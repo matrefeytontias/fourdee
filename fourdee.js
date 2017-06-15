@@ -37,97 +37,26 @@ Matrix5.prototype.identity = function ()
   ];
 }
 
-// float theta
-Matrix5.prototype.makeRotateXY = function (theta)
-{
- var c = Math.cos(theta), s = Math.sin(theta);
- this.elements = [
-   c,  s, 0, 0, 0,
-   -s, c, 0, 0, 0,
-   0,  0, 1, 0, 0,
-   0,  0, 0, 1, 0,
-   0,  0, 0, 0, 1
- ];
-}
-
-Matrix5.prototype.makeRotateXZ = function (theta)
-{
- var c = Math.cos(theta), s = Math.sin(theta);
- this.elements = [
-   c,  0, s, 0, 0,
-   0,  1, 0, 0, 0,
-   -s, 0, c, 0, 0,
-   0,  0, 0, 1, 0,
-   0,  0, 0, 0, 1
- ];
-}
-
-Matrix5.prototype.makeRotateXW = function (theta)
-{
- var c = Math.cos(theta), s = Math.sin(theta);
- this.elements = [
-   c,  0, 0, s, 0,
-   0,  1, 0, 0, 0,
-   0,  0, 1, 0, 0,
-   -s, 0, 0, c, 0,
-   0,  0, 0, 0, 1
- ];
-}
-
-Matrix5.prototype.makeRotateYZ = function (theta)
-{
- var c = Math.cos(theta), s = Math.sin(theta);
- this.elements = [
-   1,  0, 0, 0, 0,
-   0,  c, s, 0, 0,
-   0, -s, c, 0, 0,
-   0,  0, 0, 1, 0,
-   0,  0, 0, 0, 1
- ];
-}
-
-Matrix5.prototype.makeRotateYW = function (theta)
-{
- var c = Math.cos(theta), s = Math.sin(theta);
- this.elements = [
-   1,  0, 0, 0, 0,
-   0,  c, 0, s, 0,
-   0,  0, 1, 0, 0,
-   0, -s, 0, c, 0,
-   0,  0, 0, 0, 1
- ];
-}
-
-Matrix5.prototype.makeRotateZW = function (theta)
-{
- var c = Math.cos(theta), s = Math.sin(theta);
- this.elements = [
-   1, 0,  0, 0, 0,
-   0, 1,  0, 0, 0,
-   0, 0,  c, s, 0,
-   0, 0, -s, c, 0,
-   0, 0,  0, 0, 1
- ];
-}
-
 //TODO : implement this 
-Matrix5.prototype.multiply = function(mat5){
+Matrix5.prototype.multiply = function(mat){
   
 }
 
-// String plan (ex : "xz")
+// String plan (ex : "xz"), float theta
 Matrix5.prototype.rotate = function(plan, theta){
   var axes = "xyzw";
   var c = Math.cos(theta), s = Math.sin(theta);
   var i = axes.indexOf(plan.charAt(0)), j = axes.indexOf(plan.charAt(1));
   
-  //Optimized multiplication of the matrix by the good roation matrix
-  for(var k=0; k<5; k++){
-    var mik5 = this.elements[i+k*5], mjk5 = this.elements[j+k*5];
-    this.elements[i+k*5] = c * mik5 - s * mjk5;
-    this.elements[j+k*5] = s * mik5 + c * mjk5;
+  if(i == -1 || j == -1) throw "the given plan is not reconized. Possible plans are : xy, xz, xw, yz, yw, zw";
+  else{
+    //Optimized multiplication of the matrix by the good roation matrix
+    for(var k=0; k<5; k++){
+      var mik5 = this.elements[i+k*5], mjk5 = this.elements[j+k*5];
+      this.elements[i+k*5] = c * mik5 - s * mjk5;
+      this.elements[j+k*5] = s * mik5 + c * mjk5;
+    }
   }
-  
 }
 
 Matrix5.prototype.translate = function (x = 0, y = 0, z = 0, w = 0)
