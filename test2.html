@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<!-- HTML5 Hello world by kirupa - http://www.kirupa.com/html5/getting_your_feet_wet_html5_pg1.htm -->
+<html lang="en-us">
+
+<head>
+<meta charset="utf-8">
+<title>3js - test 2</title>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/three.js/85/three.min.js"></script>
+<script type="text/javascript">
+
+var cube;
+var vertices = null;
+var renderer, camera, scene;
+
+window.addEventListener("load", function(){
+	var canvas = document.getElementById("container");
+	renderTree(canvas);
+})
+
+function renderTree(container){
+	const WIDTH = 600;
+	const HEIGHT = 600;
+	
+	// Set some camera attributes.
+	const VIEW_ANGLE = 45;
+	const ASPECT = WIDTH / HEIGHT;
+	const NEAR = 0.1;
+	const FAR = 10000;
+	
+	// Create a WebGL renderer, camera
+	// and a scene
+	renderer = new THREE.WebGLRenderer();
+	camera =
+	    new THREE.PerspectiveCamera(
+	        VIEW_ANGLE,
+	        ASPECT,
+	        NEAR,
+	        FAR
+	    );
+	
+	scene = new THREE.Scene();
+	
+	// Add the camera to the scene.
+	scene.add(camera);
+	
+	const cubeMaterial =
+  new THREE.MeshStandardMaterial(
+    {
+    	color: 0x2244CC, /*
+    	opacity: 0.4,
+		transparent: true */
+    });
+    
+    const wireframeMaterial = 
+    	new THREE.MeshBasicMaterial({
+    		wireframe : true,
+    		wireframeLinecap : "round",
+    		wireframeLinewidth : 3
+    });
+	// Set up the cube vars
+	const SIZE = 100;
+	// Create a new mesh with
+	// cube geometry - we will cover
+	// the cubeMaterial next!
+	cube = new THREE.Mesh(
+	    new THREE.CubeGeometry(SIZE, SIZE, SIZE),
+	wireframeMaterial);
+	
+	// Move the cube back in Z so we
+	// can see it.
+	cube.position.z = -300;
+	// Finally, add the cube to the scene.
+	scene.add(cube);
+	
+	// Start the renderer.
+	renderer.setSize(WIDTH, HEIGHT);
+	
+	// Attach the renderer-supplied
+	// DOM element.
+
+	const pointLight2 =
+	  new THREE.PointLight(0xFFFFFF);
+	
+	// set its position
+	pointLight2.position.x = 0;
+	pointLight2.position.y = 0;
+	pointLight2.position.z = 200;
+	
+	// add to the scene
+	scene.add(pointLight2);
+	
+	renderer.render(scene, camera);
+	
+	container.appendChild(renderer.domElement);
+	
+    window.requestAnimationFrame(
+    	(function(s){
+    		return function(t){
+    			moveCube(t, s)
+    		}
+    	})(cube)
+    );
+	
+}
+
+function moveCube(timestamp, cube){
+	
+	if(!vertices){
+		vertices = {};
+		for(var i=0; i<cube.geometry.vertices.length; i++){
+			vertices[i] = {};
+			for(var attr in cube.geometry.vertices[i]){
+				vertices[i][attr] = cube.geometry.vertices[i][attr];
+			}
+		}
+	}
+
+	cube.rotation.z = timestamp / 2000;
+	cube.rotation.y = timestamp / 1000;
+	
+	//dz = Math.cos(timestamp / 2000)
+	const r = 40;
+	const dx = Math.cos(timestamp / 2000) * r;
+	const dy = Math.sin(timestamp / 2000) * r;
+	//if(Math.floor(timestamp%30) == 0) console.log(dx, dy)
+	
+	/*
+	for(var i=0; i<cube.geometry.vertices.length/2; i++){
+		cube.geometry.vertices[i].x = vertices[i].x + dx;
+		cube.geometry.vertices[i].y = vertices[i].y + dy;
+	}
+	
+	cube.geometry.verticesNeedUpdate = true;
+	*/
+	
+	renderer.render(scene, camera);
+		 
+    window.requestAnimationFrame(
+    	(function(c){
+    		return function(t){
+    			moveCube(t, c)
+    		}
+    	})(cube)
+    );
+}
+</script>
+</head>
+
+<body>
+
+<div id="container" style="border : solid 1px blue"></div>
+
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<!-- HTML5 Hello world by kirupa - http://www.kirupa.com/html5/getting_your_feet_wet_html5_pg1.htm -->
+<html lang="en-us">
+
+<head>
+<meta charset="utf-8">
+<title>3js - test 1</title>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/three.js/85/three.min.js"></script>
+<script type="text/javascript">
+
+var last;
+var renderer, camera, scene;
+
+window.addEventListener("load", function(){
+	var canvas = document.getElementById("container");
+	renderTree(canvas);
+})
+
+function renderTree(container){
+	const WIDTH = 600;
+	const HEIGHT = 300;
+	
+	// Set some camera attributes.
+	const VIEW_ANGLE = 45;
+	const ASPECT = WIDTH / HEIGHT;
+	const NEAR = 0.1;
+	const FAR = 10000;
+	
+	// Create a WebGL renderer, camera
+	// and a scene
+	renderer = new THREE.WebGLRenderer();
+	camera =
+	    new THREE.PerspectiveCamera(
+	        VIEW_ANGLE,
+	        ASPECT,
+	        NEAR,
+	        FAR
+	    );
+	
+	scene = new THREE.Scene();
+	
+	// Add the camera to the scene.
+	scene.add(camera);
+	
+	const sphereMaterial =
+  new THREE.MeshLambertMaterial(
+    {
+      color: 0xCCAA00
+    });
+	// Set up the sphere vars
+	const RADIUS = 50;
+	const SEGMENTS = 16;
+	const RINGS = 16;
+	
+	// Create a new mesh with
+	// sphere geometry - we will cover
+	// the sphereMaterial next!
+	sphere = new THREE.Mesh(
+	
+	  new THREE.SphereGeometry(
+	    RADIUS,
+	    SEGMENTS,
+	    RINGS),
+	
+	  sphereMaterial);
+	
+	// Move the Sphere back in Z so we
+	// can see it.
+	sphere.position.z = -300;
+	
+	// Finally, add the sphere to the scene.
+	scene.add(sphere);
+	
+	// Start the renderer.
+	renderer.setSize(WIDTH, HEIGHT);
+	
+	// Attach the renderer-supplied
+	// DOM element.
+	const pointLight1 =
+	  new THREE.PointLight(0xFFFFFF);
+	
+	// set its position
+	pointLight1.position.x = 0;
+	pointLight1.position.y = 0;
+	pointLight1.position.z = -300;
+	
+	// add to the scene
+	scene.add(pointLight1);
+	const pointLight2 =
+	  new THREE.PointLight(0x999999);
+	
+	// set its position
+	pointLight2.position.x = 0;
+	pointLight2.position.y = 0;
+	pointLight2.position.z = 300;
+	
+	
+	// add to the scene
+	scene.add(pointLight2);
+	
+	renderer.render(scene, camera);
+	
+	container.appendChild(renderer.domElement);
+	
+	start = null;
+	
+	
+    window.requestAnimationFrame(
+    	(function(s){
+    		return function(t){
+    			moveSphere(t, s)
+    		}
+    	})(sphere)
+    );
+	
+}
+
+function moveSphere(timestamp, sphere){
+	
+	var R = 80;
+	
+	sphere.position.x = Math.cos(timestamp / 500) * R*2;
+	sphere.position.z = -300 + Math.sin(timestamp / 500) * R;
+	
+	renderer.render(scene, camera);
+		 
+    window.requestAnimationFrame(
+    	(function(s){
+    		return function(t){
+    			moveSphere(t, s)
+    		}
+    	})(sphere)
+    );
+}
+</script>
+</head>
+
+<body>
+
+<div id="container" style="border : solid 1px blue"></div>
+
+</body>
+</html>
