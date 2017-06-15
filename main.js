@@ -5,6 +5,8 @@ const D4_gameWidth = D4_container.offsetWidth;
 const D4_gameHeight = D4_container.offsetHeight;
 const D4_aspectRatio = D4_gameWidth / D4_gameHeight;
 const D4_scene = new THREE.Scene();
+const D4_space = new Space4D(new OrthoProj());
+
 if(!D4_PERSPECTIVE)
 {
   D4_orthoWidth = 3 * D4_aspectRatio;
@@ -23,11 +25,14 @@ function main()
   D4_renderer.setSize(D4_gameWidth, D4_gameHeight);
   D4_container.appendChild(D4_renderer.domElement);
 
-  var geometry = new THREE.EdgesGeometry(new THREE.BoxGeometry(1, 1, 1));
-  var material = new THREE.LineBasicMaterial({ color:0xff0000 });
-  cube = new THREE.LineSegments(geometry, material);
-  D4_scene.add(cube);
-  D4_camera.position.z = 2;
+  /*var geometry = new THREE.EdgesGeometry(new THREE.BoxGeometry(1, 1, 1));
+  cube = new THREE.LineSegments(geometry);
+  D4_scene.add(cube);*/
+  var geometry = new BoxGeometry4D(1, 1, 1, 1);
+  cube = new Points4D(geometry, new THREE.PointsMaterial({ color: 0xff0000, size: 0.1 }));
+  D4_scene.add(cube.projection);
+  D4_space.add(cube);
+  D4_camera.position.z = 5;
 
   render();
 }
@@ -35,7 +40,7 @@ function main()
 function render()
 {
   requestAnimationFrame(render);
+  D4_space.rotation.xz += 0.05;
+  D4_space.project();
   D4_renderer.render(D4_scene, D4_camera);
-  cube.rotation.x += 0.005;
-  cube.rotation.y += 0.01;
 }
