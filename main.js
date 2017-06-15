@@ -40,7 +40,8 @@ function main()
 function render()
 {
   requestAnimationFrame(render);
-  D4_space.rotation.xz += 0.05;
+  D4_space.rotation.xz += 0.03;
+  D4_space.rotation.xw += 0.05;
   D4_space.project();
   D4_renderer.render(D4_scene, D4_camera);
 }

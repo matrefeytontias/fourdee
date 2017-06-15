@@ -110,6 +110,26 @@ Matrix5.prototype.makeRotateZW = function (theta)
  ];
 }
 
+//TODO : implement this 
+Matrix5.prototype.multiply = function(mat5){
+  
+}
+
+// String plan (ex : "xz")
+Matrix5.prototype.rotate = function(plan, theta){
+  var axes = "xyzw";
+  var c = Math.cos(theta), s = Math.sin(theta);
+  var i = axes.indexOf(plan.charAt(0)), j = axes.indexOf(plan.charAt(1));
+  
+  //Optimized multiplication of the matrix by the good roation matrix
+  for(var k=0; k<5; k++){
+    var mik5 = this.elements[i+k*5], mjk5 = this.elements[j+k*5];
+    this.elements[i+k*5] = c * mik5 - s * mjk5;
+    this.elements[j+k*5] = s * mik5 + c * mjk5;
+  }
+  
+}
+
 Matrix5.prototype.translate = function (x = 0, y = 0, z = 0, w = 0)
 {
   this.elements[4] += x;
@@ -233,9 +253,13 @@ Space4D.prototype.add = function (obj)
 Space4D.prototype.project = function ()
 {
   var mat = new Matrix5();
-
-  // TODO : consider more than this one rotation
-  mat.makeRotateXZ(this.rotation.xz);
+  
+  //Handle rotations following the order described in this.rotation.order
+  for(var i=0; i+1<this.rotation.order.length; i+=2){
+    var rotationPlan = this.rotation.order.slice(i, i+2).toLowerCase();
+    mat.rotate(rotationPlan, this.rotation[rotationPlan]);
+  }
+  
   mat.scale(this.scale, this.scale, this.scale, this.scale);
   mat.translate(this.position.x, this.position.y, this.position.z, this.position.w);
 
