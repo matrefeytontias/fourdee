@@ -1,46 +1,18 @@
 /***************
- * Vector4 API *
+ * Euler4D API *
  ***************/
 
-function Vector4(x = 0, y = 0, z = 0, w = 0)
+// float xy, float xz, float xw, float yz, float yw, float zw, String order
+function Euler4D(xy = 0, xz = 0, xw = 0, yz = 0, yw = 0, zw = 0, order = "xyxzxwyzywzw")
 {
-  this.x = x;
-  this.y = y;
-  this.z = z;
-  this.w = w;
-}
-
-Vector4.prototype.add = function (v)
-{
-  this.x += v.x;
-  this.y += v.y;
-  this.z += v.z;
-  this.w += v.w;
-  return this;
-}
-
-Vector4.prototype.mult = function (f)
-{
-  this.x *= f;
-  this.y *= f;
-  this.z *= f;
-  this.w *= f;
-  return this;
-}
-
-Vector4.prototype.dot = function (v)
-{
-  return this.x * v.x + this.y * v.y + this.z * v.z + this.w * v.w;
-}
-
-Vector4.prototype.length = function ()
-{
-  return Math.sqrt(this.dot(this));
-}
-
-Vector4.prototype.normalize = function ()
-{
-  return this.mult(1.0 / this.length());
+  this.xy = xy;
+  this.xz = xz;
+  this.xw = xw;
+  this.yz = yz;
+  this.yw = yw;
+  this.zw = zw;
+  this.order = order;
+  this.center = new Vector4();
 }
 
 /******************
@@ -68,7 +40,33 @@ Geometry4D.prototype.invalidate = function ()
 
 function Object4D()
 {
-
+  this.position = new Vector4();
+  this.rotation = new Euler4D();
+  this.scale = 1.;
+  this.projected = undefined; // use your own 3D projection
 }
 
-Object4D.prototype.constructor = Object4D;
+/***************
+ * Space4D API *
+ ***************/
+
+// Proj4D projector
+function Space4D(projector)
+{
+  Object4D.prototype.call(this);
+  this.projector = projector;
+  this.children = [];
+}
+
+Space4D.prototype = new Object4D();
+Space4D.prototype.constructor = Space4D;
+
+/**************
+ * Proj4D API *
+ **************/
+
+function Proj4D { }
+
+// Override this in your own projection
+// Vector4 v
+Proj4D.prototype.project = function (v) { }
