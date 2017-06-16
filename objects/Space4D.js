@@ -59,6 +59,8 @@ Space4D.prototype.project = function ()
           geom3.vertices.push(this.projector.project(localVertex));
         }
         geom3.verticesNeedUpdate = true;
+        if(child.projection.isLineSegments || child.material.isLineDashedMaterial)
+          geom3.computeLineDistances();
       }
     }
   }
