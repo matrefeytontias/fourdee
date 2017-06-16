@@ -43,27 +43,87 @@ Matrix5.prototype.identity = function ()
   ];
 }
 
-// Matrix5 mat
-Matrix5.prototype.multiply = function (mat)
+// float theta
+Matrix5.prototype.makeRotateXY = function (theta)
 {
-  var temp = new Matrix5();
-  temp.set(this.elements);
-  for(var i = 0; i < 5; i++)
-  {
-    for(var j = 0; j < 5; j++)
-    {
-        var r = 0;
-        for(var k = 0; k < 5; k++)
-            r += temp.elements[i * 5 + k] * mat.elements[k * 5 + j];
-        this.elements[i * 5 + j] = r;
-    }
-  }
+ var c = Math.cos(theta), s = Math.sin(theta);
+ this.elements = [
+   c,  s, 0, 0, 0,
+   -s, c, 0, 0, 0,
+   0,  0, 1, 0, 0,
+   0,  0, 0, 1, 0,
+   0,  0, 0, 0, 1
+ ];
 }
 
-// String plane (ex : "xz"), float theta
-Matrix5.prototype.rotate = function (plane, theta)
+Matrix5.prototype.makeRotateXZ = function (theta)
 {
-  const axes = "xyzw";
+ var c = Math.cos(theta), s = Math.sin(theta);
+ this.elements = [
+   c,  0, s, 0, 0,
+   0,  1, 0, 0, 0,
+   -s, 0, c, 0, 0,
+   0,  0, 0, 1, 0,
+   0,  0, 0, 0, 1
+ ];
+}
+
+Matrix5.prototype.makeRotateXW = function (theta)
+{
+ var c = Math.cos(theta), s = Math.sin(theta);
+ this.elements = [
+   c,  0, 0, s, 0,
+   0,  1, 0, 0, 0,
+   0,  0, 1, 0, 0,
+   -s, 0, 0, c, 0,
+   0,  0, 0, 0, 1
+ ];
+}
+
+Matrix5.prototype.makeRotateYZ = function (theta)
+{
+ var c = Math.cos(theta), s = Math.sin(theta);
+ this.elements = [
+   1,  0, 0, 0, 0,
+   0,  c, s, 0, 0,
+   0, -s, c, 0, 0,
+   0,  0, 0, 1, 0,
+   0,  0, 0, 0, 1
+ ];
+}
+
+Matrix5.prototype.makeRotateYW = function (theta)
+{
+ var c = Math.cos(theta), s = Math.sin(theta);
+ this.elements = [
+   1,  0, 0, 0, 0,
+   0,  c, 0, s, 0,
+   0,  0, 1, 0, 0,
+   0, -s, 0, c, 0,
+   0,  0, 0, 0, 1
+ ];
+}
+
+Matrix5.prototype.makeRotateZW = function (theta)
+{
+ var c = Math.cos(theta), s = Math.sin(theta);
+ this.elements = [
+   1, 0,  0, 0, 0,
+   0, 1,  0, 0, 0,
+   0, 0,  c, s, 0,
+   0, 0, -s, c, 0,
+   0, 0,  0, 0, 1
+ ];
+}
+
+//TODO : implement this 
+Matrix5.prototype.multiply = function(mat5){
+  
+}
+
+// String plan (ex : "xz")
+Matrix5.prototype.rotate = function(plan, theta){
+  var axes = "xyzw";
   var c = Math.cos(theta), s = Math.sin(theta);
   var i = axes.indexOf(plane.charAt(0)), j = axes.indexOf(plane.charAt(1));
   
@@ -79,6 +139,7 @@ Matrix5.prototype.rotate = function (plane, theta)
       this.elements[j + k * 5] = s * mik5 + c * mjk5;
     }
   }
+  
 }
 
 Matrix5.prototype.translate = function (x = 0, y = 0, z = 0, w = 0)
