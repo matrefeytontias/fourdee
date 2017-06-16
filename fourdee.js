@@ -107,6 +107,7 @@ THREE.Vector4.prototype.applyMatrix5 = function (m)
   this.w = m.elements[15] * temp.x + m.elements[16] * temp.y + m.elements[17] * temp.z + m.elements[18] * temp.w + m.elements[19] * temp.t;
   var t = m.elements[20] * temp.x + m.elements[21] * temp.y + m.elements[22] * temp.z + m.elements[23] * temp.w + m.elements[24] * temp.t;
   this.divideScalar(t);
+  return this;
 }
 
 /***************
@@ -135,28 +136,37 @@ function Geometry4D()
   this.vertices4D = [];
 }
 
+const tesseractVertices = [
+  new THREE.Vector4(-0.5, -0.5, -0.5, -0.5),
+  new THREE.Vector4(0.5, -0.5, -0.5, -0.5),
+  new THREE.Vector4(0.5, 0.5, -0.5, -0.5),
+  new THREE.Vector4(-0.5, 0.5, -0.5, -0.5),
+  new THREE.Vector4(-0.5, -0.5, 0.5, -0.5),
+  new THREE.Vector4(0.5, -0.5, 0.5, -0.5),
+  new THREE.Vector4(0.5, 0.5, 0.5, -0.5),
+  new THREE.Vector4(-0.5, 0.5, 0.5, -0.5),
+  new THREE.Vector4(-0.5, -0.5, -0.5, 0.5),
+  new THREE.Vector4(0.5, -0.5, -0.5, 0.5),
+  new THREE.Vector4(0.5, 0.5, -0.5, 0.5),
+  new THREE.Vector4(-0.5, 0.5, -0.5, 0.5),
+  new THREE.Vector4(-0.5, -0.5, 0.5, 0.5),
+  new THREE.Vector4(0.5, -0.5, 0.5, 0.5),
+  new THREE.Vector4(0.5, 0.5, 0.5, 0.5),
+  new THREE.Vector4(-0.5, 0.5, 0.5, 0.5),
+];
+const tesseractEdges = [
+  0, 1, 1, 2, 2, 3, 3, 0, 4, 5, 5, 6, 6, 7, 7, 4, 0, 4, 1, 5, 2, 6, 3, 7, // 1st cube : 12 edges
+  8, 9, 9, 10, 10, 11, 11, 8, 12, 13, 13, 14, 14, 15, 15, 12, 8, 12, 9, 13, 10, 14, 11, 15, // 2nd cube : 12 edges
+  0, 8, 1, 9, 2, 10, 3, 11, 4, 12, 5, 13, 6, 14, 7, 15 // link both : 8 edges
+];
+
 function BoxGeometry4D(width, height, depth, duth)
 {
   Geometry4D.call(this);
-  var x = width / 2, y = height / 2, z = depth / 2, w = duth / 2;
-  this.vertices4D = [
-    new THREE.Vector4(-x, -y, -z, -w),
-    new THREE.Vector4(x, -y, -z, -w),
-    new THREE.Vector4(x, y, -z, -w),
-    new THREE.Vector4(-x, y, -z, -w),
-    new THREE.Vector4(-x, y, z, -w),
-    new THREE.Vector4(x, y, z, -w),
-    new THREE.Vector4(x, -y, z, -w),
-    new THREE.Vector4(-x, -y, z, -w),
-    new THREE.Vector4(-x, -y, z, w),
-    new THREE.Vector4(x, -y, z, w),
-    new THREE.Vector4(x, y, z, w),
-    new THREE.Vector4(-x, y, z, w),
-    new THREE.Vector4(-x, y, -z, w),
-    new THREE.Vector4(x, y, -z, w),
-    new THREE.Vector4(x, -y, -z, w),
-    new THREE.Vector4(-x, -y, -z, w),
-  ];
+  var mat = new Matrix5();
+  mat.scale(width, height, depth, duth);
+  for(var i = 0; i < tesseractEdges.length; i++)
+    this.vertices4D.push(tesseractVertices[tesseractEdges[i]].clone().applyMatrix5(mat));
 }
 
 BoxGeometry4D.prototype = new Geometry4D();
@@ -279,3 +289,20 @@ function Points4D(geometry, material)
 
 Points4D.prototype = new Object4D();
 Points4D.prototype.constructor = Points4D;
+
+/**********************
+ * LineSegments4D API *
+ **********************/
+ 
+ // Geometry4D geometry, THREE.Material material
+ function LineSegments4D(geometry, material)
+ {
+     Object4D.call(this);
+     this.geometry = geometry;
+     this.material = material;
+     this.projection = new THREE.LineSegments(new THREE.Geometry(), material);
+ }
+ 
+ LineSegments4D.prototype = new Object4D();
+ LineSegments4D.prototype.constructor = LineSegments4D;
+ 
