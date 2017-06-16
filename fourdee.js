@@ -26,6 +26,12 @@ function Matrix5()
  ];
 }
 
+// float[25] elements
+Matrix5.prototype.set = function (elements)
+{
+    this.elements = elements.slice(0);
+}
+
 Matrix5.prototype.identity = function ()
 {
   this.elements = [
@@ -37,24 +43,40 @@ Matrix5.prototype.identity = function ()
   ];
 }
 
-//TODO : implement this 
-Matrix5.prototype.multiply = function(mat){
-  
+// Matrix5 mat
+Matrix5.prototype.multiply = function (mat)
+{
+  var temp = new Matrix5();
+  temp.set(this.elements);
+  for(var i = 0; i < 5; i++)
+  {
+    for(var j = 0; j < 5; j++)
+    {
+        var r = 0;
+        for(var k = 0; k < 5; k++)
+            r += temp.elements[i * 5 + k] * mat.elements[k * 5 + j];
+        this.elements[i * 5 + j] = r;
+    }
+  }
 }
 
-// String plan (ex : "xz"), float theta
-Matrix5.prototype.rotate = function(plan, theta){
-  var axes = "xyzw";
+// String plane (ex : "xz"), float theta
+Matrix5.prototype.rotate = function (plane, theta)
+{
+  const axes = "xyzw";
   var c = Math.cos(theta), s = Math.sin(theta);
-  var i = axes.indexOf(plan.charAt(0)), j = axes.indexOf(plan.charAt(1));
+  var i = axes.indexOf(plane.charAt(0)), j = axes.indexOf(plane.charAt(1));
   
-  if(i == -1 || j == -1) throw "the given plan is not reconized. Possible plans are : xy, xz, xw, yz, yw, zw";
-  else{
-    //Optimized multiplication of the matrix by the good roation matrix
-    for(var k=0; k<5; k++){
-      var mik5 = this.elements[i+k*5], mjk5 = this.elements[j+k*5];
-      this.elements[i+k*5] = c * mik5 - s * mjk5;
-      this.elements[j+k*5] = s * mik5 + c * mjk5;
+  if(i == -1 || j == -1)
+      throw "The given plane is not reconized. Possible planes are : xy, xz, xw, yz, yw, zw";
+  else
+  {
+    // Optimized multiplication of the current matrix by the new rotation matrix
+    for(var k = 0; k < 5; k++)
+    {
+      var mik5 = this.elements[i + k * 5], mjk5 = this.elements[j + k * 5];
+      this.elements[i + k * 5] = c * mik5 - s * mjk5;
+      this.elements[j + k * 5] = s * mik5 + c * mjk5;
     }
   }
 }
