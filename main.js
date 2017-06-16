@@ -5,7 +5,7 @@ const D4_gameWidth = D4_container.offsetWidth;
 const D4_gameHeight = D4_container.offsetHeight;
 const D4_aspectRatio = D4_gameWidth / D4_gameHeight;
 const D4_scene = new THREE.Scene();
-const D4_space = new Space4D(new OrthoProj());
+const D4_space = new Space4D(new PerspectProj(3.5));
 
 if(!D4_PERSPECTIVE)
 {
@@ -28,7 +28,7 @@ function main()
   /*var geometry = new THREE.EdgesGeometry(new THREE.BoxGeometry(1, 1, 1));
   cube = new THREE.LineSegments(geometry);
   D4_scene.add(cube);*/
-  var geometry = new BoxGeometry4D(2, 2, 2, 3);
+  var geometry = new BoxGeometry4D(2, 2, 2, 2);
   
   // Wireframe : 
   cube = new Mesh4D(geometry, [
@@ -42,9 +42,12 @@ function main()
   //Try with transparency
   //cube = new Mesh4D(geometry, new THREE.MeshBasicMaterial({color : 0x0000ff, side: THREE.DoubleSide, opacity : 0.2, transparent : true}));
 
+
   D4_scene.add(cube.projection);
   D4_space.add(cube);
   D4_camera.position.z = 5;
+  
+  D4_space.rotate("xz", 0.33);
 
   render();
 }
@@ -61,9 +64,9 @@ function render()
   
   D4_space.rotate("xz", 1/200);
   
-  D4_space.rotate("zw", 1/80);
+  //D4_space.rotate("zw", 1/80);
   
-  D4_space.rotate("xy", 1/400);
+  //D4_space.rotate("xy", 1/400);
   
   D4_space.project();
   D4_renderer.render(D4_scene, D4_camera);
