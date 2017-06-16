@@ -209,7 +209,7 @@ Space4D.prototype.project = function ()
         for(var vi = 0; vi < geom4.vertices4D.length; vi++)
         {
           var localVertex = geom4.vertices4D[vi].clone();
-          localVertex.add(child.position).sub(this.position).applyMatrix5(mat);
+          localVertex.add(child.position).applyMatrix5(mat);
           geom3.vertices.push(this.projector.project(localVertex));
         }
         geom3.verticesNeedUpdate = true;
