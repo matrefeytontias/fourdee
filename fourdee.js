@@ -9,7 +9,7 @@ function Object4D()
   this.scale = 1.;
   this.geometry = undefined;
   this.material = undefined;
-  this.projected = undefined; // use your own 3D projection
+  this.projection = undefined; // use your own 3D projection
 }
 
 /**************
