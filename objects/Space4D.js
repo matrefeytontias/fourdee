@@ -40,7 +40,7 @@ Space4D.prototype.project = function ()
       else
       {
         var objMat = child.buildMatrix5();
-        console.log(objMat.elements);
+        //console.log(objMat.elements);
         var geom3 = proj.geometry;
         geom3.vertices.length = 0;
         for(var vi = 0; vi < geom4.vertices4D.length; vi++)

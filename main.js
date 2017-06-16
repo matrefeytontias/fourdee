@@ -51,7 +51,12 @@ function render(timestamp)
   
   //D4_space.rotation.yw += 0.01;
   
+  D4_scene.rotation.x = cameraRotation.x;
   D4_scene.rotation.y = cameraRotation.y;
+  
+  
+  D4_space.rotation = user4DRotation;
+  
   //D4_scene.rotation.x = cameraRotation.x;
   updateControls(timestamp);
   

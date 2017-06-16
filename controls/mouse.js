@@ -37,7 +37,7 @@ function onDocumentMouseMove( event ) {
     
 	cameraRotation.y = cameraRotationOnMouseDown.y + ( mousePosition.x - mousePositionOnMouseDown.x ) * 0.008;
 	
-	cameraRotation.x = cameraRotationOnMouseDown.x + ( mousePosition.y - mousePositionOnMouseDown.y ) * 0.008;
+	if(keyPressed.Shift) cameraRotation.x = cameraRotationOnMouseDown.x + ( mousePosition.y - mousePositionOnMouseDown.y ) * 0.008;
 
 
 }
