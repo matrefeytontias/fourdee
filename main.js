@@ -25,7 +25,7 @@ function main()
   D4_renderer.setSize(D4_gameWidth, D4_gameHeight);
   D4_container.appendChild(D4_renderer.domElement);
 
-  var geometry = new BoxGeometry4D(1, 1, 1, 1);
+  var geometry = new BoxLinesGeometry4D(1, 1, 1, 1);
   cube = new LineSegments4D(geometry, new THREE.LineBasicMaterial({ color: 0xff0000 }));
   D4_scene.add(cube.projection);
   D4_space.add(cube);
@@ -37,8 +37,8 @@ function main()
 function render()
 {
   requestAnimationFrame(render);
-  D4_space.rotation.xz += 0.03;
-  D4_space.rotation.yw += 0.05;
+  D4_space.rotation.xz += 0.01;
+  D4_space.rotation.yw += 0.01;
   D4_space.project();
   D4_renderer.render(D4_scene, D4_camera);
 }

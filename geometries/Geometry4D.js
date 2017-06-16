@@ -31,7 +31,8 @@ const tesseractEdges = [
   0, 8, 1, 9, 2, 10, 3, 11, 4, 12, 5, 13, 6, 14, 7, 15 // link both : 8 edges
 ];
 
-function BoxGeometry4D(width, height, depth, duth)
+// Construct a Geometry4D object to be used with LineSegments4D
+function BoxLinesGeometry4D(width, height, depth, duth)
 {
   Geometry4D.call(this);
   var mat = new Matrix5();
@@ -40,5 +41,5 @@ function BoxGeometry4D(width, height, depth, duth)
     this.vertices4D.push(tesseractVertices[tesseractEdges[i]].clone().applyMatrix5(mat));
 }
 
-BoxGeometry4D.prototype = new Geometry4D();
-BoxGeometry4D.prototype.constructor = BoxGeometry4D;
+BoxLinesGeometry4D.prototype = new Geometry4D();
+BoxLinesGeometry4D.prototype.constructor = BoxLinesGeometry4D;
