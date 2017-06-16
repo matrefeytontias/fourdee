@@ -27,19 +27,34 @@ function main()
 
   var geometry = new BoxLinesGeometry4D(1, 1, 1, 1);
   cube = new LineSegments4D(geometry, new THREE.LineBasicMaterial({ color: 0xff0000 }));
+  cube.position.x = 2;
   D4_scene.add(cube.projection);
+  
   D4_space.add(cube);
+  
+  var c2 = new LineSegments4D(new BoxLinesGeometry4D(1, 1, 1, 1), new THREE.LineBasicMaterial({ color: 0xffffff }))
+  
+  D4_scene.add(c2.projection);
+  D4_space.add(c2);
+  
   D4_camera.position.z = 5;
 
   render();
 }
 
-function render()
+function render(timestamp)
 {
   requestAnimationFrame(render);
-  cube.position.x = Math.sin(performance.now() / 1000);
-  cube.rotation.xz += 0.01;
-  D4_space.rotation.yw += 0.01;
+  //cube.position.x = Math.sin(performance.now() / 1000);
+  
+  //cube.rotation.xz = userRotation ;
+  
+  //D4_space.rotation.yw += 0.01;
+  
+  D4_scene.rotation.y = cameraRotation.y;
+  //D4_scene.rotation.x = cameraRotation.x;
+  updateControls(timestamp);
+  
   D4_space.project();
   D4_renderer.render(D4_scene, D4_camera);
 }
