@@ -25,11 +25,8 @@ function main()
   D4_renderer.setSize(D4_gameWidth, D4_gameHeight);
   D4_container.appendChild(D4_renderer.domElement);
 
-  /*var geometry = new THREE.EdgesGeometry(new THREE.BoxGeometry(1, 1, 1));
-  cube = new THREE.LineSegments(geometry);
-  D4_scene.add(cube);*/
-  var geometry = new BoxGeometry4D(1, 1, 1, 1);
-  cube = new Points4D(geometry, new THREE.PointsMaterial({ color: 0xff0000, size: 0.1 }));
+  var geometry = new BoxGeometry4D(2, 1, 1, 2);
+  cube = new LineSegments4D(geometry, new THREE.LineBasicMaterial({ color: 0xff0000 }));
   D4_scene.add(cube.projection);
   D4_space.add(cube);
   D4_camera.position.z = 5;
@@ -41,7 +38,7 @@ function render()
 {
   requestAnimationFrame(render);
   D4_space.rotation.xz += 0.03;
-  D4_space.rotation.xw += 0.05;
+  D4_space.rotation.yw += 0.05;
   D4_space.project();
   D4_renderer.render(D4_scene, D4_camera);
 }
