@@ -25,7 +25,7 @@ function main()
   D4_renderer.setSize(D4_gameWidth, D4_gameHeight);
   D4_container.appendChild(D4_renderer.domElement);
 
-  var geometry = new BoxGeometry4D(2, 1, 1, 2);
+  var geometry = new BoxGeometry4D(1, 1, 1, 1);
   cube = new LineSegments4D(geometry, new THREE.LineBasicMaterial({ color: 0xff0000 }));
   D4_scene.add(cube.projection);
   D4_space.add(cube);
