@@ -34,7 +34,9 @@ function main()
   cube = new Mesh4D(geometry, [
     new THREE.MeshBasicMaterial({color : 0xff0000, wireframe : true} ),
     new THREE.MeshBasicMaterial({color : 0x0000ff, wireframe : true} ),
-    new THREE.MeshBasicMaterial({color : 0x00ff00, wireframe : true} ) 
+    new THREE.MeshBasicMaterial({color : 0xff00ff, wireframe : true} ),
+    new THREE.MeshBasicMaterial({color : 0x00ffff, wireframe : true} ),
+    new THREE.MeshBasicMaterial({color : 0xffff00, wireframe : true} ),
   ]);
   
   //Try with transparency
