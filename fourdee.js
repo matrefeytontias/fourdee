@@ -29,7 +29,7 @@ function Matrix5()
 // float[25] elements
 Matrix5.prototype.set = function (elements)
 {
-    this.elements = elements.slice(0);
+    this.elements = this.elements.slice(0);
 }
 
 Matrix5.prototype.identity = function ()
@@ -54,6 +54,7 @@ Matrix5.prototype.makeRotateXY = function (theta)
    0,  0, 0, 1, 0,
    0,  0, 0, 0, 1
  ];
+ return this;
 }
 
 Matrix5.prototype.makeRotateXZ = function (theta)
@@ -66,6 +67,7 @@ Matrix5.prototype.makeRotateXZ = function (theta)
    0,  0, 0, 1, 0,
    0,  0, 0, 0, 1
  ];
+ return this;
 }
 
 Matrix5.prototype.makeRotateXW = function (theta)
@@ -78,6 +80,7 @@ Matrix5.prototype.makeRotateXW = function (theta)
    -s, 0, 0, c, 0,
    0,  0, 0, 0, 1
  ];
+ return this;
 }
 
 Matrix5.prototype.makeRotateYZ = function (theta)
@@ -90,6 +93,7 @@ Matrix5.prototype.makeRotateYZ = function (theta)
    0,  0, 0, 1, 0,
    0,  0, 0, 0, 1
  ];
+ return this;
 }
 
 Matrix5.prototype.makeRotateYW = function (theta)
@@ -102,6 +106,7 @@ Matrix5.prototype.makeRotateYW = function (theta)
    0, -s, 0, c, 0,
    0,  0, 0, 0, 1
  ];
+ return this;
 }
 
 Matrix5.prototype.makeRotateZW = function (theta)
@@ -114,32 +119,33 @@ Matrix5.prototype.makeRotateZW = function (theta)
    0, 0, -s, c, 0,
    0, 0,  0, 0, 1
  ];
+ return this;
 }
 
-//TODO : implement this 
-Matrix5.prototype.multiply = function(mat5){
-  
-}
-
-// String plan (ex : "xz")
-Matrix5.prototype.rotate = function(plan, theta){
-  var axes = "xyzw";
-  var c = Math.cos(theta), s = Math.sin(theta);
-  var i = axes.indexOf(plane.charAt(0)), j = axes.indexOf(plane.charAt(1));
-  
-  if(i == -1 || j == -1)
-      throw "The given plane is not reconized. Possible planes are : xy, xz, xw, yz, yw, zw";
-  else
+// Matrix5 mat
+Matrix5.prototype.multiply = function (mat)
+{
+  var temp = new Matrix5();
+  temp.set(this);
+  for(var i = 0; i < 5; i++)
   {
-    // Optimized multiplication of the current matrix by the new rotation matrix
-    for(var k = 0; k < 5; k++)
+    for(var j = 0; j < 5; j++)
     {
-      var mik5 = this.elements[i + k * 5], mjk5 = this.elements[j + k * 5];
-      this.elements[i + k * 5] = c * mik5 - s * mjk5;
-      this.elements[j + k * 5] = s * mik5 + c * mjk5;
+      var r = 0;
+      for(var k = 0; k < 5; k++)
+        r += temp.elements[i * 5 + k] * mat.elements[k * 5 + j];
+      this.elements[i * 5 + j] = r;
     }
   }
   
+  return this;
+}
+
+// String plane (ex : "XZ"), float theta
+Matrix5.prototype.rotate = function (plane, theta)
+{
+  var rot = new Matrix5();
+  return this.multiply(rot["makeRotate" + plane.toUpperCase()](theta));
 }
 
 Matrix5.prototype.translate = function (x = 0, y = 0, z = 0, w = 0)
@@ -276,14 +282,16 @@ Space4D.prototype.project = function ()
 {
   var mat = new Matrix5();
   
-  //Handle rotations following the order described in this.rotation.order
-  for(var i=0; i+1<this.rotation.order.length; i+=2){
-    var rotationPlan = this.rotation.order.slice(i, i+2).toLowerCase();
-    mat.rotate(rotationPlan, this.rotation[rotationPlan]);
-  }
-  
   mat.scale(this.scale, this.scale, this.scale, this.scale);
   mat.translate(this.position.x, this.position.y, this.position.z, this.position.w);
+  //Handle rotations following the order described in this.rotation.order
+  for(var i = 0; i + 1 < this.rotation.order.length; i += 2)
+  {
+    var rotationPlane = this.rotation.order.slice(i, i + 2);
+    var theta = this.rotation[rotationPlane.toLowerCase()];
+    if(theta != 0)
+      mat.rotate(rotationPlane, theta);
+  }
 
   for(var i = 0; i < this.children.length; i++)
   {
