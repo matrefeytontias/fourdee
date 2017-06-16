@@ -25,18 +25,7 @@ Space4D.prototype.add = function (obj)
 // Updates the children Object4D with their 3D projection
 Space4D.prototype.project = function ()
 {
-  var mat = new Matrix5();
-  
-  mat.scale(this.scale, this.scale, this.scale, this.scale);
-  mat.translate(this.position.x, this.position.y, this.position.z, this.position.w);
-  // Handle rotations following the order described in this.rotation.order
-  for(var i = 0; i + 1 < this.rotation.order.length; i += 2)
-  {
-    var rotationPlane = this.rotation.order.slice(i, i + 2);
-    var theta = this.rotation[rotationPlane.toLowerCase()];
-    if(theta != 0)
-      mat.rotate(rotationPlane, theta);
-  }
+  var mat = this.buildMatrix5();
 
   for(var i = 0; i < this.children.length; i++)
   {
@@ -50,12 +39,14 @@ Space4D.prototype.project = function ()
         throw "Pushed Object4D with undefined target 3D render type";
       else
       {
+        var objMat = child.buildMatrix5();
+        console.log(objMat.elements);
         var geom3 = proj.geometry;
         geom3.vertices.length = 0;
         for(var vi = 0; vi < geom4.vertices4D.length; vi++)
         {
           var localVertex = geom4.vertices4D[vi].clone();
-          localVertex.add(child.position).applyMatrix5(mat);
+          localVertex.applyMatrix5(objMat).applyMatrix5(mat);
           geom3.vertices.push(this.projector.project(localVertex));
         }
         geom3.verticesNeedUpdate = true;
