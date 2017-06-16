@@ -96,7 +96,7 @@ function BoxGeometry4D(width, height, depth, duth)
     new THREE.Face3(4+8, 5+8, 7+8, null, null, 1),
     new THREE.Face3(6+8, 5+8, 7+8, null, null, 1),
     
-    /*
+    
     // Face du haut 1 -> Face du haut 2
     new THREE.Face3(5, 13, 10, null, null, 2),
     new THREE.Face3(5, 2, 10, null, null, 2), 
@@ -131,12 +131,13 @@ function BoxGeometry4D(width, height, depth, duth)
     new THREE.Face3(1, 2, 10, null, null, 4),
     new THREE.Face3(1, 9, 10, null, null, 4), 
     
-    new THREE.Face3(5, 6, 14, null, null, 4),
-    new THREE.Face3(13, 6, 14, null, null, 4), 
+    
+    new THREE.Face3(13, 6, 14, null, null, 4),
+    new THREE.Face3(13, 6, 5, null, null, 4), 
     
     new THREE.Face3(7, 4, 12, null, null, 4),
     new THREE.Face3(7, 15, 12, null, null, 4), 
-    */
+    
   ]
 }
 

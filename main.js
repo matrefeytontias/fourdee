@@ -34,9 +34,9 @@ function main()
   cube = new Mesh4D(geometry, [
     new THREE.MeshBasicMaterial({color : 0xff0000, wireframe : true} ),
     new THREE.MeshBasicMaterial({color : 0x0000ff, wireframe : true} ),
-    new THREE.MeshBasicMaterial({color : 0xff00ff, wireframe : true} ),
-    new THREE.MeshBasicMaterial({color : 0x00ffff, wireframe : true} ),
-    new THREE.MeshBasicMaterial({color : 0xffff00, wireframe : true} ),
+    new THREE.MeshBasicMaterial({color : 0xff00ff, wireframe : false, side: THREE.DoubleSide, opacity : 0.5, transparent : true} ),
+    new THREE.MeshBasicMaterial({color : 0x00ffff, wireframe : false, side: THREE.DoubleSide, opacity : 0.5, transparent : true} ),
+    new THREE.MeshBasicMaterial({color : 0xffff00, wireframe : false, side: THREE.DoubleSide, opacity : 0.5, transparent : true} ),
   ]);
   
   //Try with transparency
@@ -62,11 +62,11 @@ function render()
   //cube.position.y = Math.sin(time/60);
   
   
-  D4_space.rotate("xz", 1/200);
+  D4_space.rotate("xz", 1/600);
   
-  //D4_space.rotate("zw", 1/80);
+  if(document.getElementById("zw").checked) D4_space.rotate("zw", 1/240);
   
-  //D4_space.rotate("xy", 1/400);
+  if(document.getElementById("xy").checked) D4_space.rotate("xy", 1/400);
   
   D4_space.project();
   D4_renderer.render(D4_scene, D4_camera);
