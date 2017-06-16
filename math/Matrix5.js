@@ -16,7 +16,7 @@ function Matrix5()
 // float[25] elements
 Matrix5.prototype.set = function (elements)
 {
-    this.elements = this.elements.slice(0);
+    this.elements = elements.slice(0);
 }
 
 Matrix5.prototype.identity = function ()
@@ -113,7 +113,7 @@ Matrix5.prototype.makeRotateZW = function (theta)
 Matrix5.prototype.multiply = function (mat)
 {
   var temp = new Matrix5();
-  temp.set(this);
+  temp.set(this.elements);
   for(var i = 0; i < 5; i++)
   {
     for(var j = 0; j < 5; j++)

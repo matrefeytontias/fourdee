@@ -29,7 +29,7 @@ Space4D.prototype.project = function ()
   
   mat.scale(this.scale, this.scale, this.scale, this.scale);
   mat.translate(this.position.x, this.position.y, this.position.z, this.position.w);
-  //Handle rotations following the order described in this.rotation.order
+  // Handle rotations following the order described in this.rotation.order
   for(var i = 0; i + 1 < this.rotation.order.length; i += 2)
   {
     var rotationPlane = this.rotation.order.slice(i, i + 2);
