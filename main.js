@@ -53,8 +53,6 @@ function render(timestamp)
   
   //D4_space.rotation.yw += 0.01;
   
-  D4_camera.position.z = document.getElementById("first").checked ? 0 : 5;
-  
   D4_space.rotation = user4DRotation;
   
   
