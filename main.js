@@ -25,12 +25,10 @@ function main()
   D4_renderer.setSize(D4_gameWidth, D4_gameHeight);
   D4_container.appendChild(D4_renderer.domElement);
 
-  //var geometry = new BoxGeometry4D(1, 1, 1, 1);
-  var geometry = new THREE.BoxGeometry(1, 1, 1);
-  //cube = new Mesh4D(geometry, new THREE.MeshLambertMaterial({ color: 0xff0000, wireframe: true }));
-  cube = new  THREE.Mesh(geometry, new THREE.MeshLambertMaterial({ color: 0xffffff, side: THREE.DoubleSide }));
-  D4_scene.add(cube);
-  //D4_space.add(cube);
+  var geometry = new BoxGeometry4D(1, 1, 1, 1);
+  cube = new Mesh4D(geometry, new THREE.MeshBasicMaterial({ color: 0xff0000, side: THREE.DoubleSide, wireframe: true }));
+  D4_scene.add(cube.projection);
+  D4_space.add(cube);
   D4_camera.position.z = 5;
 
   var light = new THREE.PointLight(0xffffff, 1, 0);
