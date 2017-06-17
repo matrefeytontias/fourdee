@@ -52,3 +52,17 @@ OrthoProj.prototype.project = function (v)
 {
   return new THREE.Vector3(v.x, v.y, v.z);
 }
+
+function PespectProj(coef = 0.1)
+{
+  Proj4D.call(this);
+  this.coef = coef;
+}
+
+PespectProj.prototype = new Proj4D();
+
+PespectProj.prototype.project = function (v)
+{
+  var f = 1 + v.w * this.coef
+  return new THREE.Vector3(f*v.x, f*v.y, f*v.z);
+}

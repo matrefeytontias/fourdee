@@ -31,13 +31,15 @@ function onDocumentMouseDown( event ) {
 
 function onDocumentMouseMove( event ) {
 
+	var coef_mouse_rotation = document.getElementById("first").checked ? -0.004 : 0.008;
+	
 	mousePosition =  { x: event.clientX - windowHalfX , y : event.clientY - windowHalfY };
     
     document.body.style.cursor = "-webkit-grabbing";
     
-	cameraRotation.y = cameraRotationOnMouseDown.y + ( mousePosition.x - mousePositionOnMouseDown.x ) * 0.008;
+	cameraRotation.y = cameraRotationOnMouseDown.y + ( mousePosition.x - mousePositionOnMouseDown.x ) * coef_mouse_rotation;
 	
-	if(keyPressed.Shift) cameraRotation.x = cameraRotationOnMouseDown.x + ( mousePosition.y - mousePositionOnMouseDown.y ) * 0.008;
+	if(keyPressed.Shift) cameraRotation.x = cameraRotationOnMouseDown.x + ( mousePosition.y - mousePositionOnMouseDown.y ) * coef_mouse_rotation;
 
 
 }
