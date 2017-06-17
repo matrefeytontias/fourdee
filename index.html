@@ -23,7 +23,7 @@
     }
     
         
-    #first-label{
+    label{
       position : fixed;
       top : 10px;
       left : 10px;
@@ -33,9 +33,13 @@
   </style>
 </head>
 <body>
-  <label  id="first-label">
+  <label>
     <input type="checkbox" id="first">
       First person 
+  </label>
+  <label style="top : 30px">
+    <input type="checkbox" id="drag" checked=true>
+      Drag control
   </label>
   <div id="view"></div>
   <script src="main.js"></script>

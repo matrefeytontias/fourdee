@@ -11,44 +11,57 @@ window.addEventListener("load", function(){
     
     cameraRotation = new THREE.Euler();
     
-    document.body.style.cursor = "-webkit-grab";
-    
     document.addEventListener("mousedown", onDocumentMouseDown, false);
+    document.addEventListener("mousemove", onDocumentMouseMove, false);
 })
+
+function onDocumentMouseMove( event ){
+	
+	document.body.style.cursor = document.getElementById("drag").checked ? "-webkit-grab" : "none";
+	
+	mousePosition =  { x: event.clientX - windowHalfX , y : event.clientY - windowHalfY };
+	
+	if(!document.getElementById("drag").checked){
+		
+		cameraRotation.y = mousePosition.x / windowHalfX * Math.PI;
+		
+		cameraRotation.x = mousePosition.y / windowHalfY * 0.25 * Math.PI;
+	}
+}
 
 function onDocumentMouseDown( event ) {
 
 	event.preventDefault();
 
-	document.addEventListener( 'mousemove', onDocumentMouseMove, false );
-	document.addEventListener( 'mouseup', onDocumentMouseUp, false );
-	document.addEventListener( 'mouseout', onDocumentMouseOut, false );
-
-	mousePositionOnMouseDown = { x: event.clientX - windowHalfX , y : event.clientY - windowHalfY};
-	cameraRotationOnMouseDown = cameraRotation.clone();
+	if(document.getElementById("drag").checked){
+		document.addEventListener( 'mousemove', onDocumentMouseDrag, false );
+		document.addEventListener( 'mouseup', onDocumentMouseUp, false );
+		document.addEventListener( 'mouseout', onDocumentMouseOut, false );
+	
+		mousePositionOnMouseDown = { x: event.clientX - windowHalfX , y : event.clientY - windowHalfY};
+		cameraRotationOnMouseDown = cameraRotation.clone();
+	}
 
 }
 
-function onDocumentMouseMove( event ) {
-
-	var coef_mouse_rotation = document.getElementById("first").checked ? -0.004 : 0.008;
-	
-	mousePosition =  { x: event.clientX - windowHalfX , y : event.clientY - windowHalfY };
+function onDocumentMouseDrag( event ) {
     
     document.body.style.cursor = "-webkit-grabbing";
     
-	cameraRotation.y = cameraRotationOnMouseDown.y + ( mousePosition.x - mousePositionOnMouseDown.x ) * coef_mouse_rotation;
-	
-	if(keyPressed.Shift) cameraRotation.x = cameraRotationOnMouseDown.x + ( mousePosition.y - mousePositionOnMouseDown.y ) * coef_mouse_rotation;
-
-
+    
+    var coef = document.getElementById("first").checked ? -0.004 : 0.008;
+    	
+	cameraRotation.y = cameraRotationOnMouseDown.y + ( mousePosition.x - mousePositionOnMouseDown.x ) * coef;
+			
+	if(keyPressed.Shift) cameraRotation.x = cameraRotationOnMouseDown.x + ( mousePosition.y - mousePositionOnMouseDown.y ) * coef;
+    
 }
 
 function onDocumentMouseUp( event ) {
     
     document.body.style.cursor = "-webkit-grab";
 
-	document.removeEventListener( 'mousemove', onDocumentMouseMove, false );
+	document.removeEventListener( 'mousemove', onDocumentMouseDrag, false );
 	document.removeEventListener( 'mouseup', onDocumentMouseUp, false );
 	document.removeEventListener( 'mouseout', onDocumentMouseOut, false );
 
@@ -56,7 +69,7 @@ function onDocumentMouseUp( event ) {
 
 function onDocumentMouseOut( event ) {
 
-	document.removeEventListener( 'mousemove', onDocumentMouseMove, false );
+	document.removeEventListener( 'mousemove', onDocumentMouseDrag, false );
 	document.removeEventListener( 'mouseup', onDocumentMouseUp, false );
 	document.removeEventListener( 'mouseout', onDocumentMouseOut, false );
 
