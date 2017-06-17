@@ -37,7 +37,6 @@ function main()
 function render()
 {
   requestAnimationFrame(render);
-  cube.position.x = Math.sin(performance.now() / 1000);
   cube.rotation.xz += 0.01;
   D4_space.rotation.yw += 0.01;
   D4_space.project();
