@@ -23,7 +23,7 @@
     }
     
         
-    label{
+    .label{
       position : fixed;
       top : 10px;
       left : 10px;
@@ -33,14 +33,17 @@
   </style>
 </head>
 <body>
-  <label>
+  <label class="label">
     <input type="checkbox" id="first">
       First person 
   </label>
-  <label style="top : 30px">
+  <label class="label" style="top : 30px">
     <input type="checkbox" id="drag" checked=true>
       Drag control
   </label>
+  <div class="label" style="top : 50px">
+    Rotation : <span id="rotation-log"></span>
+  </div>
   <div id="view"></div>
   <script src="main.js"></script>
 </body>

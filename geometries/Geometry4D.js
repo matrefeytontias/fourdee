@@ -43,3 +43,32 @@ function BoxLinesGeometry4D(width, height, depth, duth)
 
 BoxLinesGeometry4D.prototype = new Geometry4D();
 BoxLinesGeometry4D.prototype.constructor = BoxLinesGeometry4D;
+
+
+const cubeVertices = [
+  new THREE.Vector4(-0.5, -0.5, -0.5, 0),
+  new THREE.Vector4(0.5, -0.5, -0.5, 0),
+  new THREE.Vector4(0.5, 0.5, -0.5, 0),
+  new THREE.Vector4(-0.5, 0.5, -0.5, 0),
+  new THREE.Vector4(-0.5, -0.5, 0.5, 0),
+  new THREE.Vector4(0.5, -0.5, 0.5, 0),
+  new THREE.Vector4(0.5, 0.5, 0.5, 0),
+  new THREE.Vector4(-0.5, 0.5, 0.5, 0),
+]
+
+const cubeEdges = [
+  0, 1, 1, 2, 2, 3, 3, 0, 4, 5, 5, 6, 6, 7, 7, 4, 0, 4, 1, 5, 2, 6, 3, 7
+]
+
+function Box3DLinesGeometry4D(width, height, depth)
+{
+  Geometry4D.call(this);
+  var mat = new Matrix5();
+  mat.scale(width, height, depth, 0);
+  for(var i = 0; i < cubeEdges.length; i++)
+    this.vertices4D.push(cubeVertices[cubeEdges[i]].clone().applyMatrix5(mat));
+}
+
+
+Box3DLinesGeometry4D.prototype = new Geometry4D();
+Box3DLinesGeometry4D.prototype.constructor = Box3DLinesGeometry4D;
