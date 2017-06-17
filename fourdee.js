@@ -15,7 +15,7 @@ function Object4D()
 Object4D.prototype.buildMatrix5 = function ()
 {
   var mat = new Matrix5();
-  
+
   mat.scale(this.scale, this.scale, this.scale, this.scale);
   mat.translate(this.position.x, this.position.y, this.position.z, this.position.w);
   // Handle rotations following the order described in this.rotation.order

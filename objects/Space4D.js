@@ -40,7 +40,6 @@ Space4D.prototype.project = function ()
       else
       {
         var objMat = child.buildMatrix5();
-        console.log(objMat.elements);
         var geom3 = proj.geometry;
         geom3.vertices.length = 0;
         for(var vi = 0; vi < geom4.vertices4D.length; vi++)
@@ -49,7 +48,9 @@ Space4D.prototype.project = function ()
           localVertex.applyMatrix5(objMat).add(child.rotation.center).sub(this.rotation.center).applyMatrix5(spaceMat);
           geom3.vertices.push(this.projector.project(localVertex.add(this.rotation.center)));
         }
+        geom3.faces = geom4.faces;
         geom3.verticesNeedUpdate = true;
+        geom3.elementsNeedUpdate = true;
         if(child.projection.isLineSegments || child.material.isLineDashedMaterial)
           geom3.computeLineDistances();
       }
