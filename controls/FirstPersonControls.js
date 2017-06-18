@@ -50,8 +50,6 @@ function FirstPersonControls(
         if(this.keyPressed[this.keys.left]) this.camera3D.position.add(moveDirection.rotate("y", Math.PI/2));
         if(this.keyPressed[this.keys.right]) this.camera3D.position.add(moveDirection.rotate("y", -Math.PI/2));
         
-
-        
     }
 }
 

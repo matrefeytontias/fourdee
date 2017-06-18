@@ -43,8 +43,12 @@ function main()
 
   D4_camera.position.y = 0.3;
   
-  activeControls = new FirstPersonControls(D4_camera, D4_space);
-
+  var fpControls = new FirstPersonControls(D4_camera, D4_space);
+  
+  var tpControls = new ThirdPersonControls(D4_camera, D4_scene, D4_space);
+  
+  fpControls.listen();
+  
   render();
 }
 

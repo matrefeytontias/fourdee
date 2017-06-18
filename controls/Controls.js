@@ -79,6 +79,8 @@ function onDocumentMouseDown(event) {
     document.addEventListener( 'mousemove', onDocumentMouseDrag, false );
 	document.addEventListener( 'mouseup', onDocumentMouseUp, false );
 	document.addEventListener( 'mouseout', onDocumentMouseOut, false );
+	
+	activeControls.onMouseDown(event)
 }
 
 function onDocumentMouseDrag(event) {
