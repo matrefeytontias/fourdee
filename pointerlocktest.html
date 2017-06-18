@@ -1,0 +1,78 @@
+
+<div id="pointer-lock-element"></div>
+<script>
+// Note: au moment de la rédaction, seuls Mozilla et WebKit supportent Pointer Lock.
+
+// L'élement qui sera mis en mode fullscreen et qui capturera le curseur.
+var elem;
+
+document.addEventListener("mousemove", function(e) {
+  var movementX = e.movementX       ||
+                  e.mozMovementX    ||
+                  e.webkitMovementX ||
+                  0,
+      movementY = e.movementY       ||
+                  e.mozMovementY    ||
+                  e.webkitMovementY ||
+                  0;
+
+  // Affiche les valeurs de différence de mouvement de la souris relative au dernier appelle de l'événement.
+  console.log("movementX=" + movementX, "movementY=" + movementY);
+}, false);
+
+function fullscreenChange() {
+  if (document.webkitFullscreenElement === elem ||
+      document.mozFullscreenElement === elem ||
+      document.mozFullScreenElement === elem) { // Le caractère 'S' majuscule de l'ancien API. (note de traduction: ?)
+    // L'élément est en plein écran, nous pouvons maintenant faire une requête pour capturer le curseur.
+    elem.requestPointerLock = elem.requestPointerLock    ||
+                              elem.mozRequestPointerLock ||
+                              elem.webkitRequestPointerLock;
+    elem.requestPointerLock();
+  }
+}
+
+document.addEventListener('fullscreenchange', fullscreenChange, false);
+document.addEventListener('mozfullscreenchange', fullscreenChange, false);
+document.addEventListener('webkitfullscreenchange', fullscreenChange, false);
+
+function pointerLockChange() {
+  if (document.mozPointerLockElement === elem ||
+      document.webkitPointerLockElement === elem) {
+    console.log("Pointer Lock was successful.");
+  } else {
+    console.log("Pointer Lock was lost.");
+  }
+}
+
+document.addEventListener('pointerlockchange', pointerLockChange, false);
+document.addEventListener('mozpointerlockchange', pointerLockChange, false);
+document.addEventListener('webkitpointerlockchange', pointerLockChange, false);
+
+function pointerLockError() {
+  console.log("Une erreur est survenue lors de la capture du curseur.");
+}
+
+document.addEventListener('pointerlockerror', pointerLockError, false);
+document.addEventListener('mozpointerlockerror', pointerLockError, false);
+document.addEventListener('webkitpointerlockerror', pointerLockError, false);
+
+function lockPointer() {
+
+  elem = document.getElementById("pointer-lock-element");
+  // On débute par mettre l'élément en plein écran. L'implémentation actuelle
+  // demande à ce que l'élément soit en plein écran (fullscreen) pour
+  // pouvoir capturer le pointeur--c'est une chose qui sera probablement
+  // modifiée dans le futur.
+  elem.requestFullscreen = elem.requestFullscreen    ||
+                           elem.mozRequestFullscreen ||
+                           elem.mozRequestFullScreen || // Le caractère 'S' majuscule de l'ancienne API. (note de traduction: ?)
+                           elem.webkitRequestFullscreen;
+  elem.requestFullscreen(); 
+}
+
+window.addEventListener("keydown", function(e){
+    if(e.keyCode = 32) lockPointer();
+    console.log(e.keyCode)
+});
+</script>

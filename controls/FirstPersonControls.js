@@ -1,4 +1,5 @@
 function FirstPersonControls(
+    container,
     camera3D,
     space4D,
     keys = new keySettings(), 
@@ -7,19 +8,35 @@ function FirstPersonControls(
     deplacementSensitivity = 0.001)
 {
     Controls.call(this, keys);
+    this.container = container;
     this.camera3D = camera3D;
     this.space4D = space4D;
+    this.paused = true;
     
     this.onMouseMove = function(event){
         
-        document.body.style.cursor = "none";
+        if(this.paused){
+            //document.body.style.cursor = "";
+            return;
+        } 
+        //document.body.style.cursor = "none";
         
         this.cameraRotation.y = this.mousePosition.x / this.windowHalfX * Math.PI;
 		this.cameraRotation.x = this.mousePosition.y / this.windowHalfY * 0.25 * Math.PI;
 		
     }
     
+    this.onKeyDown = function(event){
+        if(this.paused && this.keyPressed[this.keys.enter]){
+              
+            this.container.requestFullscreen = this.container.requestFullscreen || this.container.mozRequestFullscreen || this.container.mozRequestFullScreen ||  this.container.webkitRequestFullscreen;
+            this.container.requestFullscreen();
+        }
+    }
+    
     this.update = function(dt){
+        
+        if(this.paused) return;
         
         var direction = new THREE.Vector3( Math.cos(this.cameraRotation.y), Math.sin(-this.cameraRotation.x), Math.sin(this.cameraRotation.y) );
         
@@ -50,6 +67,27 @@ function FirstPersonControls(
         if(this.keyPressed[this.keys.left]) this.camera3D.position.add(moveDirection.rotate("y", Math.PI/2));
         if(this.keyPressed[this.keys.right]) this.camera3D.position.add(moveDirection.rotate("y", -Math.PI/2));
         
+    }
+    
+    this.onFullscreenChange = function() {
+        if (document.webkitFullscreenElement === this.container || document.mozFullscreenElement === this.container || document.mozFullScreenElement === this.container || document.fullscreenElement === this.container){ 
+            this.container.requestPointerLock = this.container.requestPointerLock || this.container.mozRequestPointerLock || this.container.webkitRequestPointerLock;
+            this.container.requestPointerLock();
+            this.paused = false;
+        }
+        else{
+            this.paused = true;
+        }
+    }
+    
+    this.onPointerLockChange = function() {
+        if ( document.mozPointerLockElement === this.container || document.webkitPointerLockElement === this.container || document.pointerLockElement === this.container){
+            console.log("Pointer Lock was successful.");
+        }
+        else{
+            console.log("Pointer Lock was lost.");
+        }
+        if(this.container.innerHTML.length < 2) window.setTimeout(start, 100);
     }
 }
 

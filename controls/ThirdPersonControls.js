@@ -16,6 +16,11 @@ function ThirdPersonControls(
     this.cameraRotationOnMouseDown = new THREE.Euler();
     this.mousePositionOnMouseDown = {x : 0, y : 0};
     
+    this.listen = function(){
+        activeControls = this;
+        start();
+    }
+    
     this.onMouseDown = function(event){
         
         this.cameraRotationOnMouseDown = this.cameraRotation.clone();

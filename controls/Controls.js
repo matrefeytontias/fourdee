@@ -1,6 +1,6 @@
 var activeControls;
 
-function keySettings(up=90, down=83, left=81, right=68, ana=65, kata=69, space = 32, shift = 16){
+function keySettings(up=90, down=83, left=81, right=68, ana=65, kata=69, space = 32, shift = 16, enter = 13){
     this.up = up;
     this.down = down;
     this.left = left;
@@ -9,6 +9,7 @@ function keySettings(up=90, down=83, left=81, right=68, ana=65, kata=69, space =
     this.ana = ana;
     this.space = space;
     this.shift = shift;
+    this.enter = enter;
 }
 
 function Controls(keys = new keySettings()){
@@ -16,6 +17,7 @@ function Controls(keys = new keySettings()){
     this.keyPressed = [];
     this.cameraRotation = new THREE.Euler();
     this.mousePosition  = { x: 0, y : 0};
+    this.paused = false;
     
     this.windowHalfX = window.innerWidth / 2;
     this.windowHalfY = window.innerHeight / 2;
@@ -33,6 +35,8 @@ function Controls(keys = new keySettings()){
     this.onKeyDown = function(event){};
     this.onKeyUp = function(event){}
     this.onMouseOut = function(event){};
+    this.onFullscreenChange = function() {};
+    this.onPointerLockChange = function() {};
     
     this.defaultOnKeyDown = function(event){
         this.keyPressed[event.keyCode] = true; 
@@ -42,7 +46,9 @@ function Controls(keys = new keySettings()){
     };
     
     this.defaultOnMouseMove = function(event){
-        this.mousePosition =  { x: event.clientX - this.windowHalfX , y : event.clientY - this.windowHalfY };
+        //this.mousePosition =  { x: event.clientX - this.windowHalfX , y : event.clientY - this.windowHalfY };
+        this.mousePosition.x += event.movementX;
+        this.mousePosition.y += event.movementY;
     }
 }
 
@@ -54,7 +60,17 @@ window.addEventListener("load", function(){
     document.addEventListener("mousedown", onDocumentMouseDown, false);
     document.addEventListener("mousemove", onDocumentMouseMove, false);
     
+    document.addEventListener('fullscreenchange', onDocumentFullscreenChange, false);
+    document.addEventListener('mozfullscreenchange', onDocumentFullscreenChange, false);
+    document.addEventListener('webkitfullscreenchange', onDocumentFullscreenChange, false);
+    
+    document.addEventListener('pointerlockchange', onDocumentPointerLockChange, false);
+    document.addEventListener('mozpointerlockchange', onDocumentPointerLockChange, false);
+    document.addEventListener('webkitpointerlockchange', onDocumentPointerLockChange, false);
+    
 })
+
+
 
 
 function onDocuemntKeyDown(event){
@@ -68,6 +84,9 @@ function onDocuemntKeyUp(event){
 }
 
 function onDocumentMouseMove(event){
+    event.movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
+    event.movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
+    
     activeControls.defaultOnMouseMove(event);
 	activeControls.onMouseMove(event);
 }
@@ -110,3 +129,19 @@ function onDocumentMouseOut( event ) {
     
     activeControls.onMouseOut(event);
 }
+
+function onDocumentFullscreenChange() {
+    activeControls.onFullscreenChange();
+}
+
+function onDocumentPointerLockChange() {
+    activeControls.onPointerLockChange();
+}
+
+function pointerLockError() {
+  console.log("An error occured during pointer locking.");
+}
+
+document.addEventListener('pointerlockerror', pointerLockError, false);
+document.addEventListener('mozpointerlockerror', pointerLockError, false);
+document.addEventListener('webkitpointerlockerror', pointerLockError, false);
