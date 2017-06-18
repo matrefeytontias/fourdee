@@ -7,6 +7,8 @@ const D4_aspectRatio = D4_gameWidth / D4_gameHeight;
 const D4_scene = new THREE.Scene();
 const D4_space = new Space4D(new PespectProj(0));
 
+var lastUpdateTimestamp;
+
 if(!D4_PERSPECTIVE)
 {
   D4_orthoWidth = 3 * D4_aspectRatio;
@@ -40,24 +42,20 @@ function main()
   D4_space.add(c2);
 
   D4_camera.position.y = 0.3;
+  
+  activeControls = new FirstPersonControls(D4_camera, D4_space);
 
   render();
 }
 
 function render(timestamp)
 {
+  
   requestAnimationFrame(render);
-  //cube.position.x = Math.sin(performance.now() / 1000);
+
+  activeControls.update(timestamp - lastUpdateTimestamp)
   
-  //cube.rotation.xz = userRotation ;
-  
-  //D4_space.rotation.yw += 0.01;
-  
-  D4_space.rotation = user4DRotation;
-  
-  
-  //D4_scene.rotation.x = cameraRotation.x;
-  updateControls(timestamp);
+  lastUpdateTimestamp = timestamp;
   
   D4_space.project();
   D4_renderer.render(D4_scene, D4_camera);
