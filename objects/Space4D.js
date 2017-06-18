@@ -25,7 +25,7 @@ Space4D.prototype.add = function (obj)
 // Updates the children Object4D with their 3D projection
 Space4D.prototype.project = function ()
 {
-  var mat = this.buildMatrix5();
+  var spaceMat = this.buildMatrix5();
 
   for(var i = 0; i < this.children.length; i++)
   {
@@ -40,16 +40,19 @@ Space4D.prototype.project = function ()
       else
       {
         var objMat = child.buildMatrix5();
-        //console.log(objMat.elements);
         var geom3 = proj.geometry;
         geom3.vertices.length = 0;
         for(var vi = 0; vi < geom4.vertices4D.length; vi++)
         {
-          var localVertex = geom4.vertices4D[vi].clone();
-          localVertex.applyMatrix5(objMat).applyMatrix5(mat);
-          geom3.vertices.push(this.projector.project(localVertex));
+          var localVertex = geom4.vertices4D[vi].clone().sub(child.rotation.center);
+          localVertex.applyMatrix5(objMat).add(child.rotation.center).sub(this.rotation.center).applyMatrix5(spaceMat);
+          geom3.vertices.push(this.projector.project(localVertex.add(this.rotation.center)));
         }
+        geom3.faces = geom4.faces;
         geom3.verticesNeedUpdate = true;
+        geom3.elementsNeedUpdate = true;
+        geom3.computeFaceNormals();
+        geom3.computeVertexNormals();
         if(child.projection.isLineSegments || child.material.isLineDashedMaterial)
           geom3.computeLineDistances();
       }

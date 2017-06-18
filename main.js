@@ -5,9 +5,11 @@ const D4_gameWidth = D4_container.offsetWidth;
 const D4_gameHeight = D4_container.offsetHeight;
 const D4_aspectRatio = D4_gameWidth / D4_gameHeight;
 const D4_scene = new THREE.Scene();
-const D4_space = new Space4D(new PespectProj(0));
 
 var lastUpdateTimestamp;
+
+const D4_space = new Space4D(new OrthoProj());
+//const D4_space = new Space4D(new StereoProj(new THREE.Vector4(0, 0, 0, 5), 3));
 
 if(!D4_PERSPECTIVE)
 {
@@ -22,6 +24,13 @@ var cube;
 
 window.addEventListener("load", main);
 
+const orthoProj = new OrthoProj();
+const stereoProj = new StereoProj(new THREE.Vector4(0, 0, 0, 5), 3);
+window.addEventListener("mouseup", function (e)
+{
+  D4_space.projector = D4_space.projector === orthoProj ? stereoProj : orthoProj;
+});
+
 function main()
 {
   D4_renderer.setSize(D4_gameWidth, D4_gameHeight);
@@ -30,6 +39,7 @@ function main()
   var geometry = new BoxLinesGeometry4D(100, 3, 100, 100);
   cube = new LineSegments4D(geometry, new THREE.LineBasicMaterial({ color: 0xff0000 }));
   cube.position.y = -1.5;
+
   D4_scene.add(cube.projection);
   
   D4_space.add(cube);
@@ -48,7 +58,11 @@ function main()
   var tpControls = new ThirdPersonControls(D4_camera, D4_scene, D4_space);
   
   fpControls.listen();
-  
+
+  var light = new THREE.PointLight(0xffffff, 1, 0);
+  light.position.set(-1.5, 1.0, -2);
+  D4_scene.add(light);
+
   render();
 }
 
