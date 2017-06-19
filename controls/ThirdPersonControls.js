@@ -44,14 +44,15 @@ function ThirdPersonControls(
     this.update = function(dt){
         
         //4D rotations : 
+        var cameraPos4D = new THREE.Vector4(this.camera3D.position.x, this.camera3D.position.y, this.camera3D.position.z, 0);
         if(this.keyPressed[this.keys.ana]){
             for(var i=0; i<rotation4DPlans.length; i++){
-                this.space4D.rotation[rotation4DPlans[i]] += dt * rotation4DSensitivity;
+                this.space4D.rotateAround(cameraPos4D, rotation4DPlans[i], dt * rotation4DSensitivity);
             }
         }
         if(this.keyPressed[this.keys.kata]){
             for(var i=0; i<rotation4DPlans.length; i++){
-                this.space4D.rotation[rotation4DPlans[i]] -= dt * rotation4DSensitivity;
+                this.space4D.rotateAround(cameraPos4D, rotation4DPlans[i], -dt * rotation4DSensitivity);
             }
         }
         
