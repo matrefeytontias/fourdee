@@ -43,6 +43,7 @@ function render()
   requestAnimationFrame(render);
   cube.rotation.xz += 0.01;
   D4_space.rotation.xw += 0.01;
+  D4_space.rotateAround(new THREE.Vector4(1, 0, -1, 0), "xz", 0.01);
   D4_space.project();
   D4_renderer.render(D4_scene, D4_camera);
 }
