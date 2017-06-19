@@ -14,12 +14,12 @@ function Matrix5()
 }
 
 // float[25] elements
-Matrix5.prototype.set = function (elements)
+Matrix5.prototype.set = function(elements)
 {
     this.elements = elements.slice(0);
 }
 
-Matrix5.prototype.identity = function ()
+Matrix5.prototype.identity = function()
 {
   this.elements = [
     1, 0, 0, 0, 0,
@@ -31,7 +31,7 @@ Matrix5.prototype.identity = function ()
 }
 
 // float theta
-Matrix5.prototype.makeRotateXY = function (theta)
+Matrix5.prototype.makeRotateXY = function(theta)
 {
  var c = Math.cos(theta), s = Math.sin(theta);
  this.elements = [
@@ -44,7 +44,7 @@ Matrix5.prototype.makeRotateXY = function (theta)
  return this;
 }
 
-Matrix5.prototype.makeRotateXZ = function (theta)
+Matrix5.prototype.makeRotateXZ = function(theta)
 {
  var c = Math.cos(theta), s = Math.sin(theta);
  this.elements = [
@@ -57,7 +57,7 @@ Matrix5.prototype.makeRotateXZ = function (theta)
  return this;
 }
 
-Matrix5.prototype.makeRotateXW = function (theta)
+Matrix5.prototype.makeRotateXW = function(theta)
 {
  var c = Math.cos(theta), s = Math.sin(theta);
  this.elements = [
@@ -70,7 +70,7 @@ Matrix5.prototype.makeRotateXW = function (theta)
  return this;
 }
 
-Matrix5.prototype.makeRotateYZ = function (theta)
+Matrix5.prototype.makeRotateYZ = function(theta)
 {
  var c = Math.cos(theta), s = Math.sin(theta);
  this.elements = [
@@ -83,7 +83,7 @@ Matrix5.prototype.makeRotateYZ = function (theta)
  return this;
 }
 
-Matrix5.prototype.makeRotateYW = function (theta)
+Matrix5.prototype.makeRotateYW = function(theta)
 {
  var c = Math.cos(theta), s = Math.sin(theta);
  this.elements = [
@@ -96,7 +96,7 @@ Matrix5.prototype.makeRotateYW = function (theta)
  return this;
 }
 
-Matrix5.prototype.makeRotateZW = function (theta)
+Matrix5.prototype.makeRotateZW = function(theta)
 {
  var c = Math.cos(theta), s = Math.sin(theta);
  this.elements = [
@@ -110,7 +110,7 @@ Matrix5.prototype.makeRotateZW = function (theta)
 }
 
 // Matrix5 mat
-Matrix5.prototype.multiply = function (mat)
+Matrix5.prototype.multiply = function(mat)
 {
   var temp = new Matrix5();
   temp.set(this.elements);
@@ -124,18 +124,18 @@ Matrix5.prototype.multiply = function (mat)
       this.elements[i * 5 + j] = r;
     }
   }
-  
+
   return this;
 }
 
 // String plane (ex : "XZ"), float theta
-Matrix5.prototype.rotate = function (plane, theta)
+Matrix5.prototype.rotate = function(plane, theta)
 {
   var rot = new Matrix5();
   return this.multiply(rot["makeRotate" + plane.toUpperCase()](theta));
 }
 
-Matrix5.prototype.translate = function (x = 0, y = 0, z = 0, w = 0)
+Matrix5.prototype.translate = function(x = 0, y = 0, z = 0, w = 0)
 {
   this.elements[4] += x;
   this.elements[9] += y;
@@ -143,7 +143,7 @@ Matrix5.prototype.translate = function (x = 0, y = 0, z = 0, w = 0)
   this.elements[19] += w;
 }
 
-Matrix5.prototype.scale = function (x = 1, y = 1, z = 1, w = 1)
+Matrix5.prototype.scale = function(x = 1, y = 1, z = 1, w = 1)
 {
   this.elements[0] *= x;
   this.elements[6] *= y;
@@ -152,7 +152,7 @@ Matrix5.prototype.scale = function (x = 1, y = 1, z = 1, w = 1)
 }
 
 // Matrix5 m
-THREE.Vector4.prototype.applyMatrix5 = function (m)
+THREE.Vector4.prototype.applyMatrix5 = function(m)
 {
   var temp = new Vector5(this.x, this.y, this.z, this.w, 1);
   this.x = m.elements[0] * temp.x + m.elements[1] * temp.y + m.elements[2] * temp.z + m.elements[3] * temp.w + m.elements[4] * temp.t;

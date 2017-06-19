@@ -10,9 +10,17 @@ function Object4D()
   this.geometry = undefined;
   this.material = undefined;
   this.projection = undefined; // use your own 3D projection
+  this.dirty = true;
 }
 
-Object4D.prototype.buildMatrix5 = function ()
+// int[] faces, int[] materials
+Object4D.prototype.setFaceMaterial = function(faces, materials)
+{
+  for(var i=0; i < materials.length; i++)
+    this.geometry.faces[faces[i]].materialIndex = materials[i];
+}
+
+Object4D.prototype.buildMatrix5 = function()
 {
   var mat = new Matrix5();
 
@@ -38,25 +46,25 @@ function Proj4D() { }
 
 // Override this in your own projection
 // Vector4 v
-Proj4D.prototype.project = function (v) { }
+Proj4D.prototype.project = function(v) { }
 
-// 
+//
 // Linear algebra projection : (x, y, z, w) -> (x, y, z, 0)
-// 
+//
 function OrthoProj()
 {
   Proj4D.call(this);
 }
 
 OrthoProj.prototype = new Proj4D();
-OrthoProj.prototype.project = function (v)
+OrthoProj.prototype.project = function(v)
 {
   return new THREE.Vector3(v.x, v.y, v.z);
 }
 
-// 
+//
 // Stereographical projection : uses a 3-sphere to project the 4D point onto the hyperplane w = 0
-// 
+//
 // THREE.Vector4 center, float radius, THREE.Vector4 planeNormal, THREE.Vector4 planePoint
 function StereoProj(center, radius)
 {
@@ -68,12 +76,12 @@ function StereoProj(center, radius)
 }
 
 StereoProj.prototype = new Proj4D();
-StereoProj.prototype.project = function (v)
+StereoProj.prototype.project = function(v)
 {
   // Projection of the point on the 3-sphere
   var sphereProj = v.clone().sub(this.sphereCenter);
   sphereProj.multiplyScalar(this.sphereRadius / sphereProj.length()).add(this.sphereCenter);
-  
+
   var u = sphereProj.clone().sub(this.spherePole).normalize();
   if(u.w != 0)
   {
