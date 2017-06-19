@@ -42,17 +42,17 @@ function main(){
 
   /*
   var geometry = new BoxGeometry4D(1, 1, 1, 1);
-  cube = new Mesh4D(geometry, new THREE.MeshLambertMaterial({ 
-    color: 0xffffff, 
+  cube = new Mesh4D(geometry, new THREE.MeshLambertMaterial({
+    color: 0xffffff,
     transparent : true,
     opacity : 0.4,
-    //wireframe : true, 
-    wireframeLinewidth : 5, 
+    //wireframe : true,
+    wireframeLinewidth : 5,
     side : THREE.DoubleSide,
     //emissive : 0x000000,
     //emissiveIntensity : 1
   }));
-  
+
   */
   D4_scene.add(cube.projection);
 
@@ -71,22 +71,19 @@ function main(){
   light.position.set(1.5, -1.0, 2);
   D4_scene.add(light);
 
-  
+
   var light = new THREE.PointLight(0x0000ff, 0.5, 0);
   light.position.set(-1.5, -1.0, 2);
   D4_scene.add(light);
-  
+
   // End level;
 
   //Start controls
   var fpControls = new FirstPersonControls(D4_container, D4_camera, D4_space);
-
   var tpControls = new ThirdPersonControls(D4_camera, D4_scene, D4_space);
-
   fpControls.listen();
 
   document.getElementById("center-text").style.display = activeControls === fpControls ? "" : "none";
-
 }
 
 function start()
@@ -102,7 +99,6 @@ function start()
 
 function render(timestamp)
 {
-
   requestAnimationFrame(render);
 
   if(!activeControls.paused){
@@ -110,7 +106,7 @@ function render(timestamp)
 
     lastUpdateTimestamp = timestamp;
   }
-  
+
   D4_space.project();
   D4_renderer.render(D4_scene, D4_camera);
 }
