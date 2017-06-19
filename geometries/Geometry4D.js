@@ -44,7 +44,7 @@ const tesseractFaces = [
   new THREE.Face3(6, 1, 2),
   new THREE.Face3(2, 5, 6),
   new THREE.Face3(6, 5, 4),
-  new THREE.Face3(4, 7, 6),  
+  new THREE.Face3(4, 7, 6), 
   // Second cube
   new THREE.Face3(10, 9, 8),
   new THREE.Face3(8, 11, 10),

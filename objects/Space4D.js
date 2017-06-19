@@ -70,6 +70,7 @@ Space4D.prototype.project = function ()
         geom3.elementsNeedUpdate = true;
         geom3.computeFaceNormals();
         geom3.computeVertexNormals();
+        geom3.computeFlatVertexNormals();
         if(child.projection.isLineSegments || child.material.isLineDashedMaterial)
           geom3.computeLineDistances();
       }

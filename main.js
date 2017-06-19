@@ -28,9 +28,9 @@ function main()
   var geometry = new BoxGeometry4D(1, 1, 1, 1);
   cube = new Mesh4D(geometry, new THREE.MeshLambertMaterial({ 
     color: 0xffffff, 
-    //transparent : true,
-    //opacity : 0.6,
-    wireframe : true, 
+    transparent : true,
+    opacity : 0.4,
+    //wireframe : true, 
     wireframeLinewidth : 5, 
     side : THREE.DoubleSide,
     //emissive : 0x000000,
@@ -44,11 +44,12 @@ function main()
   light.position.set(1.5, -1.0, 2);
   D4_scene.add(light);
   
-  cube.rotation.yz = 0.4;
+  cube.rotation.yz = -0.4;
+  cube.rotation.xw = Math.PI;
   
-  var light = new THREE.PointLight(0xffffff, 0.5, 0);
+  var light = new THREE.PointLight(0x0000ff, 0.5, 0);
   light.position.set(-1.5, -1.0, 2);
-  //D4_scene.add(light);
+  D4_scene.add(light);
 
   render();
 }
@@ -57,8 +58,10 @@ function render()
 {
   requestAnimationFrame(render);
   cube.rotation.xz += 0.01;
+  //cube.rotation.yz += 0.01;
+  cube.rotation.zw += 0.01
   D4_space.rotation.xw += 0.01;
-  D4_space.rotation.yw += 0.01;
+  //D4_space.rotation.yw += 0.01;
   D4_space.project();
   D4_renderer.render(D4_scene, D4_camera);
 }
