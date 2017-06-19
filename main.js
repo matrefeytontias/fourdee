@@ -19,8 +19,10 @@ const stereoProj = new StereoProj(new THREE.Vector4(0, 0, 0, 5), 3);
 
 const D4_space = new Space4D(orthoProj);
 
-const D4_camera = D4_PERSPECTIVE ? new THREE.PerspectiveCamera(75, D4_gameWidth / D4_gameHeight, 0.1, 1000)
+var D4_camera = D4_PERSPECTIVE ? new THREE.PerspectiveCamera(75, D4_gameWidth / D4_gameHeight, 0.1, 1000)
                                  : new THREE.OrthographicCamera(-D4_orthoWidth / 2, D4_orthoWidth / 2, D4_orthoHeight / 2, -D4_orthoHeight / 2, 0.1, 1000);
+
+
 const D4_renderer = new THREE.WebGLRenderer();
 
 var cube;
@@ -36,6 +38,7 @@ function main()
   cube.position.y = -1.5;
   */
 
+
   var geometry = new BoxGeometry4D(3, 3, 3, 3);
   cube = new Mesh4D(geometry, [
     new THREE.MeshBasicMaterial({
@@ -43,6 +46,7 @@ function main()
     }),
     new THREE.MeshBasicMaterial({
       color: 0x00ffff,
+      //side : THREE.BackSide
     }),
     new THREE.MeshBasicMaterial({
       color: 0xff0000,
@@ -63,14 +67,16 @@ function main()
       side : THREE.DoubleSide,
     }),
   ]);
+  
+  cube.position.y = 1.5;
+  cube.position.z = 3;
 
-  cube.setFaceMaterial(tesseractFacesGroups.faces, tesseractFacesGroups.materials);
+  cube.setFaceMaterial(tesseractFacesGroups.faces, tesseractFacesGroups.materials); 
 
   D4_scene.add(cube.projection);
   D4_space.add(cube);
 
   D4_camera.position.y = 0.3;
-  D4_camera.position.z = 5;
 
   var light = new THREE.PointLight(0xffff00, 2, 0);
   light.position.set(1.5, -1.0, 2);
@@ -90,13 +96,24 @@ function main()
   document.getElementById("center-text").style.display = activeControls === fpControls ? "" : "none";
 }
 
-function start()
-{
+function resize(){
+  
   D4_gameWidth = D4_container.offsetWidth;
   D4_gameHeight = D4_container.offsetHeight;
 
   D4_renderer.setSize(D4_gameWidth, D4_gameHeight);
+  
+  D4_camera.aspect = D4_gameWidth / D4_gameHeight;
+  D4_camera.updateProjectionMatrix();
+  
+}
+
+function start()
+{
+
   D4_container.appendChild(D4_renderer.domElement);
+  
+  resize();
 
   render();
 }
