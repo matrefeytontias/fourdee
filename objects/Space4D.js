@@ -14,7 +14,7 @@ Space4D.prototype = new Object4D();
 Space4D.prototype.constructor = Space4D;
 
 // Object4D obj
-Space4D.prototype.add = function (obj)
+Space4D.prototype.add = function(obj)
 {
   for(var i = 0; i < this.children.length; i++)
     if(this.children[i] === obj)
@@ -26,7 +26,7 @@ Space4D.prototype.add = function (obj)
 
 // Rotates the whole 4D space around a point
 // Vector4 center, String plane (eg "xw"), float theta
-Space4D.prototype.rotateAround = function (center, plane, theta)
+Space4D.prototype.rotateAround = function(center, plane, theta)
 {
   var rot = new Matrix5();
   rot["makeRotate" + plane.toUpperCase()](theta);
@@ -41,7 +41,7 @@ Space4D.prototype.rotateAround = function (center, plane, theta)
 }
 
 // Updates the children Object4D with their 3D projection
-Space4D.prototype.project = function ()
+Space4D.prototype.project = function()
 {
   var spaceMat = this.buildMatrix5();
 

@@ -13,7 +13,7 @@ function Object4D()
   this.dirty = true;
 }
 
-Object4D.prototype.buildMatrix5 = function ()
+Object4D.prototype.buildMatrix5 = function()
 {
   var mat = new Matrix5();
 
@@ -39,7 +39,7 @@ function Proj4D() { }
 
 // Override this in your own projection
 // Vector4 v
-Proj4D.prototype.project = function (v) { }
+Proj4D.prototype.project = function(v) { }
 
 //
 // Linear algebra projection : (x, y, z, w) -> (x, y, z, 0)
@@ -50,7 +50,7 @@ function OrthoProj()
 }
 
 OrthoProj.prototype = new Proj4D();
-OrthoProj.prototype.project = function (v)
+OrthoProj.prototype.project = function(v)
 {
   return new THREE.Vector3(v.x, v.y, v.z);
 }
@@ -69,7 +69,7 @@ function StereoProj(center, radius)
 }
 
 StereoProj.prototype = new Proj4D();
-StereoProj.prototype.project = function (v)
+StereoProj.prototype.project = function(v)
 {
   // Projection of the point on the 3-sphere
   var sphereProj = v.clone().sub(this.sphereCenter);
