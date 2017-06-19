@@ -2,9 +2,9 @@ function FirstPersonControls(
     container,
     camera3D,
     space4D,
-    keys = new keySettings(), 
+    keys = new keySettings(),
     rotation4DPlans = ["xw", "zw"],
-    rotation4DSensitivity = 0.002, 
+    rotation4DSensitivity = 0.001,
     deplacementSensitivity = 0.001)
 {
     Controls.call(this, keys);
@@ -12,52 +12,53 @@ function FirstPersonControls(
     this.camera3D = camera3D;
     this.space4D = space4D;
     this.paused = true;
-    
+
     this.onMouseMove = function(event){
-        
+
         if(this.paused){
             //document.body.style.cursor = "";
             return;
-        } 
+        }
         //document.body.style.cursor = "none";
-        
+
         this.cameraRotation.y = this.mousePosition.x / this.windowHalfX * Math.PI;
 		this.cameraRotation.x = this.mousePosition.y / this.windowHalfY * 0.25 * Math.PI;
-		
+
     }
-    
+
     this.onKeyDown = function(event){
         if(this.paused && this.keyPressed[this.keys.enter]){
-              
+
             this.container.requestFullscreen = this.container.requestFullscreen || this.container.mozRequestFullscreen || this.container.mozRequestFullScreen ||  this.container.webkitRequestFullscreen;
             this.container.requestFullscreen();
         }
     }
-    
+
     this.update = function(dt){
-        
+
         if(this.paused) return;
-        
+
         var direction = new THREE.Vector3( Math.cos(this.cameraRotation.y), Math.sin(-this.cameraRotation.x), Math.sin(this.cameraRotation.y) );
-        
-        
-        //4D rotations : 
+
+
+        var cameraPos4D = new THREE.Vector4(this.camera3D.position.x, this.camera3D.position.y, this.camera3D.position.z, 0);
+        //4D rotations :
         if(this.keyPressed[this.keys.ana]){
             for(var i=0; i<rotation4DPlans.length; i++){
-                this.space4D.rotation[rotation4DPlans[i]] += dt * rotation4DSensitivity;
+                // this.space4D.rotation[rotation4DPlans[i]] += dt * rotation4DSensitivity;
+                this.space4D.rotateAround(cameraPos4D, rotation4DPlans[i], dt * rotation4DSensitivity);
             }
         }
         if(this.keyPressed[this.keys.kata]){
             for(var i=0; i<rotation4DPlans.length; i++){
-                this.space4D.rotation[rotation4DPlans[i]] -= dt * rotation4DSensitivity;
+                // this.space4D.rotation[rotation4DPlans[i]] -= dt * rotation4DSensitivity;
+                this.space4D.rotateAround(cameraPos4D, rotation4DPlans[i], -dt * rotation4DSensitivity);
             }
         }
-        
-        //camera 3D rotation 
         var where = this.camera3D.position.clone();
         where.add(direction);
         this.camera3D.lookAt(where);
-        
+
         //translation
         var moveDirection = direction.clone();
         moveDirection.y = 0;
@@ -66,11 +67,11 @@ function FirstPersonControls(
         if(this.keyPressed[this.keys.down]) this.camera3D.position.sub(moveDirection);
         if(this.keyPressed[this.keys.left]) this.camera3D.position.add(moveDirection.rotate("y", Math.PI/2));
         if(this.keyPressed[this.keys.right]) this.camera3D.position.add(moveDirection.rotate("y", -Math.PI/2));
-        
+
     }
-    
+
     this.onFullscreenChange = function() {
-        if (document.webkitFullscreenElement === this.container || document.mozFullscreenElement === this.container || document.mozFullScreenElement === this.container || document.fullscreenElement === this.container){ 
+        if (document.webkitFullscreenElement === this.container || document.mozFullscreenElement === this.container || document.mozFullScreenElement === this.container || document.fullscreenElement === this.container){
             this.container.requestPointerLock = this.container.requestPointerLock || this.container.mozRequestPointerLock || this.container.webkitRequestPointerLock;
             this.container.requestPointerLock();
             this.paused = false;
@@ -79,7 +80,7 @@ function FirstPersonControls(
             this.paused = true;
         }
     }
-    
+
     this.onPointerLockChange = function() {
         if ( document.mozPointerLockElement === this.container || document.webkitPointerLockElement === this.container || document.pointerLockElement === this.container){
             console.log("Pointer Lock was successful.");
