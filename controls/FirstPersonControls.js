@@ -15,14 +15,11 @@ function FirstPersonControls(
     
     this.onMouseMove = function(event){
         
-        if(this.paused){
-            //document.body.style.cursor = "";
-            return;
-        } 
-        //document.body.style.cursor = "none";
+        if(this.paused) return;
         
         this.cameraRotation.y = this.mousePosition.x / this.windowHalfX * Math.PI;
-		this.cameraRotation.x = this.mousePosition.y / this.windowHalfY * 0.25 * Math.PI;
+		this.cameraRotation.x += event.movementY / this.windowHalfY * 0.25 * Math.PI;
+		this.cameraRotation.x = Math.min( 0.25 * Math.PI, Math.max( -0.25 * Math.PI, this.cameraRotation.x ) );
 		
     }
     
