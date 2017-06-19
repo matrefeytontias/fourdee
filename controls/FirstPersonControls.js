@@ -78,11 +78,14 @@ function FirstPersonControls(
       if(this.keyPressed[this.keys.up]) movement.add(moveDirection);
       if(this.keyPressed[this.keys.down]) movement.sub(moveDirection);
       if(this.keyPressed[this.keys.left]) movement.add(moveDirection.clone().rotate("y", Math.PI/2));
-      if(this.keyPressed[this.keys.right]) movement.add(moveDirection.clone().rotate("y", -Math.PI/2));;
+      if(this.keyPressed[this.keys.right]) movement.add(moveDirection.clone().rotate("y", -Math.PI/2));
 
+      movement.y = 0;
+      movement = space4D.tryForCameraMove(this.camera3D.position, movement, 0.3);
+      
       var movement4D = new THREE.Vector4(movement.x, 0, movement.z, 0);
       movement4D.applyEuler4D(this.displacementEuler);
-
+      
       this.camera3D.position.add(movement);
       this.characterPos4D.add(movement4D);
     }
