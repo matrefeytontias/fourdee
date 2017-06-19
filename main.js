@@ -64,7 +64,7 @@ function main()
     }),
   ]);
 
-  cube.applyMaterialsToFaces(tesseractFacesGroups.faces, tesseractFacesGroups.materials);
+  cube.setFaceMaterial(tesseractFacesGroups.faces, tesseractFacesGroups.materials);
 
   D4_scene.add(cube.projection);
   D4_space.add(cube);
