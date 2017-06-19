@@ -15,9 +15,9 @@ const D4_scene = new THREE.Scene();
 var lastUpdateTimestamp;
 
 const orthoProj = new OrthoProj();
-const stereoProj = new StereoProj(new THREE.Vector4(0, 0, 0, 5), 3);
+const stereoProj = new StereoProj(new THREE.Vector4(0, 0, 0, 10), 1);
 
-const D4_space = new Space4D(orthoProj);
+const D4_space = new Space4D(stereoProj);
 
 var D4_camera = D4_PERSPECTIVE ? new THREE.PerspectiveCamera(75, D4_gameWidth / D4_gameHeight, 0.1, 1000)
                                  : new THREE.OrthographicCamera(-D4_orthoWidth / 2, D4_orthoWidth / 2, D4_orthoHeight / 2, -D4_orthoHeight / 2, 0.1, 1000);
@@ -25,7 +25,7 @@ var D4_camera = D4_PERSPECTIVE ? new THREE.PerspectiveCamera(75, D4_gameWidth / 
 
 const D4_renderer = new THREE.WebGLRenderer();
 
-var cube;
+var cube, light;
 
 window.addEventListener("load", main);
 
@@ -41,7 +41,7 @@ function main()
 
   var geometry = new BoxGeometry4D(2, 2, 2, 0);
   cube = new Mesh4D(geometry, [
-    new THREE.MeshBasicMaterial({
+    new THREE.MeshLambertMaterial({
       color: 0xffffff,
     }),
     new THREE.MeshLambertMaterial({
@@ -53,17 +53,17 @@ function main()
     new THREE.MeshBasicMaterial({
       color: 0x00ffff,
       wireframe : true,
-      wireframeLinewidth : 0,
+      wireframeLinewidth : 1,
     }),
     new THREE.MeshBasicMaterial({
       color: 0x00ffff,
       wireframe : true,
-      wireframeLinewidth : 0,
+      wireframeLinewidth : 1,
     }),
     new THREE.MeshBasicMaterial({
       color: 0x00ffff,
       wireframe : true,
-      wireframeLinewidth : 0,
+      wireframeLinewidth : 1,
     }),
   ]);
   
@@ -76,14 +76,13 @@ function main()
 
   D4_camera.position.y = 0.8;
 
-  var light = new THREE.PointLight(0x00ffff, 0.5, 100);
-  light.position.set(0, 0.8, 0);
+  light = new THREE.PointLight(0x00ffff, 0.5, 100);
   D4_scene.add(light);
 
   // End level;
 
   //Start controls
-  var fpControls = new FirstPersonControls(D4_container, new THREE.Vector4(), D4_camera, D4_space);
+  var fpControls = new FirstPersonControls(D4_container, new THREE.Vector4(), D4_camera, D4_space, new KeySettings(), ["xw"]);
   var tpControls = new ThirdPersonControls(D4_camera, D4_scene, D4_space);
   fpControls.listen();
 
@@ -115,6 +114,7 @@ function start()
 function render(timestamp)
 {
   requestAnimationFrame(render);
+  light.position.set(D4_camera.position.x, D4_camera.position.y, D4_camera.position.z);
 
   if(!activeControls.paused)
   {
