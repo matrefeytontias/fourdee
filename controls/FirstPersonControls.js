@@ -5,7 +5,7 @@ function FirstPersonControls(
     keys = new keySettings(),
     rotation4DPlans = ["xw", "zw"],
     rotation4DSensitivity = 0.001,
-    deplacementSensitivity = 0.001)
+    deplacementSensitivity = 0.002)
 {
     Controls.call(this, keys);
     this.container = container;
