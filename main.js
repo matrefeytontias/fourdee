@@ -30,33 +30,47 @@ window.addEventListener("load", main);
 function main()
 {
   // Build Level
+  /*
   var geometry = new BoxLinesGeometry4D(100, 3, 100, 100);
   cube = new LineSegments4D(geometry, new THREE.LineBasicMaterial({ color: 0xff0000 }));
   cube.position.y = -1.5;
-
-  /*
-  var geometry = new BoxGeometry4D(1, 1, 1, 1);
-  cube = new Mesh4D(geometry, new THREE.MeshLambertMaterial({
-    color: 0xffffff,
-    transparent : true,
-    opacity : 0.4,
-    //wireframe : true,
-    wireframeLinewidth : 5,
-    side : THREE.DoubleSide,
-    //emissive : 0x000000,
-    //emissiveIntensity : 1
-  }));
   */
+
+  var geometry = new BoxGeometry4D(3, 3, 3, 3);
+  cube = new Mesh4D(geometry, [
+    new THREE.MeshBasicMaterial({
+      color: 0xffffff
+    }),
+    new THREE.MeshBasicMaterial({
+      color: 0x00ffff,
+    }),
+    new THREE.MeshBasicMaterial({
+      color: 0xff0000,
+      wireframe : true,
+      wireframeLinewidth : 5,
+      side : THREE.DoubleSide,
+    }),
+    new THREE.MeshBasicMaterial({
+      color: 0x0000ff,
+      wireframe : true,
+      wireframeLinewidth : 5,
+      side : THREE.DoubleSide,
+    }),
+    new THREE.MeshBasicMaterial({
+      color: 0x00ff00,
+      wireframe : true,
+      wireframeLinewidth : 5,
+      side : THREE.DoubleSide,
+    }),
+  ]);
+
+  cube.applyMaterialsToFaces(tesseractFacesGroups.faces, tesseractFacesGroups.materials);
+
   D4_scene.add(cube.projection);
   D4_space.add(cube);
-
-  var c2 = new LineSegments4D(new BoxLinesGeometry4D(1, 1, 1, 0), new THREE.LineBasicMaterial({ color: 0xffffff }))
-  c2.position.w = -1;
-  c2.position.y = 0.5
-  D4_scene.add(c2.projection);
-  D4_space.add(c2);
-
+  
   D4_camera.position.y = 0.3;
+  D4_camera.position.z = 5;
 
   var light = new THREE.PointLight(0xffff00, 2, 0);
   light.position.set(1.5, -1.0, 2);

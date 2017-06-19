@@ -13,6 +13,13 @@ function Object4D()
   this.dirty = true;
 }
 
+// int[] faces, int[] materials
+Object4D.prototype.setFaceMaterial = function(faces, materials)
+{
+  for(var i=0; i < materials.length; i++)
+    this.geometry.faces[faces[i]].materialIndex = materials[i];
+}
+
 Object4D.prototype.buildMatrix5 = function()
 {
   var mat = new Matrix5();
