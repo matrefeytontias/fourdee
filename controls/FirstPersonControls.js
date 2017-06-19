@@ -21,7 +21,7 @@ function FirstPersonControls(
 
   this.onMouseMove = function(event)
   {
-    if(this.paused) return;acterPos4D
+    if(this.paused) return;
     this.cameraRotation.y = this.mousePosition.x / this.windowHalfX * Math.PI;
     this.cameraRotation.x += event.movementY / this.windowHalfY * 0.25 * Math.PI;
     this.cameraRotation.x = Math.min(0.25 * Math.PI, Math.max(-0.25 * Math.PI, this.cameraRotation.x));
@@ -47,8 +47,8 @@ function FirstPersonControls(
     {
       for(var i = 0; i < rotation4DPlanes.length; i++)
       {
-        this.space4D.rotateAround(cameraPos4D, rotation4DPlanes[i], dt * rotation4DSensitivity);
-        displacementEuler[rotation4DPlanes[i]] -= dt * rotation4DSensitivity;
+        this.space4D.rotateAround(this.characterPos4D, rotation4DPlanes[i], dt * rotation4DSensitivity);
+        this.displacementEuler[rotation4DPlanes[i]] -= dt * rotation4DSensitivity;
       }
     }
 
@@ -56,8 +56,8 @@ function FirstPersonControls(
     {
       for(var i = 0; i < rotation4DPlanes.length; i++)
       {
-        this.space4D.rotateAround(cameraPos4D, rotation4DPlanes[i], -dt * rotation4DSensitivity);
-        displacementEuler[rotation4DPlanes[i]] += dt * rotation4DSensitivity;
+        this.space4D.rotateAround(this.characterPos4D, rotation4DPlanes[i], -dt * rotation4DSensitivity);
+        this.displacementEuler[rotation4DPlanes[i]] += dt * rotation4DSensitivity;
       }
     }
 
@@ -73,16 +73,18 @@ function FirstPersonControls(
     {
       moveDirection.y = 0;
       moveDirection.multiplyScalar(displacementSensitivity*dt);
+      var movement = new THREE.Vector3();
 
-      if(this.keyPressed[this.keys.down]) moveDirection.multiplyScalar(-1);
-      if(this.keyPressed[this.keys.left]) moveDirection.rotate("y", Math.PI/2);
-      if(this.keyPressed[this.keys.right]) moveDirection.rotate("y", -Math.PI/2);
+      if(this.keyPressed[this.keys.up]) movement.add(moveDirection);
+      if(this.keyPressed[this.keys.down]) movement.sub(moveDirection);
+      if(this.keyPressed[this.keys.left]) movement.add(moveDirection.clone().rotate("y", Math.PI/2));
+      if(this.keyPressed[this.keys.right]) movement.add(moveDirection.clone().rotate("y", -Math.PI/2));;
 
-      var moveDirection4D = new THREE.Vector4(moveDirection.x, 0, moveDirection.z, 0);
-      moveDirection4D.applyEuler4D(displacementEuler);
+      var movement4D = new THREE.Vector4(movement.x, 0, movement.z, 0);
+      movement4D.applyEuler4D(this.displacementEuler);
 
-      this.camera3D.position.add(moveDirection);
-      this.characterPos4D.add(moveDirection4D);
+      this.camera3D.position.add(movement);
+      this.characterPos4D.add(movement4D);
     }
     else
     {

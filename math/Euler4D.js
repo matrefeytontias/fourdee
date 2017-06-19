@@ -15,7 +15,7 @@ function Euler4D(xy = 0, xz = 0, xw = 0, yz = 0, yw = 0, zw = 0, order = "XYXZXW
   this.center = new THREE.Vector4();
 }
 
-THREE.Vector4.applyEuler4D = function(euler)
+THREE.Vector4.prototype.applyEuler4D = function(euler)
 {
   var mat = new Matrix5();
 
@@ -27,6 +27,6 @@ THREE.Vector4.applyEuler4D = function(euler)
     if(theta != 0)
       mat.rotate(rotationPlane, theta);
   }
-  
+
   return this.applyMatrix5(mat);
 }

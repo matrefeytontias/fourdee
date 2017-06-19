@@ -68,7 +68,7 @@ function main()
 
   D4_scene.add(cube.projection);
   D4_space.add(cube);
-  
+
   D4_camera.position.y = 0.3;
   D4_camera.position.z = 5;
 
@@ -83,7 +83,7 @@ function main()
   // End level;
 
   //Start controls
-  var fpControls = new FirstPersonControls(D4_container, D4_camera, D4_space);
+  var fpControls = new FirstPersonControls(D4_container, new THREE.Vector4(), D4_camera, D4_space);
   var tpControls = new ThirdPersonControls(D4_camera, D4_scene, D4_space);
   fpControls.listen();
 
