@@ -20,6 +20,8 @@ Space4D.prototype.add = function (obj)
     if(this.children[i] === obj)
       throw "Can't add same Object4D to Space4D twice";
   this.children.push(obj);
+  // Temporary fix. Invalidate bounding box upon rotation ?
+  obj.projection.frustumCulled = false;
 }
 
 // Rotates the whole 4D space around a point
