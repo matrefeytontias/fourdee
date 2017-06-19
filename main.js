@@ -26,13 +26,28 @@ function main()
   D4_container.appendChild(D4_renderer.domElement);
 
   var geometry = new BoxGeometry4D(1, 1, 1, 1);
-  cube = new Mesh4D(geometry, new THREE.MeshBasicMaterial({ color: 0xff0000, side: THREE.DoubleSide, wireframe: true }));
+  cube = new Mesh4D(geometry, new THREE.MeshLambertMaterial({ 
+    color: 0xff0000, 
+    //transparent : true,
+    //opacity : 0.6,
+    //wireframe : true, 
+    wireframeLinewidth : 5, 
+    //side : THREE.DoubleSide,
+    emissive : 0x000000,
+    emissiveIntensity : 1
+  }));
   D4_scene.add(cube.projection);
   D4_space.add(cube);
   D4_camera.position.z = 5;
 
-  var light = new THREE.PointLight(0xffffff, 1, 0);
-  light.position.set(-1.5, 1.0, -2);
+  var light = new THREE.PointLight(0xffff00, 2, 10);
+  light.position.set(1.5, -1.0, 2);
+  D4_scene.add(light);
+  
+  cube.rotation.yz = 0.4;
+  
+  var light = new THREE.PointLight(0xffffff, 0.5, 0);
+  light.position.set(-1.5, -1.0, 2);
   D4_scene.add(light);
 
   render();
@@ -43,7 +58,7 @@ function render()
   requestAnimationFrame(render);
   cube.rotation.xz += 0.01;
   D4_space.rotation.xw += 0.01;
-  D4_space.rotateAround(new THREE.Vector4(1, 0, -1, 0), "xz", 0.01);
+  D4_space.rotation.yw += 0.01;
   D4_space.project();
   D4_renderer.render(D4_scene, D4_camera);
 }
