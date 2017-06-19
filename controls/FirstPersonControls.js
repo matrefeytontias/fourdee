@@ -1,21 +1,27 @@
+// HTMLDOMElement container, THREE.Vector4 characterPos4D, THREE.Camera camera3D,
+// Space4D space4D, KeySettings keys, String[] rotation4DPlanes,
+// float rotation4DSensitivity, float displacementSensitivity
 function FirstPersonControls(
   container,
+  characterPos4D,
   camera3D,
   space4D,
   keys = new KeySettings(),
-  rotation4DPlans = ["xw", "zw"],
+  rotation4DPlanes = ["xw", "zw"],
   rotation4DSensitivity = 0.001,
-  deplacementSensitivity = 0.002)
+  displacementSensitivity = 0.002)
 {
   Controls.call(this, keys);
   this.container = container;
+  this.characterPos4D = characterPos4D;
   this.camera3D = camera3D;
   this.space4D = space4D;
   this.paused = true;
+  this.displacementEuler = new Euler4D();
 
   this.onMouseMove = function(event)
   {
-    if(this.paused) return;
+    if(this.paused) return;acterPos4D
     this.cameraRotation.y = this.mousePosition.x / this.windowHalfX * Math.PI;
     this.cameraRotation.x += event.movementY / this.windowHalfY * 0.25 * Math.PI;
     this.cameraRotation.x = Math.min(0.25 * Math.PI, Math.max(-0.25 * Math.PI, this.cameraRotation.x));
@@ -34,17 +40,28 @@ function FirstPersonControls(
   {
     if(this.paused) return;
 
-    var direction = new THREE.Vector3(Math.cos(this.cameraRotation.y), Math.sin(-this.cameraRotation.x), Math.sin(this.cameraRotation.y));
-    var cameraPos4D = new THREE.Vector4(this.camera3D.position.x, this.camera3D.position.y, this.camera3D.position.z, 0);
+    // characterPos4D = new THREE.Vector4(this.camera3D.position.x, this.camera3D.position.y, this.camera3D.position.z, 0);
 
     //4D rotations :
     if(this.keyPressed[this.keys.ana])
-      for(var i = 0; i < rotation4DPlans.length; i++)
-        this.space4D.rotateAround(cameraPos4D, rotation4DPlans[i], dt * rotation4DSensitivity);
+    {
+      for(var i = 0; i < rotation4DPlanes.length; i++)
+      {
+        this.space4D.rotateAround(cameraPos4D, rotation4DPlanes[i], dt * rotation4DSensitivity);
+        displacementEuler[rotation4DPlanes[i]] -= dt * rotation4DSensitivity;
+      }
+    }
 
     if(this.keyPressed[this.keys.kata])
-      for(var i = 0; i < rotation4DPlans.length; i++)
-        this.space4D.rotateAround(cameraPos4D, rotation4DPlans[i], -dt * rotation4DSensitivity);
+    {
+      for(var i = 0; i < rotation4DPlanes.length; i++)
+      {
+        this.space4D.rotateAround(cameraPos4D, rotation4DPlanes[i], -dt * rotation4DSensitivity);
+        displacementEuler[rotation4DPlanes[i]] += dt * rotation4DSensitivity;
+      }
+    }
+
+    var direction = new THREE.Vector3(Math.cos(this.cameraRotation.y), Math.sin(-this.cameraRotation.x), Math.sin(this.cameraRotation.y));
 
     var where = this.camera3D.position.clone();
     where.add(direction);
@@ -52,12 +69,25 @@ function FirstPersonControls(
 
     //translation
     var moveDirection = direction.clone();
-    moveDirection.y = 0;
-    moveDirection.multiplyScalar(deplacementSensitivity*dt);
-    if(this.keyPressed[this.keys.up]) this.camera3D.position.add(moveDirection);
-    if(this.keyPressed[this.keys.down]) this.camera3D.position.sub(moveDirection);
-    if(this.keyPressed[this.keys.left]) this.camera3D.position.add(moveDirection.rotate("y", Math.PI/2));
-    if(this.keyPressed[this.keys.right]) this.camera3D.position.add(moveDirection.rotate("y", -Math.PI/2));
+    if(this.keyPressed[this.keys.up] || this.keyPressed[this.keys.down] || this.keyPressed[this.keys.left] || this.keyPressed[this.keys.right])
+    {
+      moveDirection.y = 0;
+      moveDirection.multiplyScalar(displacementSensitivity*dt);
+
+      if(this.keyPressed[this.keys.down]) moveDirection.multiplyScalar(-1);
+      if(this.keyPressed[this.keys.left]) moveDirection.rotate("y", Math.PI/2);
+      if(this.keyPressed[this.keys.right]) moveDirection.rotate("y", -Math.PI/2);
+
+      var moveDirection4D = new THREE.Vector4(moveDirection.x, 0, moveDirection.z, 0);
+      moveDirection4D.applyEuler4D(displacementEuler);
+
+      this.camera3D.position.add(moveDirection);
+      this.characterPos4D.add(moveDirection4D);
+    }
+    else
+    {
+      moveDirection.multiplyScalar(0);
+    }
   }
 
   this.onFullscreenChange = function()
