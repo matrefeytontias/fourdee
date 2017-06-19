@@ -39,51 +39,45 @@ function main()
   */
 
 
-  var geometry = new BoxGeometry4D(3, 3, 3, 3);
+  var geometry = new BoxGeometry4D(2, 2, 2, 0);
   cube = new Mesh4D(geometry, [
     new THREE.MeshBasicMaterial({
-      color: 0xffffff
+      color: 0xffffff,
+    }),
+    new THREE.MeshLambertMaterial({
+      color: 0x00ffff,
+      side : THREE.BackSide,
+      emissive : 0xffffff,
+      emissiveIntensity : 0.1
     }),
     new THREE.MeshBasicMaterial({
       color: 0x00ffff,
-      //side : THREE.BackSide
+      wireframe : true,
+      wireframeLinewidth : 0,
     }),
     new THREE.MeshBasicMaterial({
-      color: 0xff0000,
+      color: 0x00ffff,
       wireframe : true,
-      wireframeLinewidth : 5,
-      side : THREE.DoubleSide,
+      wireframeLinewidth : 0,
     }),
     new THREE.MeshBasicMaterial({
-      color: 0x0000ff,
+      color: 0x00ffff,
       wireframe : true,
-      wireframeLinewidth : 5,
-      side : THREE.DoubleSide,
-    }),
-    new THREE.MeshBasicMaterial({
-      color: 0x00ff00,
-      wireframe : true,
-      wireframeLinewidth : 5,
-      side : THREE.DoubleSide,
+      wireframeLinewidth : 0,
     }),
   ]);
   
-  cube.position.y = 1.5;
-  cube.position.z = 3;
+  cube.position.y = 1;
 
   cube.setFaceMaterial(tesseractFacesGroups.faces, tesseractFacesGroups.materials); 
 
   D4_scene.add(cube.projection);
   D4_space.add(cube);
 
-  D4_camera.position.y = 0.3;
+  D4_camera.position.y = 0.8;
 
-  var light = new THREE.PointLight(0xffff00, 2, 0);
-  light.position.set(1.5, -1.0, 2);
-  D4_scene.add(light);
-
-  var light = new THREE.PointLight(0x0000ff, 0.5, 0);
-  light.position.set(-1.5, -1.0, 2);
+  var light = new THREE.PointLight(0x00ffff, 0.5, 100);
+  light.position.set(0, 0.8, 0);
   D4_scene.add(light);
 
   // End level;
