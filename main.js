@@ -1,11 +1,16 @@
 const D4_PERSPECTIVE = true;
 
-const D4_container = document.getElementById("view");
-const D4_gameWidth = D4_container.offsetWidth;
-const D4_gameHeight = D4_container.offsetHeight;
+var paused = false;
+var D4_container = document.getElementById("view");
+var D4_gameWidth = D4_container.offsetWidth;
+var D4_gameHeight = D4_container.offsetHeight;
 const D4_aspectRatio = D4_gameWidth / D4_gameHeight;
 const D4_scene = new THREE.Scene();
+
+var lastUpdateTimestamp;
+
 const D4_space = new Space4D(new OrthoProj());
+//const D4_space = new Space4D(new StereoProj(new THREE.Vector4(0, 0, 0, 5), 3));
 
 if(!D4_PERSPECTIVE)
 {
@@ -20,11 +25,22 @@ var cube;
 
 window.addEventListener("load", main);
 
-function main()
-{
-  D4_renderer.setSize(D4_gameWidth, D4_gameHeight);
-  D4_container.appendChild(D4_renderer.domElement);
+/*
+window.addEventListener("keydown", function(e){
+  if(e.keyCode == 13) lockPointer();
+}); */
 
+const orthoProj = new OrthoProj();
+const stereoProj = new StereoProj(new THREE.Vector4(0, 0, 0, 5), 3);
+
+function main(){
+
+  // Build Level
+  var geometry = new BoxLinesGeometry4D(100, 3, 100, 100);
+  cube = new LineSegments4D(geometry, new THREE.LineBasicMaterial({ color: 0xff0000 }));
+  cube.position.y = -1.5;
+
+  /*
   var geometry = new BoxGeometry4D(1, 1, 1, 1);
   cube = new Mesh4D(geometry, new THREE.MeshLambertMaterial({ 
     color: 0xffffff, 
@@ -36,32 +52,65 @@ function main()
     //emissive : 0x000000,
     //emissiveIntensity : 1
   }));
+  
+  */
   D4_scene.add(cube.projection);
+
   D4_space.add(cube);
-  D4_camera.position.z = 5;
+
+  var c2 = new LineSegments4D(new BoxLinesGeometry4D(1, 1, 1, 0), new THREE.LineBasicMaterial({ color: 0xffffff }))
+  c2.position.w = -1;
+  c2.position.y = 0.5
+
+  D4_scene.add(c2.projection);
+  D4_space.add(c2);
+
+  D4_camera.position.y = 0.3;
 
   var light = new THREE.PointLight(0xffff00, 2, 0);
   light.position.set(1.5, -1.0, 2);
   D4_scene.add(light);
-  
-  cube.rotation.yz = -0.4;
-  cube.rotation.xw = Math.PI;
+
   
   var light = new THREE.PointLight(0x0000ff, 0.5, 0);
   light.position.set(-1.5, -1.0, 2);
   D4_scene.add(light);
+  
+  // End level;
+
+  //Start controls
+  var fpControls = new FirstPersonControls(D4_container, D4_camera, D4_space);
+
+  var tpControls = new ThirdPersonControls(D4_camera, D4_scene, D4_space);
+
+  fpControls.listen();
+
+  document.getElementById("center-text").style.display = activeControls === fpControls ? "" : "none";
+
+}
+
+function start()
+{
+  D4_gameWidth = D4_container.offsetWidth;
+  D4_gameHeight = D4_container.offsetHeight;
+
+  D4_renderer.setSize(D4_gameWidth, D4_gameHeight);
+  D4_container.appendChild(D4_renderer.domElement);
 
   render();
 }
 
-function render()
+function render(timestamp)
 {
+
   requestAnimationFrame(render);
-  cube.rotation.xz += 0.01;
-  //cube.rotation.yz += 0.01;
-  cube.rotation.zw += 0.01
-  D4_space.rotation.xw += 0.01;
-  //D4_space.rotation.yw += 0.01;
+
+  if(!activeControls.paused){
+    activeControls.update(timestamp - lastUpdateTimestamp)
+
+    lastUpdateTimestamp = timestamp;
+  }
+  
   D4_space.project();
   D4_renderer.render(D4_scene, D4_camera);
 }

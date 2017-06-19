@@ -31,6 +31,7 @@ const tesseractEdges = [
   8, 9, 9, 10, 10, 11, 11, 8, 12, 13, 13, 14, 14, 15, 15, 12, 8, 15, 9, 14, 10, 13, 11, 12, // 2nd cube : 12 edges
   0, 8, 1, 9, 2, 10, 3, 11, 4, 12, 5, 13, 6, 14, 7, 15 // link both : 8 edges
 ];
+
 const tesseractFaces = [ 
   // First cube 
   new THREE.Face3(2, 1, 0),
