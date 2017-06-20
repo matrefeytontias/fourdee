@@ -13,3 +13,15 @@ function Mesh4D(geometry, material)
 
 Mesh4D.prototype = new Object4D();
 Mesh4D.prototype.constructor = Mesh4D;
+
+
+function BackSides(mesh4d, material){
+
+  material.side = THREE.BackSide;
+  THREE.Mesh.call(this, mesh4d.projection.geometry, material);
+  this.frustumCulled = false;
+  
+}
+
+BackSides.prototype = new THREE.Mesh();
+BackSides.prototype.constructor = BackSides;

@@ -65,9 +65,9 @@ function main()
   ]);
   
   cube.setFaceMaterial(tesseractFacesGroups.faces, tesseractFacesGroups.materials); 
+  */
   
-  
-  var geometry = new Box3DGeometry4D("yzw", 2, 2, 2);
+  var geometry = new Box3DGeometry4D("xyz", 2, 2, 2);
   cube = new Mesh4D(geometry, 
     new THREE.MeshLambertMaterial({
       color: 0x00ffff
@@ -80,21 +80,11 @@ function main()
   D4_scene.add(cube.projection);
   D4_space.add(cube);
   
-  var geometry = new Box3DGeometry4D("yzw", 2, 2, 2);
-  var cubeInterior = new Mesh4D(geometry, 
-    new THREE.MeshLambertMaterial({
-      color: 0xff00ff,
-      side : THREE.BackSide
-    })
-  );
+  var interior = new BackSides(cube, new THREE.MeshLambertMaterial({ color: 0xff00ff }));
+  D4_scene.add(interior);
   
-  cubeInterior.position.y = cube.position.y;
-  cubeInterior.position.z = cube.position.z;
-  
-  D4_scene.add(cubeInterior.projection);
-  D4_space.add(cubeInterior); */
-
-  var geometry = new D4hedronGeometry(5);
+  /*
+  var geometry = new PentacoreGeometry(5);
   var d4hedron = new Mesh4D(geometry, 
     new THREE.MeshLambertMaterial({
       color: 0xff0000,
@@ -106,9 +96,11 @@ function main()
   
   d4hedron.position.y = 1;
   
+  
   D4_scene.add(d4hedron.projection);
   D4_space.add(d4hedron);
-
+  */
+  
   D4_camera.position.y = 0.8;
   
   light = new THREE.PointLight(0xffffff, 1, 100);
@@ -117,7 +109,7 @@ function main()
   // End level;
 
   //Start controls
-  var fpControls = new FirstPersonControls(D4_container, new THREE.Vector4(), D4_camera, D4_space, new KeySettings(), ["xw", "zw"]);
+  var fpControls = new FirstPersonControls(D4_container, new THREE.Vector4(), D4_camera, D4_space, new KeySettings(), ["xw"]);
   var tpControls = new ThirdPersonControls(D4_camera, D4_scene, D4_space);
   fpControls.listen();
 
@@ -125,9 +117,6 @@ function main()
 }
 
 function resize(){
-  
-  D4_space.rotation.xw += 0.01;
-  D4_space.rotation.zw += 0.01;
   
   D4_gameWidth = D4_container.offsetWidth;
   D4_gameHeight = D4_container.offsetHeight;
@@ -151,6 +140,7 @@ function start()
 
 function render(timestamp)
 {
+  
   requestAnimationFrame(render);
   light.position.set(D4_camera.position.x, D4_camera.position.y, D4_camera.position.z);
 
