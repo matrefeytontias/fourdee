@@ -26,7 +26,7 @@ var D4_camera = D4_PERSPECTIVE ? new THREE.PerspectiveCamera(75, D4_gameWidth / 
                                  : new THREE.OrthographicCamera(-D4_orthoWidth / 2, D4_orthoWidth / 2, D4_orthoHeight / 2, -D4_orthoHeight / 2, 0.1, 1000);
 
 
-const D4_renderer = new THREE.WebGLRenderer();
+const D4_renderer = new THREE.WebGLRenderer({ antialias: true });
 
 var ground, cube, light;
 
@@ -40,15 +40,15 @@ function main()
   ground.position.y = -1;
   D4_space.add(ground);
 
-  var cubeGeometry = new BoxGeometry4D(3, 0.5, 3, 3);
+  var cubeGeometry = new BoxGeometry4D(3, 1, 3, 3);
   cube = new Mesh4D(cubeGeometry, [
     new THREE.MeshPhongMaterial({
       color: 0xffffff
     }),
     new THREE.MeshPhongMaterial({
       color: 0x00ffff,
-      emissive : 0xffffff,
-      emissiveIntensity : 0.1
+      /*emissive : 0xffffff,
+      emissiveIntensity : 0.1*/
     }),
     new THREE.MeshBasicMaterial({
       color: 0x00ffff,
@@ -67,7 +67,7 @@ function main()
     }),
   ]);
 
-  cube.position.y = 0.25;
+  cube.position.y = 0.5;
   cube.setFaceMaterial(tesseractFacesGroups.faces, tesseractFacesGroups.materials);
   D4_space.add(cube);
 
@@ -111,15 +111,14 @@ function start()
 function render(timestamp)
 {
   requestAnimationFrame(render);
-  light.position.set(D4_camera.position.x, D4_camera.position.y, D4_camera.position.z);
-
-  light.position.copy(D4_camera.position);
 
   if(!activeControls.paused)
   {
     activeControls.update((timestamp - lastUpdateTimestamp) / 1000)
     lastUpdateTimestamp = timestamp;
   }
+  
+  light.position.copy(D4_camera.position);
 
   D4_space.project();
   D4_renderer.render(D4_scene, D4_camera);
