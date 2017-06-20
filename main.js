@@ -40,7 +40,7 @@ function main()
   ground.position.y = -1;
   D4_space.add(ground);
 
-  var cubeGeometry = new BoxGeometry4D(3, 3, 3, 3);
+  var cubeGeometry = new BoxGeometry4D(3, 0.5, 3, 3);
   cube = new Mesh4D(cubeGeometry, [
     new THREE.MeshPhongMaterial({
       color: 0xffffff
@@ -67,7 +67,7 @@ function main()
     }),
   ]);
 
-  cube.position.y = 1.5;
+  cube.position.y = 0.25;
   cube.setFaceMaterial(tesseractFacesGroups.faces, tesseractFacesGroups.materials);
   D4_space.add(cube);
 

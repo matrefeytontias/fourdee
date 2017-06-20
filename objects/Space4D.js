@@ -91,27 +91,36 @@ Space4D.prototype.project = function()
   });
 }
 
-// Assumes that the player cannot get pinched and that the previousPos is valid
-// Player player
-// Returns the maximum-length amount that keeps a valid position
-// THREE.Vector3 previousPos, THREE.Vector3 amount, float collisionRadius
-Space4D.prototype.tryForMove = function(previousPos, amount, collisionRadius)
+// /!\ Bind to Space4D instance before using
+// Partial collision resolution with AA cylinder hitboxes. Axis is either "xz" or "y".
+function tryMoveInternal(previousPos, amount, collisionRadius, collisionHeight, axis)
 {
+  // Check for null movement first
+  if(amount.length() == 0)
+  {
+    // console.log("Movement along " + axis + " is null");
+    return { collided: false, movement: amount };
+  }
+
   var collisions = [];
   var sqr = collisionRadius * collisionRadius;
   var nextPos = previousPos.clone().add(amount);
+  var h = collisionHeight / 2;
 
   // Find all faces that collide with the camera's new position
+  var i = 0;
   this.visitObjects(function(child)
   {
     var geom3 = child.projection.geometry, vertices = geom3.vertices, faces = geom3.faces;
     for(var j = 0; j < faces.length; j++)
     {
       var face = faces[j];
-      var dSq = sqdTriangle(nextPos, vertices[face.a], vertices[face.b], vertices[face.c]);
-      if(dSq < sqr)
+      var proj = projOnTriangle(nextPos, vertices[face.a], vertices[face.b], vertices[face.c]);
+      var dSq = dist2(proj, nextPos);
+      // Objects have cylinder hitboxes
+      if(Math.abs(proj.y - nextPos.y) < h && dSq < sqr)
         // There has been a collision
-        collisions.push({ dSq: dSq, obj: child, faceIndex: j});
+        collisions.push({ proj: proj, dSq: dSq, obj: child, face: face});
     }
   });
 
@@ -119,41 +128,66 @@ Space4D.prototype.tryForMove = function(previousPos, amount, collisionRadius)
     return { collided: false, movement: amount };
   // There has been one or more collisions
   collisions.sort(function (x, y) { return y.dSq - x.dSq; });
-  // Only resolve collision with the closest face
-  var child = collisions[0].obj, vertices = child.projection.geometry.vertices, faces = child.projection.geometry.faces;
-  var face = faces[collisions[0].faceIndex];
+  // Only resolve collision with the closest face for now
+  var proj = collisions[0].proj;
+  var child = collisions[0].obj, vertices = child.projection.geometry.vertices;
+  var face = collisions[0].face;
   var faceNorm = cross(sub(vertices, face.b, face.a), sub(vertices, face.a, face.c)).normalize();
-  // Project the movement along the surface's plane by subtracting the projection on the normal
-  var newAmount = amount.sub(faceNorm.multiplyScalar(amount.dot(faceNorm)));
-  return { collided: true, movement: this.tryForMove(previousPos, newAmount.multiplyScalar(0.5), collisionRadius).movement };
+  // The movement brings the object right on the intersection point ...
+  var distProj = proj.clone().sub(previousPos);
+  var newAmount = distProj.clone().normalize();
+  var spentAmount;
+  if(axis == "xz")
+  {
+    // We do that by completing the movement and moving the object along the face's normal
+    // until it's out of the surface
+    var n = dot(proj.clone().sub(previousPos), faceNorm) > 0 ? faceNorm.clone().negate() : faceNorm.clone();
+    newAmount = distProj.add(mult(n, collisionRadius));
+    newAmount.y = 0;
+    spentAmount = amount.clone();
+  }
+  else // axis == "y"
+  {
+    // We know for a fact that the intersection point has the required XZ so ...
+    newAmount.multiplyScalar(Math.max(0, Math.abs(distProj.y) - h));
+    // Here distProj is always colinear to amount
+    spentAmount = newAmount.clone();
+  }
+  var movRemainder = amount.clone().sub(spentAmount);
+  // ... and the rest of the movement is carried along the surface by subtracting the projection on the normal
+  newAmount.add(movRemainder.sub(faceNorm.multiplyScalar(movRemainder.dot(faceNorm))));
+  return { collided: true, movement: newAmount };
 }
 
-// Squared distance to triangle
+// Assumes that the player cannot get pinched and that the previousPos is valid
+// Player player
+// Returns the maximum-length amount that keeps a valid position
+// THREE.Vector3 previousPos, THREE.Vector3 amount, float collisionRadius, float collisionHeight
+Space4D.prototype.tryForMove = function(previousPos, amount, collisionRadius, collisionHeight)
+{
+  /*
+   * Implementation details
+   * We say here that objects have a cylindrical hitbox. It's cool because it's rotation-independent.
+   * The movement test is then a 2-pass process : first compute the collisions for the movement along Y,
+   * then do the same thing for the movement along the XZ plane.
+   * The clever ones probably noticed that this is because the cylinder is invariant along Y.
+   */
+  var tryMoveInternalBound = tryMoveInternal.bind(this);
+  var collided = false;
+  var newAmount = new THREE.Vector3(0, amount.y, 0);
+  var resultY = tryMoveInternalBound(previousPos, newAmount, collisionRadius, collisionHeight, "y");
+  collided = collided || resultY.collided;
+  newAmount = amount.clone().sub(resultY.movement);
+  newAmount.y = 0;
+  var resultXZ =
+    tryMoveInternalBound(add(previousPos, resultY.movement), newAmount, collisionRadius, collisionHeight, "xz");
+  return { collided: collided || resultXZ.collided, movement: add(resultY.movement, resultXZ.movement) };
+}
+
+// Projection of point on triangle
 // Code adapted from http://iquilezles.org/www/articles/triangledistance/triangledistance.htm
 // Thanks to Íñigo Quílez
 // All arguments are THREE.Vector3
-function sqdTriangle(p, v1, v2, v3)
-{
-    // prepare data
-    var v21 = v2.clone().sub(v1), p1 = p.clone().sub(v1);
-    var v32 = v3.clone().sub(v2), p2 = p.clone().sub(v2);
-    var v13 = v1.clone().sub(v3), p3 = p.clone().sub(v3);
-    var nor = v21.clone().cross(v13);
-
-    return   (sign(dot(cross(v21,nor),p1)) +
-              sign(dot(cross(v32,nor),p2)) +
-              sign(dot(cross(v13,nor),p3))<2.0)
-              ?
-              // 3 edges
-              min( min(
-              dot2(v21.multiplyScalar(clamp(dot(v21,p1)/dot2(v21),0.0,1.0)).sub(p1)),
-              dot2(v32.multiplyScalar(clamp(dot(v32,p2)/dot2(v32),0.0,1.0)).sub(p2)) ),
-              dot2(v13.multiplyScalar(clamp(dot(v13,p3)/dot2(v13),0.0,1.0)).sub(p3)) )
-              :
-              // 1 face
-              dot(nor,p1)*dot(nor,p1)/dot2(nor);
-}
-
 function projOnTriangle(p, v1, v2, v3)
 {
   var v21 = v2.clone().sub(v1), p1 = p.clone().sub(v1);
@@ -181,7 +215,7 @@ function projOnTriangle(p, v1, v2, v3)
     return proj3;
   }
   // 1 face
-  return sub(p, mult(nor, p1.dot(nor) / dot2(nor)));
+  return p.clone().sub(mult(nor, p1.dot(nor) / dot2(nor)));
 }
 
 // Convenience functions
@@ -192,6 +226,6 @@ function cross(a, b) { return a.clone().cross(b); }
 function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
 function dot2(a) { return a.dot(a); }
 function add(a, b) { return new THREE.Vector3(a.x + b.x, a.y + b.y, a.z + b.z); }
-function sub(a, b) { return new THREE.Vector3(a.x - b.x, a.y - b.y, a.z - b.z); }
+function sub(v, a, b) { return v[a].clone().sub(v[b]); }
 function mult(v, f) { return new THREE.Vector3(v.x * f, v.y * f, v.z * f); }
-function dist2(a, b) { return dot2(sub(a, b)); }
+function dist2(a, b) { return dot2(a.clone().sub(b)); }
