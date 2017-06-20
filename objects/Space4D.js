@@ -40,14 +40,21 @@ Space4D.prototype.rotateAround = function(center, plane, theta)
   }
 }
 
+// (Object4D -> void) callback
+Space4D.prototype.visitObjects = function(callback)
+{
+  for(var i = 0; i < this.children.length; i++)
+    callback.bind(this)(this.children[i]);
+}
+
 // Updates the children Object4D with their 3D projection
 Space4D.prototype.project = function()
 {
   var spaceMat = this.buildMatrix5();
 
-  for(var i = 0; i < this.children.length; i++)
+  this.visitObjects(function(child)
   {
-    var child = this.children[i], geom4 = child.geometry;
+    var geom4 = child.geometry;
     if(child.dirty)
     {
       if(geom4 === undefined)
@@ -80,7 +87,7 @@ Space4D.prototype.project = function()
       }
       child.dirty = false;
     }
-  }
+  });
 }
 
 // Assumes that the player cannot get pinched and that the previousPos is valid
@@ -92,24 +99,27 @@ Space4D.prototype.tryForCameraMove = function(previousPos, amount, collisionRadi
   var collisions = [];
   var sqr = collisionRadius * collisionRadius;
   var nextPos = previousPos.clone().add(amount);
-  for(var i = 0; i < this.children.length; i++)
+
+  // Find all faces that collide with the camera's new position
+  this.visitObjects(function(child)
   {
-    var geom3 = this.children[i].projection.geometry, vertices = geom3.vertices, faces = geom3.faces;
+    var geom3 = child.projection.geometry, vertices = geom3.vertices, faces = geom3.faces;
     for(var j = 0; j < faces.length; j++)
     {
       var face = faces[j];
       var distanceSq = sqdTriangle(nextPos, vertices[face.a], vertices[face.b], vertices[face.c]);
       if(distanceSq < sqr)
         // There has been a collision
-        collisions.push({ dSq: distanceSq, objIndex: i, faceIndex: j});
+        collisions.push({ dSq: distanceSq, obj: child, faceIndex: j});
     }
-  }
+  });
+
   if(collisions.length == 0)
     return amount;
   // There has been one or more collisions
   collisions.sort(function (x, y) { return y.dSq - x.dSq; });
   // Only resolve collision with the closest face
-  var child = this.children[collisions[0].objIndex], vertices = child.projection.geometry.vertices, faces = child.projection.geometry.faces;
+  var child = collisions[0].obj, vertices = child.projection.geometry.vertices, faces = child.projection.geometry.faces;
   var face = faces[collisions[0].faceIndex];
   // Project the direction along the tangent axis on (x, z)
   var tangent = sub(vertices, face.a, face.b);
