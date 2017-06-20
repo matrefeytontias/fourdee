@@ -20,6 +20,7 @@ Space4D.prototype.add = function(obj)
     if(this.children[i] === obj)
       throw "Can't add same Object4D to Space4D twice";
   this.children.push(obj);
+  D4_scene.add(obj.projection);
   // Temporary fix. Invalidate bounding box upon rotation ?
   obj.projection.frustumCulled = false;
 }
