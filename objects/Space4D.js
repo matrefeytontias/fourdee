@@ -100,8 +100,11 @@ Space4D.prototype.tryForCameraMove = function(previousPos, amount, collisionRadi
       if(sqdTriangle(nextPos, vertices[face.a], vertices[face.b], vertices[face.c]) < sqr)
       {
         // There has been a collision
-        // TODO : interpolate
-        return new THREE.Vector3();
+        // Project the direction along the tangent axis on (x, z)
+        var tangent = vertices[face.a].clone().sub(vertices[face.c]);
+        tangent.y = 0;
+        tangent.multiplyScalar(tangent.normalize().dot(amount));
+        return tangent;
       }
     }
   }
@@ -114,23 +117,23 @@ Space4D.prototype.tryForCameraMove = function(previousPos, amount, collisionRadi
 // All arguments are THREE.Vector3
 function sqdTriangle(p, v1, v2, v3)
 {
-    // prepare data    
+    // prepare data
     var v21 = v2.clone().sub(v1), p1 = p.clone().sub(v1);
     var v32 = v3.clone().sub(v2), p2 = p.clone().sub(v2);
     var v13 = v1.clone().sub(v3), p3 = p.clone().sub(v3);
     var nor = v21.clone().cross(v13);
 
-    return   (sign(dot(cross(v21,nor),p1)) + 
-              sign(dot(cross(v32,nor),p2)) + 
-              sign(dot(cross(v13,nor),p3))<2.0) 
+    return   (sign(dot(cross(v21,nor),p1)) +
+              sign(dot(cross(v32,nor),p2)) +
+              sign(dot(cross(v13,nor),p3))<2.0)
               ?
-              // 3 edges    
-              min( min( 
-              dot2(v21.multiplyScalar(clamp(dot(v21,p1)/dot2(v21),0.0,1.0)).sub(p1)), 
-              dot2(v32.multiplyScalar(clamp(dot(v32,p2)/dot2(v32),0.0,1.0)).sub(p2)) ), 
+              // 3 edges
+              min( min(
+              dot2(v21.multiplyScalar(clamp(dot(v21,p1)/dot2(v21),0.0,1.0)).sub(p1)),
+              dot2(v32.multiplyScalar(clamp(dot(v32,p2)/dot2(v32),0.0,1.0)).sub(p2)) ),
               dot2(v13.multiplyScalar(clamp(dot(v13,p3)/dot2(v13),0.0,1.0)).sub(p3)) )
               :
-              // 1 face    
+              // 1 face
               dot(nor,p1)*dot(nor,p1)/dot2(nor);
 }
 
