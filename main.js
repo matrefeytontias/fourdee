@@ -96,10 +96,11 @@ function main()
 
   var geometry = new D4hedronGeometry(5);
   var d4hedron = new Mesh4D(geometry, 
-    new THREE.MeshBasicMaterial({
+    new THREE.MeshLambertMaterial({
       color: 0xff0000,
-      wireframe : true,
-      wireframeLinewidth : 5,
+      //wireframe : true,
+      //wireframeLinewidth : 5,
+      side : THREE.DoubleSide
     })
   );
   
@@ -110,13 +111,13 @@ function main()
 
   D4_camera.position.y = 0.8;
   
-  light = new THREE.PointLight(0xffffff, 0.5, 100);
+  light = new THREE.PointLight(0xffffff, 1, 100);
   D4_scene.add(light);
 
   // End level;
 
   //Start controls
-  var fpControls = new FirstPersonControls(D4_container, new THREE.Vector4(), D4_camera, D4_space, new KeySettings(), ["xw", "yw", ""]);
+  var fpControls = new FirstPersonControls(D4_container, new THREE.Vector4(), D4_camera, D4_space, new KeySettings(), ["xw", "zw"]);
   var tpControls = new ThirdPersonControls(D4_camera, D4_scene, D4_space);
   fpControls.listen();
 
@@ -124,6 +125,9 @@ function main()
 }
 
 function resize(){
+  
+  D4_space.rotation.xw += 0.01;
+  D4_space.rotation.zw += 0.01;
   
   D4_gameWidth = D4_container.offsetWidth;
   D4_gameHeight = D4_container.offsetHeight;
