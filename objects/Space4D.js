@@ -113,14 +113,19 @@ Space4D.prototype.tryForMove = function(previousPos, amount, collisionRadius)
     for(var j = 0; j < faces.length; j++)
     {
       var face = faces[j];
-      var faceNorm = cross(sub(vertices, face.b, face.a), sub(vertices, face.c, face.a)).normalize();
+      var faceNorm = cross(sub(vertices, face.b, face.a), sub(vertices, face.c, face.a));
+      // Only check collisions for faces that exist in 3D
+      if(faceNorm.length() == 0)
+        continue;
+      faceNorm.normalize();
+      // console.log(vertices[face.a], vertices[face.b], vertices[face.c]);
+      // Only check collisions for faces that face us
       if(dot(faceNorm, amount) >= 0)
         continue;
       var proj = projOnTriangle(nextPos, vertices[face.a], vertices[face.b], vertices[face.c]);
       var dSq = dist2(proj, nextPos);
-      // Only check collisions for faces that face us
       // Objects have spherical hitboxes
-      if(dot(faceNorm, amount) < 0 && dSq < sqr)
+      if(dSq < sqr)
         // There has been a collision
         collisions.push({ proj: proj, dSq: dSq, obj: child, face: face, faceNorm: faceNorm });
     }
