@@ -65,9 +65,9 @@ function main()
   ]);
   
   cube.setFaceMaterial(tesseractFacesGroups.faces, tesseractFacesGroups.materials); 
-  */
   
-  var geometry = new Box3DGeometry4D("xyz", 2, 2, 2);
+  
+  var geometry = new Box3DGeometry4D("yzw", 2, 2, 2);
   cube = new Mesh4D(geometry, 
     new THREE.MeshLambertMaterial({
       color: 0x00ffff
@@ -80,7 +80,7 @@ function main()
   D4_scene.add(cube.projection);
   D4_space.add(cube);
   
-  var geometry = new Box3DGeometry4D("xyz", 2, 2, 2);
+  var geometry = new Box3DGeometry4D("yzw", 2, 2, 2);
   var cubeInterior = new Mesh4D(geometry, 
     new THREE.MeshLambertMaterial({
       color: 0xff00ff,
@@ -92,7 +92,21 @@ function main()
   cubeInterior.position.z = cube.position.z;
   
   D4_scene.add(cubeInterior.projection);
-  D4_space.add(cubeInterior);
+  D4_space.add(cubeInterior); */
+
+  var geometry = new D4hedronGeometry(5);
+  var d4hedron = new Mesh4D(geometry, 
+    new THREE.MeshBasicMaterial({
+      color: 0xff0000,
+      wireframe : true,
+      wireframeLinewidth : 5,
+    })
+  );
+  
+  d4hedron.position.y = 1;
+  
+  D4_scene.add(d4hedron.projection);
+  D4_space.add(d4hedron);
 
   D4_camera.position.y = 0.8;
   
