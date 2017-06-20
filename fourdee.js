@@ -16,8 +16,20 @@ function Object4D()
 // int[] faces, int[] materials
 Object4D.prototype.setFaceMaterial = function(faces, materials)
 {
-  for(var i=0; i < materials.length; i++)
+  for(var i = 0; i < materials.length; i++)
     this.geometry.faces[faces[i]].materialIndex = materials[i];
+}
+
+// int [][] faces
+Object4D.prototype.setFaceGroupMaterial = function(facesGroups)
+{
+  for(var i = 0; i < facesGroups.length; i++)
+  {
+    for(var j = 0; j < facesGroups[i].length; j++)
+    {
+      this.geometry.faces[facesGroups[i][j]].materialIndex = i;
+    }
+  }
 }
 
 Object4D.prototype.buildMatrix5 = function()

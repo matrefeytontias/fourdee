@@ -17,7 +17,7 @@ var lastUpdateTimestamp;
 const orthoProj = new OrthoProj();
 const stereoProj = new StereoProj(new THREE.Vector4(0, 0, 0, 10), 1);
 
-const D4_space = new Space4D(stereoProj);
+const D4_space = new Space4D(orthoProj);
 
 var D4_camera = D4_PERSPECTIVE ? new THREE.PerspectiveCamera(75, D4_gameWidth / D4_gameHeight, 0.1, 1000)
                                  : new THREE.OrthographicCamera(-D4_orthoWidth / 2, D4_orthoWidth / 2, D4_orthoHeight / 2, -D4_orthoHeight / 2, 0.1, 1000);
@@ -31,58 +31,17 @@ window.addEventListener("load", main);
 
 function main()
 {
-  // Build Level
-  /*
-  var geometry = new BoxLinesGeometry4D(100, 3, 100, 100);
-  cube = new LineSegments4D(geometry, new THREE.LineBasicMaterial({ color: 0xff0000 }));
-  cube.position.y = -1.5;
-  */
-
-
-  var geometry = new BoxGeometry4D(2, 2, 2, 0);
-  cube = new Mesh4D(geometry, [
-    new THREE.MeshLambertMaterial({
-      color: 0xffffff,
-    }),
-    new THREE.MeshLambertMaterial({
-      color: 0x00ffff,
-      side : THREE.BackSide,
-      emissive : 0xffffff,
-      emissiveIntensity : 0.1
-    }),
-    new THREE.MeshBasicMaterial({
-      color: 0x00ffff,
-      wireframe : true,
-      wireframeLinewidth : 1,
-    }),
-    new THREE.MeshBasicMaterial({
-      color: 0x00ffff,
-      wireframe : true,
-      wireframeLinewidth : 1,
-    }),
-    new THREE.MeshBasicMaterial({
-      color: 0x00ffff,
-      wireframe : true,
-      wireframeLinewidth : 1,
-    }),
-  ]);
+  build5(D4_scene, D4_space);
   
-  cube.position.y = 1;
-
-  cube.setFaceMaterial(tesseractFacesGroups.faces, tesseractFacesGroups.materials); 
-
-  D4_scene.add(cube.projection);
-  D4_space.add(cube);
-
   D4_camera.position.y = 0.8;
-
-  light = new THREE.PointLight(0x00ffff, 0.5, 100);
+  
+  light = new THREE.PointLight(0xffffff, 1, 100);
   D4_scene.add(light);
 
   // End level;
 
   //Start controls
-  var fpControls = new FirstPersonControls(D4_container, new THREE.Vector4(), D4_camera, D4_space, new KeySettings(), ["xw"]);
+  var fpControls = new FirstPersonControls(D4_container, new THREE.Vector4(), D4_camera, D4_space, new KeySettings(), ["xw", "zw"]);
   var tpControls = new ThirdPersonControls(D4_camera, D4_scene, D4_space);
   fpControls.listen();
 
@@ -113,6 +72,7 @@ function start()
 
 function render(timestamp)
 {
+  
   requestAnimationFrame(render);
   light.position.set(D4_camera.position.x, D4_camera.position.y, D4_camera.position.z);
 
