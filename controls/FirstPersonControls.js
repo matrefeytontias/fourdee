@@ -18,6 +18,7 @@ function FirstPersonControls(
   this.space4D = space4D;
   this.paused = true;
   this.displacementEuler = new Euler4D();
+  this.raycaster = new THREE.Raycaster();
 
   this.onMouseMove = function(event)
   {
@@ -63,6 +64,13 @@ function FirstPersonControls(
 
     var direction = new THREE.Vector3(Math.cos(this.cameraRotation.y), Math.sin(-this.cameraRotation.x), Math.sin(this.cameraRotation.y));
 
+    this.raycaster.set(this.camera3D.position, direction.normalize());
+
+	  // calculate objects intersecting the picking ray
+	  var intersects = this.raycaster.intersectObjects( D4_scene.children );
+
+	  console.log(intersects.length, this.raycaster.ray);
+
     var where = this.camera3D.position.clone();
     where.add(direction);
     this.camera3D.lookAt(where);
@@ -106,10 +114,14 @@ function FirstPersonControls(
 
   this.onPointerLockChange = function()
   {
-    if (document.mozPointerLockElement === this.container || document.webkitPointerLockElement === this.container || document.pointerLockElement === this.container)
+    if (document.mozPointerLockElement === this.container || document.webkitPointerLockElement === this.container || document.pointerLockElement === this.container){
       console.log("Pointer Lock was successful.");
-    else
+      this.paused = false;
+    }
+    else{
       console.log("Pointer Lock was lost.");
+      this.paused = true;
+    }
     if(this.container.innerHTML.length < 2) window.setTimeout(start, 100);
     else window.setTimeout(resize, 100);
   }
