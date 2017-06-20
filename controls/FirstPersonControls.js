@@ -87,7 +87,7 @@ function FirstPersonControls(
     // Eventually add a jump
     if(this.canJump && this.keyPressed[this.keys.space])
       this.player.velocity3D.y += D4_JUMP;
-    var data = space4D.tryForMove(this.camera3D.position, this.player.velocity3D, this.player.radius, this.player.height);
+    var data = space4D.tryForMove(this.camera3D.position, this.player.velocity3D, this.player.radius);
     this.player.velocity3D = data.movement;
     this.canJump = (data.collided && this.player.velocity3D.y == 0);
 

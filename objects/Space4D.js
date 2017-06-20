@@ -91,21 +91,19 @@ Space4D.prototype.project = function()
   });
 }
 
-// /!\ Bind to Space4D instance before using
-// Partial collision resolution with AA cylinder hitboxes. Axis is either "xz" or "y".
-function tryMoveInternal(previousPos, amount, collisionRadius, collisionHeight, axis)
+// Assumes that the player cannot get pinched and that the previousPos is valid
+// Player player
+// Returns the maximum-length amount that keeps a valid position
+// THREE.Vector3 previousPos, THREE.Vector3 amount, float collisionRadius
+Space4D.prototype.tryForMove = function(previousPos, amount, collisionRadius)
 {
   // Check for null movement first
   if(amount.length() == 0)
-  {
-    // console.log("Movement along " + axis + " is null");
     return { collided: false, movement: amount };
-  }
 
   var collisions = [];
   var sqr = collisionRadius * collisionRadius;
   var nextPos = previousPos.clone().add(amount);
-  var h = collisionHeight / 2;
 
   // Find all faces that collide with the camera's new position
   var i = 0;
@@ -117,10 +115,12 @@ function tryMoveInternal(previousPos, amount, collisionRadius, collisionHeight, 
       var face = faces[j];
       var proj = projOnTriangle(nextPos, vertices[face.a], vertices[face.b], vertices[face.c]);
       var dSq = dist2(proj, nextPos);
-      // Objects have cylinder hitboxes
-      if(Math.abs(proj.y - nextPos.y) < h && dSq < sqr)
+      var faceNorm = cross(sub(vertices, face.b, face.a), sub(vertices, face.c, face.a)).normalize();
+      // Only check collisions for faces that face us
+      // Objects have spherical hitboxes
+      if(dot(faceNorm, amount) < 0 && dSq < sqr)
         // There has been a collision
-        collisions.push({ proj: proj, dSq: dSq, obj: child, face: face});
+        collisions.push({ proj: proj, dSq: dSq, obj: child, face: face, faceNorm: faceNorm });
     }
   });
 
@@ -132,56 +132,14 @@ function tryMoveInternal(previousPos, amount, collisionRadius, collisionHeight, 
   var proj = collisions[0].proj;
   var child = collisions[0].obj, vertices = child.projection.geometry.vertices;
   var face = collisions[0].face;
-  var faceNorm = cross(sub(vertices, face.b, face.a), sub(vertices, face.a, face.c)).normalize();
+  var faceNorm = collisions[0].faceNorm;
   // The movement brings the object right on the intersection point ...
-  var distProj = proj.clone().sub(previousPos);
-  var newAmount = distProj.clone().normalize();
-  var spentAmount;
-  if(axis == "xz")
-  {
-    // We do that by completing the movement and moving the object along the face's normal
-    // until it's out of the surface
-    var n = dot(proj.clone().sub(previousPos), faceNorm) > 0 ? faceNorm.clone().negate() : faceNorm.clone();
-    newAmount = distProj.add(mult(n, collisionRadius));
-    newAmount.y = 0;
-    spentAmount = amount.clone();
-  }
-  else // axis == "y"
-  {
-    // We know for a fact that the intersection point has the required XZ so ...
-    newAmount.multiplyScalar(Math.max(0, Math.abs(distProj.y) - h));
-    // Here distProj is always colinear to amount
-    spentAmount = newAmount.clone();
-  }
-  var movRemainder = amount.clone().sub(spentAmount);
+  // var newAmount = amount.clone().normalize().multiplyScalar(proj.clone().sub(previousPos).length());
+  var newAmount = new THREE.Vector3();
+  var movRemainder = amount.clone().sub(newAmount);
   // ... and the rest of the movement is carried along the surface by subtracting the projection on the normal
   newAmount.add(movRemainder.sub(faceNorm.multiplyScalar(movRemainder.dot(faceNorm))));
-  return { collided: true, movement: newAmount };
-}
-
-// Assumes that the player cannot get pinched and that the previousPos is valid
-// Player player
-// Returns the maximum-length amount that keeps a valid position
-// THREE.Vector3 previousPos, THREE.Vector3 amount, float collisionRadius, float collisionHeight
-Space4D.prototype.tryForMove = function(previousPos, amount, collisionRadius, collisionHeight)
-{
-  /*
-   * Implementation details
-   * We say here that objects have a cylindrical hitbox. It's cool because it's rotation-independent.
-   * The movement test is then a 2-pass process : first compute the collisions for the movement along Y,
-   * then do the same thing for the movement along the XZ plane.
-   * The clever ones probably noticed that this is because the cylinder is invariant along Y.
-   */
-  var tryMoveInternalBound = tryMoveInternal.bind(this);
-  var collided = false;
-  var newAmount = new THREE.Vector3(0, amount.y, 0);
-  var resultY = tryMoveInternalBound(previousPos, newAmount, collisionRadius, collisionHeight, "y");
-  collided = collided || resultY.collided;
-  newAmount = amount.clone().sub(resultY.movement);
-  newAmount.y = 0;
-  var resultXZ =
-    tryMoveInternalBound(add(previousPos, resultY.movement), newAmount, collisionRadius, collisionHeight, "xz");
-  return { collided: collided || resultXZ.collided, movement: add(resultY.movement, resultXZ.movement) };
+  return { collided: true, movement: this.tryForMove(previousPos, newAmount.multiplyScalar(0.5), collisionRadius).movement };
 }
 
 // Projection of point on triangle
