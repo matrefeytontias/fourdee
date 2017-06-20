@@ -95,7 +95,7 @@ Space4D.prototype.project = function()
 // Player player
 // Returns the maximum-length amount that keeps a valid position
 // THREE.Vector3 previousPos, THREE.Vector3 amount, float collisionRadius
-Space4D.prototype.tryForCameraMove = function(previousPos, amount, collisionRadius)
+Space4D.prototype.tryForMove = function(previousPos, amount, collisionRadius)
 {
   var collisions = [];
   var sqr = collisionRadius * collisionRadius;
@@ -108,35 +108,24 @@ Space4D.prototype.tryForCameraMove = function(previousPos, amount, collisionRadi
     for(var j = 0; j < faces.length; j++)
     {
       var face = faces[j];
-      var distanceSq = sqdTriangle(nextPos, vertices[face.a], vertices[face.b], vertices[face.c]);
-      if(distanceSq < sqr)
+      var dSq = sqdTriangle(nextPos, vertices[face.a], vertices[face.b], vertices[face.c]);
+      if(dSq < sqr)
         // There has been a collision
-        collisions.push({ dSq: distanceSq, obj: child, faceIndex: j});
+        collisions.push({ dSq: dSq, obj: child, faceIndex: j});
     }
   });
 
   if(collisions.length == 0)
-    return amount;
+    return { collided: false, movement: amount };
   // There has been one or more collisions
   collisions.sort(function (x, y) { return y.dSq - x.dSq; });
   // Only resolve collision with the closest face
   var child = collisions[0].obj, vertices = child.projection.geometry.vertices, faces = child.projection.geometry.faces;
   var face = faces[collisions[0].faceIndex];
-  // Project the direction along the tangent axis on (x, z)
-  var tangent = sub(vertices, face.a, face.b);
-  tangent.y = 0;
-  if(tangent.lengthSq() == 0)
-  {
-    tangent = sub(vertices, face.a, face.c);
-    tangent.y = 0;
-    if(tangent.lengthSq() == 0)
-    {
-      tangent = sub(vertices, face.b, face.c);
-      tangent.y = 0;
-    }
-  }
-  tangent.multiplyScalar(tangent.normalize().dot(amount));
-  return this.tryForCameraMove(previousPos, tangent.multiplyScalar(0.5), collisionRadius);
+  var faceNorm = cross(sub(vertices, face.b, face.a), sub(vertices, face.a, face.c)).normalize();
+  // Project the movement along the surface's plane by subtracting the projection on the normal
+  var newAmount = amount.sub(faceNorm.multiplyScalar(amount.dot(faceNorm)));
+  return { collided: true, movement: this.tryForMove(previousPos, newAmount.multiplyScalar(0.5), collisionRadius).movement };
 }
 
 // Squared distance to triangle
