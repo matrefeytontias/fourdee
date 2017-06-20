@@ -8,6 +8,29 @@ function Geometry4D()
   this.faces = [];
 }
 
+//int [] faces
+Geometry4D.prototype.filterFaces = function(faces){
+  var initialLength = this.faces.length;
+  for(var i = 0; i < faces.length; i++)
+  {
+    this.faces.push( this.faces[faces[i]] ) 
+  }
+  this.faces.splice(0, initialLength);
+}
+
+//int [][] facesGroups
+Geometry4D.prototype.filterFacesGroups = function(groups, facesGroups){
+  var initialLength = this.faces.length;
+  for(var i = 0; i < groups.length; i++)
+  {
+    for(var j = 0; j < facesGroups[groups[i]].length; j++)
+    {
+      this.faces.push( this.faces[facesGroups[groups[i]][j]] ); 
+    }
+  }
+  this.faces.splice(0, initialLength);
+}
+
 const tesseractVertices = [
     new THREE.Vector4(-0.5, -0.5, -0.5, -0.5),
     new THREE.Vector4(0.5, -0.5, -0.5, -0.5),
@@ -88,19 +111,13 @@ const tesseractFaces = [
   new THREE.Face3(4, 7, 15) 
 ];
 
-const tesseractFacesGroups = {
-  faces : [
-    12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
-    24, 25, 26, 27, 28, 29, 30, 31,
-    32, 33, 34, 35, 36, 37, 38, 39,
-    40, 41, 42, 43, 44, 45, 46, 47
-  ],
-  materials : [
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    2, 2, 2, 2, 2, 2, 2, 2, 
-    3, 3, 3, 3, 3, 3, 3, 3,
-    4, 4, 4, 4, 4, 4, 4, 4
-  ]
-}
+
+const tesseractFacesGroups = [
+  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+  [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23],
+  [24, 25, 26, 27, 28, 29, 30, 31],
+  [32, 33, 34, 35, 36, 37, 38, 39],
+  [40, 41, 42, 43, 44, 45, 46, 47]
+]
 
 

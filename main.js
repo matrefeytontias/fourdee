@@ -31,75 +31,7 @@ window.addEventListener("load", main);
 
 function main()
 {
-  // Build Level
-  /*
-  var geometry = new BoxLinesGeometry4D(100, 3, 100, 100);
-  cube = new LineSegments4D(geometry, new THREE.LineBasicMaterial({ color: 0xff0000 }));
-  cube.position.y = -1.5;
-  */
-
-  /*
-  var geometry = new BoxGeometry4D(2, 2, 2, 2);
-  cube = new Mesh4D(geometry, [
-    new THREE.MeshBasicMaterial({
-      color: 0xffffff
-    }),
-    new THREE.MeshBasicMaterial({
-      color: 0x00ffff
-    }),
-    new THREE.MeshBasicMaterial({
-      color: 0xff0000,
-      wireframe : true,
-      wireframeLinewidth : 5,
-    }),
-    new THREE.MeshBasicMaterial({
-      color: 0x0000ff,
-      wireframe : true,
-      wireframeLinewidth : 5,
-    }),
-    new THREE.MeshBasicMaterial({
-      color: 0xffff00,
-      wireframe : true,
-      wireframeLinewidth : 5,
-    }),
-  ]);
-  
-  cube.setFaceMaterial(tesseractFacesGroups.faces, tesseractFacesGroups.materials); 
-  */
-  
-  var geometry = new Box3DGeometry4D("xyz", 2, 2, 2);
-  cube = new Mesh4D(geometry, 
-    new THREE.MeshLambertMaterial({
-      color: 0x00ffff
-    })
-  );
-  
-  cube.position.y = 1;
-  cube.position.z = 0;
-
-  D4_scene.add(cube.projection);
-  D4_space.add(cube);
-  
-  var interior = new BackSides(cube, new THREE.MeshLambertMaterial({ color: 0xff00ff }));
-  D4_scene.add(interior);
-  
-  /*
-  var geometry = new PentacoreGeometry(5);
-  var d4hedron = new Mesh4D(geometry, 
-    new THREE.MeshLambertMaterial({
-      color: 0xff0000,
-      //wireframe : true,
-      //wireframeLinewidth : 5,
-      side : THREE.DoubleSide
-    })
-  );
-  
-  d4hedron.position.y = 1;
-  
-  
-  D4_scene.add(d4hedron.projection);
-  D4_space.add(d4hedron);
-  */
+  build5(D4_scene, D4_space);
   
   D4_camera.position.y = 0.8;
   
@@ -109,7 +41,7 @@ function main()
   // End level;
 
   //Start controls
-  var fpControls = new FirstPersonControls(D4_container, new THREE.Vector4(), D4_camera, D4_space, new KeySettings(), ["xw"]);
+  var fpControls = new FirstPersonControls(D4_container, new THREE.Vector4(), D4_camera, D4_space, new KeySettings(), ["xw", "zw"]);
   var tpControls = new ThirdPersonControls(D4_camera, D4_scene, D4_space);
   fpControls.listen();
 
