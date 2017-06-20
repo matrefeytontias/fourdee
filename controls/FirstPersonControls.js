@@ -111,6 +111,7 @@ function FirstPersonControls(
     else
       console.log("Pointer Lock was lost.");
     if(this.container.innerHTML.length < 2) window.setTimeout(start, 100);
+    else window.setTimeout(resize, 100);
   }
 }
 

@@ -140,6 +140,12 @@ function onDocumentPointerLockChange()
   activeControls.onPointerLockChange();
 }
 
+function OnDocumentResize(){
+    
+}
+
+
+//TODO ? Handle compatibility 
 function pointerLockError()
 {
   console.log("An error occured during pointer locking.");
