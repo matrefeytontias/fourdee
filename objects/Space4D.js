@@ -154,6 +154,36 @@ function sqdTriangle(p, v1, v2, v3)
               dot(nor,p1)*dot(nor,p1)/dot2(nor);
 }
 
+function projOnTriangle(p, v1, v2, v3)
+{
+  var v21 = v2.clone().sub(v1), p1 = p.clone().sub(v1);
+  var v32 = v3.clone().sub(v2), p2 = p.clone().sub(v2);
+  var v13 = v1.clone().sub(v3), p3 = p.clone().sub(v3);
+  var nor = v21.clone().cross(v13);
+
+  if(sign(dot(cross(v21,nor),p1)) +
+     sign(dot(cross(v32,nor),p2)) +
+     sign(dot(cross(v13,nor),p3))<2.0)
+  {
+    // 3 edges
+    var proj1 = add(v1, mult(v21, clamp(dot(p1, v21) / dot2(v21), 0, 1))),
+        proj2 = add(v2, mult(v32, clamp(dot(p2, v32) / dot2(v32), 0, 1))),
+        proj3 = add(v3, mult(v13, clamp(dot(p3, v13) / dot2(v13), 0, 1)));
+
+    var d1 = dist2(p, proj1),
+        d2 = dist2(p, proj2),
+        d3 = dist2(p, proj3);
+
+    if(d1 <= d2 && d1 <= d3)
+      return proj1;
+    if(d2 <= d1 && d2 <= d3)
+      return proj2;
+    return proj3;
+  }
+  // 1 face
+  return sub(p, mult(nor, p1.dot(nor) / dot2(nor)));
+}
+
 // Convenience functions
 var sign = Math.sign;
 var min = Math.min;
@@ -161,4 +191,7 @@ function dot(a, b) { return a.dot(b); }
 function cross(a, b) { return a.clone().cross(b); }
 function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
 function dot2(a) { return a.dot(a); }
-function sub(array, a, b) { return array[a].clone().sub(array[b]); }
+function add(a, b) { return new THREE.Vector3(a.x + b.x, a.y + b.y, a.z + b.z); }
+function sub(a, b) { return new THREE.Vector3(a.x - b.x, a.y - b.y, a.z - b.z); }
+function mult(v, f) { return new THREE.Vector3(v.x * f, v.y * f, v.z * f); }
+function dist2(a, b) { return dot2(sub(a, b)); }
