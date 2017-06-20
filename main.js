@@ -23,25 +23,25 @@ const D4_camera = D4_PERSPECTIVE ? new THREE.PerspectiveCamera(75, D4_gameWidth 
                                  : new THREE.OrthographicCamera(-D4_orthoWidth / 2, D4_orthoWidth / 2, D4_orthoHeight / 2, -D4_orthoHeight / 2, 0.1, 1000);
 const D4_renderer = new THREE.WebGLRenderer();
 
-var cube;
+var ground, cube, light;
 
 window.addEventListener("load", main);
 
 function main()
 {
   // Build Level
-  /*
-  var geometry = new BoxLinesGeometry4D(100, 3, 100, 100);
-  cube = new LineSegments4D(geometry, new THREE.LineBasicMaterial({ color: 0xff0000 }));
-  cube.position.y = -1.5;
-  */
 
-  var geometry = new BoxGeometry4D(3, 3, 3, 3);
-  cube = new Mesh4D(geometry, [
-    new THREE.MeshBasicMaterial({
+  var groundGeometry = new BoxGeometry4D(100, 1, 100, 100);
+  ground = new Mesh4D(groundGeometry, new THREE.MeshPhongMaterial({ color: 0xffffff }));
+  ground.position.y = -0.5;
+  D4_space.add(ground);
+
+  var cubeGeometry = new BoxGeometry4D(3, 3, 3, 3);
+  cube = new Mesh4D(cubeGeometry, [
+    new THREE.MeshPhongMaterial({
       color: 0xffffff
     }),
-    new THREE.MeshBasicMaterial({
+    new THREE.MeshPhongMaterial({
       color: 0x00ffff,
     }),
     new THREE.MeshBasicMaterial({
@@ -63,21 +63,14 @@ function main()
       side : THREE.DoubleSide,
     }),
   ]);
-
+  cube.position.y = 1.5;
   cube.setFaceMaterial(tesseractFacesGroups.faces, tesseractFacesGroups.materials);
-
-  D4_scene.add(cube.projection);
   D4_space.add(cube);
 
-  D4_camera.position.y = 0.3;
+  D4_camera.position.y = 0.8;
   D4_camera.position.z = 5;
 
-  var light = new THREE.PointLight(0xffff00, 2, 0);
-  light.position.set(1.5, -1.0, 2);
-  D4_scene.add(light);
-
-  var light = new THREE.PointLight(0x0000ff, 0.5, 0);
-  light.position.set(-1.5, -1.0, 2);
+  light = new THREE.PointLight(0xffffff, 1, 1000);
   D4_scene.add(light);
 
   // End level;
@@ -104,6 +97,8 @@ function start()
 function render(timestamp)
 {
   requestAnimationFrame(render);
+
+  light.position.copy(D4_camera.position);
 
   if(!activeControls.paused)
   {
