@@ -1,19 +1,20 @@
-// HTMLDOMElement container, THREE.Vector4 characterPos4D, THREE.Camera camera3D,
+// HTMLDOMElement container, THREE.Vector4 player.position, THREE.Camera camera3D,
 // Space4D space4D, KeySettings keys, String[] rotation4DPlanes,
 // float rotation4DSensitivity, float displacementSensitivity
 function FirstPersonControls(
   container,
-  characterPos4D,
+  player,
   camera3D,
   space4D,
   keys = new KeySettings(),
   rotation4DPlanes = ["xw", "zw"],
-  rotation4DSensitivity = 0.001,
-  displacementSensitivity = 0.004)
+  rotation4DSensitivity = 1,
+  displacementSensitivity = 4)
 {
   Controls.call(this, keys);
   this.container = container;
-  this.characterPos4D = characterPos4D;
+  this.player = player;
+  this.canJump = false;
   this.camera3D = camera3D;
   this.space4D = space4D;
   this.paused = true;
@@ -40,14 +41,12 @@ function FirstPersonControls(
   {
     if(this.paused) return;
 
-    // characterPos4D = new THREE.Vector4(this.camera3D.position.x, this.camera3D.position.y, this.camera3D.position.z, 0);
-
     //4D rotations :
     if(this.keyPressed[this.keys.ana])
     {
       for(var i = 0; i < rotation4DPlanes.length; i++)
       {
-        this.space4D.rotateAround(this.characterPos4D, rotation4DPlanes[i], dt * rotation4DSensitivity);
+        this.space4D.rotateAround(this.player.position, rotation4DPlanes[i], dt * rotation4DSensitivity);
         this.displacementEuler[rotation4DPlanes[i]] -= dt * rotation4DSensitivity;
       }
     }
@@ -56,7 +55,7 @@ function FirstPersonControls(
     {
       for(var i = 0; i < rotation4DPlanes.length; i++)
       {
-        this.space4D.rotateAround(this.characterPos4D, rotation4DPlanes[i], -dt * rotation4DSensitivity);
+        this.space4D.rotateAround(this.player.position, rotation4DPlanes[i], -dt * rotation4DSensitivity);
         this.displacementEuler[rotation4DPlanes[i]] += dt * rotation4DSensitivity;
       }
     }
@@ -68,12 +67,11 @@ function FirstPersonControls(
     this.camera3D.lookAt(where);
 
     //translation
-    var moveDirection = direction.clone();
     if(this.keyPressed[this.keys.up] || this.keyPressed[this.keys.down] || this.keyPressed[this.keys.left] || this.keyPressed[this.keys.right])
     {
+      var moveDirection = direction.clone(), movement = new THREE.Vector3();
       moveDirection.y = 0;
       moveDirection.multiplyScalar(displacementSensitivity*dt);
-      var movement = new THREE.Vector3();
 
       if(this.keyPressed[this.keys.up]) movement.add(moveDirection);
       if(this.keyPressed[this.keys.down]) movement.sub(moveDirection);
@@ -81,18 +79,33 @@ function FirstPersonControls(
       if(this.keyPressed[this.keys.right]) movement.add(moveDirection.clone().rotate("y", -Math.PI/2));
 
       movement.y = 0;
-      movement = space4D.tryForCameraMove(this.camera3D.position, movement, 0.5);
-
-      var movement4D = new THREE.Vector4(movement.x, 0, movement.z, 0);
-      movement4D.applyEuler4D(this.displacementEuler);
-
-      this.camera3D.position.add(movement);
-      this.characterPos4D.add(movement4D);
+      this.player.velocity3D.add(movement);
     }
+
+    // Add gravity
+    this.player.velocity3D.y += -D4_GRAVITY * dt;
+    // Eventually add a jump
+    if(this.canJump && this.keyPressed[this.keys.space])
+      this.player.velocity3D.y += D4_JUMP;
+    var data = space4D.tryForMove(this.camera3D.position, this.player.velocity3D, this.player.radius);
+    this.player.velocity3D = data.movement;
+    this.canJump = (data.collided && this.player.velocity3D.y == 0);
+
+    var movement4D = new THREE.Vector4(this.player.velocity3D.x, 0, this.player.velocity3D.z, 0);
+    movement4D.applyEuler4D(this.displacementEuler);
+
+    this.camera3D.position.add(this.player.velocity3D);
+    this.player.position.add(movement4D);
+
+    // Bring the velocity back to zero by applying friction to the XZ part
+    var backupY = this.player.velocity3D.y;
+    this.player.velocity3D.y = 0;
+    var velLen = this.player.velocity3D.length();
+    if(velLen < D4_FRICTION * dt)
+      this.player.velocity3D.set(0, 0, 0);
     else
-    {
-      moveDirection.multiplyScalar(0);
-    }
+      this.player.velocity3D.multiplyScalar((velLen - D4_FRICTION * dt) / velLen);
+    this.player.velocity3D.y = backupY;
   }
 
   this.onFullscreenChange = function()
