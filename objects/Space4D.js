@@ -89,6 +89,7 @@ Space4D.prototype.project = function()
 // THREE.Vector3 previousPos, THREE.Vector3 amount, float collisionRadius
 Space4D.prototype.tryForCameraMove = function(previousPos, amount, collisionRadius)
 {
+  var collisions = [];
   var sqr = collisionRadius * collisionRadius;
   var nextPos = previousPos.clone().add(amount);
   for(var i = 0; i < this.children.length; i++)
@@ -97,18 +98,34 @@ Space4D.prototype.tryForCameraMove = function(previousPos, amount, collisionRadi
     for(var j = 0; j < faces.length; j++)
     {
       var face = faces[j];
-      if(sqdTriangle(nextPos, vertices[face.a], vertices[face.b], vertices[face.c]) < sqr)
-      {
+      var distanceSq = sqdTriangle(nextPos, vertices[face.a], vertices[face.b], vertices[face.c]);
+      if(distanceSq < sqr)
         // There has been a collision
-        // Project the direction along the tangent axis on (x, z)
-        var tangent = vertices[face.a].clone().sub(vertices[face.c]);
-        tangent.y = 0;
-        tangent.multiplyScalar(tangent.normalize().dot(amount));
-        return tangent;
-      }
+        collisions.push({ dSq: distanceSq, objIndex: i, faceIndex: j});
     }
   }
-  return amount;
+  if(collisions.length == 0)
+    return amount;
+  // There has been one or more collisions
+  collisions.sort(function (x, y) { return y.dSq - x.dSq; });
+  // Only resolve collision with the closest face
+  var child = this.children[collisions[0].objIndex], vertices = child.projection.geometry.vertices, faces = child.projection.geometry.faces;
+  var face = faces[collisions[0].faceIndex];
+  // Project the direction along the tangent axis on (x, z)
+  var tangent = sub(vertices, face.a, face.b);
+  tangent.y = 0;
+  if(tangent.lengthSq() == 0)
+  {
+    tangent = sub(vertices, face.a, face.c);
+    tangent.y = 0;
+    if(tangent.lengthSq() == 0)
+    {
+      tangent = sub(vertices, face.b, face.c);
+      tangent.y = 0;
+    }
+  }
+  tangent.multiplyScalar(tangent.normalize().dot(amount));
+  return this.tryForCameraMove(previousPos, tangent.multiplyScalar(0.5), collisionRadius);
 }
 
 // Squared distance to triangle
@@ -144,3 +161,4 @@ function dot(a, b) { return a.dot(b); }
 function cross(a, b) { return a.clone().cross(b); }
 function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
 function dot2(a) { return a.dot(a); }
+function sub(array, a, b) { return array[a].clone().sub(array[b]); }
