@@ -11,6 +11,7 @@ function Object4D()
   this.material = undefined;
   this.projection = undefined; // use your own 3D projection
   this.dirty = true;
+  this.positionalOnly = false; // use this if you do not want projection
 }
 
 // int[] faces, int[] materials

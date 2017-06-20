@@ -48,7 +48,7 @@ Space4D.prototype.visitObjects = function(callback)
     callback.bind(this)(this.children[i]);
 }
 
-// Updates the children Object4D with their 3D projection
+// Updates the children Object4D with their 3D projection if need be
 Space4D.prototype.project = function()
 {
   var spaceMat = this.buildMatrix5();
@@ -56,7 +56,7 @@ Space4D.prototype.project = function()
   this.visitObjects(function(child)
   {
     var geom4 = child.geometry;
-    if(child.dirty)
+    if(child.dirty && !child.positionalOnly)
     {
       if(geom4 === undefined)
         throw "Pushed Object4D with undefined geometry";
