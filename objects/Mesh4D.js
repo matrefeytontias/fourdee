@@ -16,12 +16,13 @@ Mesh4D.prototype = new Object4D();
 Mesh4D.prototype.constructor = Mesh4D;
 
 
-function BackSides(mesh4d, material){
-
+function BackSides(mesh4d, material)
+{
   material.side = THREE.BackSide;
   THREE.Mesh.call(this, mesh4d.projection.geometry, material);
   this.frustumCulled = false;
   mesh4d.add3Dchild(this);
+  this.parent4D = mesh4d;
 }
 
 BackSides.prototype = new THREE.Mesh();

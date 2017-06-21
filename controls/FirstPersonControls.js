@@ -23,19 +23,19 @@ function FirstPersonControls(
   this.rotateAroundMe = false;
   this.startText = document.getElementById("start");
   this.raycaster = new THREE.Raycaster();
-    
+
   this.raycaster.setFromCamera(new THREE.Vector2(0, 0), this.camera3D);
 
   this.onMouseMove = function(event)
   {
     if(this.paused) return;
-    
+
     this.cameraRotation.y = this.mousePosition.x / this.windowHalfX * Math.PI;
     this.cameraRotation.x += event.movementY / this.windowHalfY * 0.25 * Math.PI;
     this.cameraRotation.x = Math.min(0.25 * Math.PI, Math.max(-0.25 * Math.PI, this.cameraRotation.x));
-  
+
   }
-  
+
   this.onMouseDown = function(){
 
 	  var intersects = this.raycaster.intersectObjects( D4_scene.children );
@@ -49,12 +49,12 @@ function FirstPersonControls(
 	      this.selectedObeject4D = intersects[i].object.parent4D;
 	    }
 	  }
-	  
+
 	  if(this.selectedObeject4D !== null){
 	    //TODO -> wireframe
 	  }
   }
-  
+
   this.onMouseUp = function(){
     this.selectedObeject4D = new Object4D();
   }
@@ -100,7 +100,7 @@ function FirstPersonControls(
           this.displacementEuler[rotation4DPlanes[i]] += dt * rotation4DSensitivity;
         }
         else if(this.selectedObeject4D !== null)
-          this.selectedObeject4D.rotation[rotation4DPlanes[i]] -= dt * rotation4DSensitivity;
+          this.selectedObeject4D.rotation[rotation4DPlanes[i]] += dt * rotation4DSensitivity;
       }
       this.selectedObeject4D.dirty = true;
     }
@@ -135,7 +135,7 @@ function FirstPersonControls(
       moveDirection.multiplyScalar(0);
     }
   }
-  
+
   this.isFullScreen = function(){
     return (document.webkitFullscreenElement === this.container || document.mozFullscreenElement === this.container || document.mozFullScreenElement === this.container || document.fullscreenElement === this.container)
   }
