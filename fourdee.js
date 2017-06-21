@@ -50,10 +50,13 @@ Object4D.prototype.buildMatrix5 = function()
   return mat;
 }
 
-Object4D.prototype.add3Dchild = function(object3D){
+Object4D.prototype.add3Dchild = function(object3D)
+{
   this.children3D.push(object3D);
   object3D.parent4D = this;
 }
+
+
 
 /**************
  * Proj4D API *

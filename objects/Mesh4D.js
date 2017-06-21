@@ -22,7 +22,6 @@ function BackSides(mesh4d, material)
   THREE.Mesh.call(this, mesh4d.projection.geometry, material);
   this.frustumCulled = false;
   mesh4d.add3Dchild(this);
-  this.parent4D = mesh4d;
 }
 
 BackSides.prototype = new THREE.Mesh();
