@@ -9,7 +9,6 @@ LevelLoader.loadFile = function(filename, space4D)
     if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
     {
       LevelLoader.result = LevelLoader.loadJSON(xmlhttp.responseText, space4D);
-      console.log("It worked yo");
       window.dispatchEvent(new Event("levelLoaded"));
     }
     LevelLoader.loadFinished = (xmlhttp.readyState == 4);
@@ -59,14 +58,16 @@ LevelLoader.loadJSON = function(level, space4D)
       for(var plane in objData.rotation)
         obj.rotation[plane] = objData.rotation[plane];
     }
-  }
 
-  for(var objName in objects)
-    space4D.add(objects[objName]);
+    space4D.add(obj);
+  }
 
   var startPos = new THREE.Vector4();
   for(var coord in data.startingPosition)
+  {
+    console.log(coord);
     startPos[coord] = data.startingPosition[coord];
+  }
 
   return { startPos: startPos, title: data.title };
 }

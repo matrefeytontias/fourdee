@@ -1,30 +1,30 @@
 {
-  "startingPos": {  },
+  "startingPosition": { "y": 0.8, "z": -5 },
   "title": "Test me daddy !!!!!!!111!!1",
   "materials": [
     { "name": "cool face",
       "type": "MeshPhongMaterial",
-      "options": { "color":"#ff0000" }
-    },
-    { "name": "boring face",
-      "type": "MeshBasicMaterial",
       "options": { "color":"#ffffff" }
+    },
+    { "name": "rad face",
+      "type": "MeshPhongMaterial",
+      "options": { "color":"#00ffff" }
     }
   ],
   "objects": [
-    { "name": "rad box",
+    { "name": "cube",
       "geometry": "BoxGeometry4D",
       "options": [ 3, 3, 3, 3 ],
-      "material": ["cool face", "boring face"],
-      "position": { "x": 10, "y": 1.5, "z": 5 },
+      "material": "rad face",
+      "position": { "y": 1.5 },
       "rotation": { "xz": 0.25 }
     },
-    { "name": "shit box",
+    { "name": "ground",
       "geometry": "BoxGeometry4D",
-      "options": [ 100, 3, 100, 0 ],
+      "options": [ 100, 2, 100, 100 ],
       "material": "cool face",
-      "position": { "y": -1.5 },
-      "rotation": { "xz": 0.25 }
+      "position": { "y": -1 },
+      "rotation": { }
     }
   ]
 }
