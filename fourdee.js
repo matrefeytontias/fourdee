@@ -13,7 +13,7 @@ function Object4D()
   this.dirty = true;
   this.selectable = false;
   this.seleted = false;
-  this.wireframeMesh = undefined;
+  this.wireframeIndexes = [];
 
 }
 
@@ -40,33 +40,61 @@ Object4D.prototype.setFaceGroupMaterial = function(facesGroups)
 Object4D.prototype.setSelectable = function(b)
 {
   this.selectable = b;
-  if(b && this.wireframeMesh === undefined)
-    this.setWireframeMaterial();
+  if(b && this.wireframeIndexes.length == 0)
+  {
+    var l = this.children3D.length;
+    for(var i = 0; i < l; i++)
+    {
+      
+      
+      if(Array.isArray(this.children3D[i].material))
+      {
+        var materials = [];
+        for(var j = 0; j < this.children3D[i].material.length; j++)
+        {
+          materials.push( this.children3D[i].material[j].clone() );
+          materials[j].transparent = true;
+          materials[j].opacity = 0.2;
+        }
+        this.addWireframeMaterial(materials);
+      }
+      else{
+        var m = this.children3D[i].material.clone();
+        m.transparent = true;
+        m.opacity = 0.2;
+        this.addWireframeMaterial(m);
+      }
+    }
+    this.addWireframeMaterial()
+  }
 }
 
-Object4D.prototype.setWireframeMaterial = function(material = new THREE.MeshBasicMaterial({ 
+Object4D.prototype.addWireframeMaterial = function(material = new THREE.MeshBasicMaterial({ 
         color : 0xffffff, 
         wireframe : true,
         wireframeLinewidth : 5}))
 {
-  this.wireframeMesh =this.add3DMeshMaterial(material);
-  this.wireframeMesh.visible = false;
+  this.wireframeIndexes.push(this.children3D.length); 
+  var wmesh = this.add3DMeshMaterial(material);
+  wmesh.visible = false;
 }
 
 Object4D.prototype.toggleWireframe = function (){
-  if(this.wireframeMesh === undefined)
-    throw "wireframe material is undefined";
+  if(this.wireframeIndexes.length == 0)
+    throw "no defined wireframe materials (tried to toggleWireframe)";
   this.selected = !this.selected;
   if(this.selected)
   {
     for(var i = 0; i < this.children3D.length; i++)
       this.children3D[i].visible = false;
-    this.wireframeMesh.visible = true;
+    for(var i = 0; i < this.wireframeIndexes.length; i++)
+      this.children3D[this.wireframeIndexes[i]].visible = true;
   }
   else{
     for(var i = 0; i < this.children3D.length; i++)
       this.children3D[i].visible = true;
-    this.wireframeMesh.visible = false;
+    for(var i = 0; i < this.wireframeIndexes.length; i++)
+      this.children3D[this.wireframeIndexes[i]].visible = false;
   }
 }
 

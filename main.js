@@ -31,14 +31,12 @@ window.addEventListener("load", main);
 
 function main()
 {
-  build3(D4_scene, D4_space);
+  build4(D4_scene, D4_space);
   
   D4_camera.position.y = 0.8;
   
   light = new THREE.PointLight(0xffffff, 1, 100);
   D4_scene.add(light);
-
-  // End level;
 
   //Start controls
   var fpControls = new FirstPersonControls(D4_container, new THREE.Vector4(), D4_camera, D4_space, ["xw", "zw"]);

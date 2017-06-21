@@ -26,7 +26,7 @@ function FirstPersonControls(
 
   this.onMouseMove = function(event)
   {
-    if(this.paused) return;
+    if(this.paused || this.selectedObeject4D !== null) return;
     
     this.cameraRotation.y = this.mousePosition.x / this.windowHalfX * Math.PI;
     this.cameraRotation.x += event.movementY / this.windowHalfY * 0.25 * Math.PI;
@@ -85,8 +85,6 @@ function FirstPersonControls(
         else if(this.selectedObeject4D !== null)
           this.selectedObeject4D.rotation[rotation4DPlanes[i]] -= dt * rotation4DSensitivity;
       }
-      if(this.selectedObeject4D !== null)
-        this.selectedObeject4D.dirty = true;
     }
 
     if(this.keyPressed[this.keys.kata])
@@ -99,11 +97,16 @@ function FirstPersonControls(
           this.displacementEuler[rotation4DPlanes[i]] += dt * rotation4DSensitivity;
         }
         else if(this.selectedObeject4D !== null)
-          this.selectedObeject4D.rotation[rotation4DPlanes[i]] -= dt * rotation4DSensitivity;
+          this.selectedObeject4D.rotation[rotation4DPlanes[i]] += dt * rotation4DSensitivity;
       }
-      if(this.selectedObeject4D !== null)
-        this.selectedObeject4D.dirty = true;
     }
+    
+    if( this.selectedObeject4D !== null && (this.keyPressed[this.keys.kata] || this.keyPressed[this.keys.ana]) )
+    {
+      //this.camera3D.lookAt(this.selectedObeject4D.position);
+      this.selectedObeject4D.dirty = true;
+    }
+    
 
     var direction = new THREE.Vector3(Math.cos(this.cameraRotation.y), Math.sin(-this.cameraRotation.x), Math.sin(this.cameraRotation.y));
 
