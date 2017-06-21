@@ -9,12 +9,12 @@ function Object4D()
   this.scale = 1.;
   this.geometry = undefined;
   this.projection = undefined; // use your own 3D projection
+  this.position3D = new THREE.Vector3();
   this.children3D = [];
   this.dirty = true;
   this.selectable = false;
   this.seleted = false;
   this.wireframeIndexes = [];
-
 }
 
 // int[] faces, int[] materials
@@ -45,8 +45,8 @@ Object4D.prototype.setSelectable = function(b)
     var l = this.children3D.length;
     for(var i = 0; i < l; i++)
     {
-      
-      
+
+
       if(Array.isArray(this.children3D[i].material))
       {
         var materials = [];
@@ -69,12 +69,12 @@ Object4D.prototype.setSelectable = function(b)
   }
 }
 
-Object4D.prototype.addWireframeMaterial = function(material = new THREE.MeshBasicMaterial({ 
-        color : 0xffffff, 
+Object4D.prototype.addWireframeMaterial = function(material = new THREE.MeshBasicMaterial({
+        color : 0xffffff,
         wireframe : true,
         wireframeLinewidth : 5}))
 {
-  this.wireframeIndexes.push(this.children3D.length); 
+  this.wireframeIndexes.push(this.children3D.length);
   var wmesh = this.add3DMeshMaterial(material);
   wmesh.visible = false;
 }
@@ -126,7 +126,7 @@ Object4D.prototype.add3DChild = function(object3D)
 Object4D.prototype.add3DMeshMaterial = function(material)
 {
   var mesh3d = new THREE.Mesh(this.projection, material);
-  
+
   return this.add3DChild(mesh3d);
 }
 
@@ -134,7 +134,7 @@ Object4D.prototype.addChildrenToScene = function(scene)
 {
   for(var i = 0; i < this.children3D.length; i++)
   {
-    scene.add(this.children3D[i]);  
+    scene.add(this.children3D[i]);
   }
 }
 

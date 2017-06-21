@@ -60,6 +60,9 @@ Space4D.prototype.project = function()
         else
         {
           var objMat = child.buildMatrix5();
+          var localPosition = child.position.clone().sub(child.rotation.center);
+          localPosition.applyMatrix5(objMat).add(child.rotation.center).sub(this.rotation.center).applyMatrix5(spaceMat);
+          child.position3D = this.projector.project(localPosition.add(this.rotation.center));
           geom3.vertices.length = 0;
           for(var vi = 0; vi < geom4.vertices4D.length; vi++)
           {
@@ -75,9 +78,6 @@ Space4D.prototype.project = function()
           geom3.computeFlatVertexNormals();
           geom3.computeBoundingBox();
           geom3.computeBoundingSphere();
-          /*
-          if(child.projection.isLineSegments || child.material.isLineDashedMaterial)
-            geom3.computeLineDistances(); */
         }
       }
       child.dirty = false;
