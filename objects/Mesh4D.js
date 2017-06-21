@@ -9,6 +9,7 @@ function Mesh4D(geometry, material)
   this.geometry = geometry;
   this.material = material;
   this.projection = new THREE.Mesh(new THREE.Geometry(), material);
+  this.add3Dchild(this.projection);
 }
 
 Mesh4D.prototype = new Object4D();
@@ -20,7 +21,7 @@ function BackSides(mesh4d, material){
   material.side = THREE.BackSide;
   THREE.Mesh.call(this, mesh4d.projection.geometry, material);
   this.frustumCulled = false;
-  
+  mesh4d.add3Dchild(this);
 }
 
 BackSides.prototype = new THREE.Mesh();

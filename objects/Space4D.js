@@ -74,6 +74,8 @@ Space4D.prototype.project = function()
           geom3.computeFaceNormals();
           geom3.computeVertexNormals();
           geom3.computeFlatVertexNormals();
+          geom3.computeBoundingBox();
+          geom3.computeBoundingSphere();
           if(child.projection.isLineSegments || child.material.isLineDashedMaterial)
             geom3.computeLineDistances();
         }

@@ -18,14 +18,36 @@ function FirstPersonControls(
   this.space4D = space4D;
   this.paused = true;
   this.displacementEuler = new Euler4D();
-  this.raycaster = new THREE.Raycaster();
+  this.selectedObeject4D = new Object4D();
 
   this.onMouseMove = function(event)
   {
     if(this.paused) return;
+    
     this.cameraRotation.y = this.mousePosition.x / this.windowHalfX * Math.PI;
     this.cameraRotation.x += event.movementY / this.windowHalfY * 0.25 * Math.PI;
     this.cameraRotation.x = Math.min(0.25 * Math.PI, Math.max(-0.25 * Math.PI, this.cameraRotation.x));
+  
+  }
+  
+  this.onMouseUp = function(){
+    var raycaster = new THREE.Raycaster();
+    
+    raycaster.setFromCamera(new THREE.Vector2(0, 0), this.camera3D);
+
+	  var intersects = raycaster.intersectObjects( D4_scene.children );
+
+    var minDistance = Infinity;
+	  for(var i = 0; i < intersects.length; i++)
+	  {
+	    if(intersects[i].distance < minDistance)
+	    {
+	      minDistance = intersects[i].distance;
+	      this.selectedObeject4D = intersects[i].object.parent4D;
+	    }
+	  }
+	  
+	  if(intersects.length != 0) console.log(this.selectedObeject4D);
   }
 
   this.onKeyDown = function(event)
@@ -63,13 +85,6 @@ function FirstPersonControls(
     }
 
     var direction = new THREE.Vector3(Math.cos(this.cameraRotation.y), Math.sin(-this.cameraRotation.x), Math.sin(this.cameraRotation.y));
-
-    this.raycaster.set(this.camera3D.position, direction.normalize());
-
-	  // calculate objects intersecting the picking ray
-	  var intersects = this.raycaster.intersectObjects( D4_scene.children );
-
-	  console.log(intersects.length, this.raycaster.ray);
 
     var where = this.camera3D.position.clone();
     where.add(direction);

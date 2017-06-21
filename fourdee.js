@@ -10,6 +10,7 @@ function Object4D()
   this.geometry = undefined;
   this.material = undefined;
   this.projection = undefined; // use your own 3D projection
+  this.children3D = [];
   this.dirty = true;
 }
 
@@ -47,6 +48,11 @@ Object4D.prototype.buildMatrix5 = function()
       mat.rotate(rotationPlane, theta);
   }
   return mat;
+}
+
+Object4D.prototype.add3Dchild = function(object3D){
+  this.children3D.push(object3D);
+  object3D.parent4D = this;
 }
 
 /**************

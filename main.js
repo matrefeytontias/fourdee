@@ -31,8 +31,15 @@ window.addEventListener("load", main);
 
 function main()
 {
-  build5(D4_scene, D4_space);
+  build3(D4_scene, D4_space);
   
+ /*cube = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshBasicMaterial({color : 0x0000ff}) );
+  
+  cube.position.x = 1;
+  cube.position.y = 1;
+  
+  D4_scene.add(cube);
+  */
   D4_camera.position.y = 0.8;
   
   light = new THREE.PointLight(0xffffff, 1, 100);
