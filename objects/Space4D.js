@@ -54,13 +54,12 @@ Space4D.prototype.project = function()
         throw "Pushed Object4D with undefined geometry";
       else
       {
-        var proj = child.projection;
-        if(proj === undefined)
-          throw "Pushed Object4D with undefined target 3D render type";
+        var geom3 = child.projection;
+        if(geom3 === undefined)
+          throw "Pushed Object4D with undefined target 3D geometry";
         else
         {
           var objMat = child.buildMatrix5();
-          var geom3 = proj.geometry;
           geom3.vertices.length = 0;
           for(var vi = 0; vi < geom4.vertices4D.length; vi++)
           {
@@ -76,8 +75,9 @@ Space4D.prototype.project = function()
           geom3.computeFlatVertexNormals();
           geom3.computeBoundingBox();
           geom3.computeBoundingSphere();
+          /*
           if(child.projection.isLineSegments || child.material.isLineDashedMaterial)
-            geom3.computeLineDistances();
+            geom3.computeLineDistances(); */
         }
       }
       child.dirty = false;

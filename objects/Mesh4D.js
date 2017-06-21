@@ -6,20 +6,20 @@
 function Mesh4D(geometry, material)
 {
   Object4D.call(this);
+  
   this.geometry = geometry;
   this.material = material;
-  this.projection = new THREE.Mesh(new THREE.Geometry(), material);
-  this.add3Dchild(this.projection);
+  this.projection = new THREE.Geometry();
+  this.add3DMeshMaterial(material);
 }
 
 Mesh4D.prototype = new Object4D();
 Mesh4D.prototype.constructor = Mesh4D;
 
-
 function BackSides(mesh4d, material){
 
   material.side = THREE.BackSide;
-  THREE.Mesh.call(this, mesh4d.projection.geometry, material);
+  THREE.Mesh.call(this, mesh4d.projection, material);
   this.frustumCulled = false;
   mesh4d.add3Dchild(this);
 }

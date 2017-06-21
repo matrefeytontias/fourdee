@@ -8,10 +8,13 @@ function Object4D()
   this.rotation = new Euler4D();
   this.scale = 1.;
   this.geometry = undefined;
-  this.material = undefined;
   this.projection = undefined; // use your own 3D projection
   this.children3D = [];
   this.dirty = true;
+  this.selectable = false;
+  this.seleted = false;
+  this.wireframeMesh = undefined;
+
 }
 
 // int[] faces, int[] materials
@@ -33,6 +36,40 @@ Object4D.prototype.setFaceGroupMaterial = function(facesGroups)
   }
 }
 
+//boolean b, THREE.Material wireframeMaterial
+Object4D.prototype.setSelectable = function(b)
+{
+  this.selectable = b;
+  if(b && this.wireframeMesh === undefined)
+    this.setWireframeMaterial();
+}
+
+Object4D.prototype.setWireframeMaterial = function(material = new THREE.MeshBasicMaterial({ 
+        color : 0xffffff, 
+        wireframe : true,
+        wireframeLinewidth : 5}))
+{
+  this.wireframeMesh =this.add3DMeshMaterial(material);
+  this.wireframeMesh.visible = false;
+}
+
+Object4D.prototype.toggleWireframe = function (){
+  if(this.wireframeMesh === undefined)
+    throw "wireframe material is undefined";
+  this.selected = !this.selected;
+  if(this.selected)
+  {
+    for(var i = 0; i < this.children3D.length; i++)
+      this.children3D[i].visible = false;
+    this.wireframeMesh.visible = true;
+  }
+  else{
+    for(var i = 0; i < this.children3D.length; i++)
+      this.children3D[i].visible = true;
+    this.wireframeMesh.visible = false;
+  }
+}
+
 Object4D.prototype.buildMatrix5 = function()
 {
   var mat = new Matrix5();
@@ -50,9 +87,27 @@ Object4D.prototype.buildMatrix5 = function()
   return mat;
 }
 
-Object4D.prototype.add3Dchild = function(object3D){
+Object4D.prototype.add3DChild = function(object3D)
+{
   this.children3D.push(object3D);
   object3D.parent4D = this;
+  object3D.frustumCulled = false;
+  return object3D;
+}
+
+Object4D.prototype.add3DMeshMaterial = function(material)
+{
+  var mesh3d = new THREE.Mesh(this.projection, material);
+  
+  return this.add3DChild(mesh3d);
+}
+
+Object4D.prototype.addChildrenToScene = function(scene)
+{
+  for(var i = 0; i < this.children3D.length; i++)
+  {
+    scene.add(this.children3D[i]);  
+  }
 }
 
 /**************

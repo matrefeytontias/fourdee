@@ -23,8 +23,6 @@ function FirstPersonControls(
   this.rotateAroundMe = false;
   this.startText = document.getElementById("start");
   this.raycaster = new THREE.Raycaster();
-    
-  this.raycaster.setFromCamera(new THREE.Vector2(0, 0), this.camera3D);
 
   this.onMouseMove = function(event)
   {
@@ -38,25 +36,25 @@ function FirstPersonControls(
   
   this.onMouseDown = function(){
 
-	  var intersects = this.raycaster.intersectObjects( D4_scene.children );
+    this.raycaster.setFromCamera(new THREE.Vector2(0, 0), this.camera3D);
 
-    var minDistance = Infinity;
-	  for(var i = 0; i < intersects.length; i++)
+	  var intersects =  this.raycaster.intersectObjects(D4_scene.children);
+
+	  if(intersects.length != 0)
 	  {
-	    if(intersects[i].distance < minDistance)
-	    {
-	      minDistance = intersects[i].distance;
-	      this.selectedObeject4D = intersects[i].object.parent4D;
-	    }
+	    var obj4d =  intersects[0].object.parent4D;
+	    if(obj4d.selectable)
+	      this.selectedObeject4D = obj4d;
 	  }
 	  
-	  if(this.selectedObeject4D !== null){
-	    //TODO -> wireframe
-	  }
+	  if(this.selectedObeject4D !== null)
+	    this.selectedObeject4D.toggleWireframe();
   }
   
   this.onMouseUp = function(){
-    this.selectedObeject4D = new Object4D();
+    if(this.selectedObeject4D !== null) 
+      this.selectedObeject4D.toggleWireframe();
+    this.selectedObeject4D = null;
   }
 
   this.onKeyDown = function(event)
@@ -87,7 +85,8 @@ function FirstPersonControls(
         else if(this.selectedObeject4D !== null)
           this.selectedObeject4D.rotation[rotation4DPlanes[i]] -= dt * rotation4DSensitivity;
       }
-      this.selectedObeject4D.dirty = true;
+      if(this.selectedObeject4D !== null)
+        this.selectedObeject4D.dirty = true;
     }
 
     if(this.keyPressed[this.keys.kata])
@@ -102,7 +101,8 @@ function FirstPersonControls(
         else if(this.selectedObeject4D !== null)
           this.selectedObeject4D.rotation[rotation4DPlanes[i]] -= dt * rotation4DSensitivity;
       }
-      this.selectedObeject4D.dirty = true;
+      if(this.selectedObeject4D !== null)
+        this.selectedObeject4D.dirty = true;
     }
 
     var direction = new THREE.Vector3(Math.cos(this.cameraRotation.y), Math.sin(-this.cameraRotation.x), Math.sin(this.cameraRotation.y));

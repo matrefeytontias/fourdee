@@ -41,9 +41,10 @@ function build2(scene, space){
     scene.add(cube.projection);
 }
 
+var cube;
 function build3(scene, space){
     var geometry = new Box3DGeometry4D("xyz", 2, 2, 2);
-    var cube = new Mesh4D(geometry, 
+    cube = new Mesh4D(geometry, 
         new THREE.MeshLambertMaterial({
             color: 0x00ffff
         })
@@ -52,11 +53,16 @@ function build3(scene, space){
     
     cube.position.y = 1;
     
-    scene.add(cube.projection);
-    space.add(cube);
+    cube.setWireframeMaterial();
+    cube.add3DMeshMaterial( new THREE.MeshLambertMaterial({ color: 0xff00ff, side : THREE.BackSide }) )  ;
+    cube.setSelectable(true);
+    //cube.toggleWireframe();
     
-    var interior = new BackSides(cube, new THREE.MeshLambertMaterial({ color: 0xff00ff }));
-    scene.add(interior);
+    console.log(cube);
+    
+    cube.addChildrenToScene(scene);
+    
+    space.add(cube);
   
 }
 
