@@ -48,6 +48,7 @@ function build3(scene, space){
             color: 0x00ffff
         })
     );
+    cube.rotation.zw = 1;
     
     cube.position.y = 1;
     
