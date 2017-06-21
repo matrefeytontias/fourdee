@@ -101,7 +101,7 @@ function FirstPersonControls(
     var backupY = this.player.velocity3D.y;
     this.player.velocity3D.y = 0;
     var velLen = this.player.velocity3D.length();
-    if(velLen < D4_FRICTION * dt)
+    if(velLen <= D4_FRICTION * dt)
       this.player.velocity3D.set(0, 0, 0);
     else
       this.player.velocity3D.multiplyScalar((velLen - D4_FRICTION * dt) / velLen);

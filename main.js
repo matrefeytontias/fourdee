@@ -103,9 +103,9 @@ function start()
 {
   D4_container.appendChild(D4_renderer.domElement);
 
-  lastUpdateTimestamp = performance.now();
+  lastUpdateTimestamp = -1;
   resize();
-  render(performance.now());
+  requestAnimationFrame(render);
 }
 
 function render(timestamp)
@@ -114,7 +114,7 @@ function render(timestamp)
 
   if(!activeControls.paused)
   {
-    activeControls.update((timestamp - lastUpdateTimestamp) / 1000)
+    activeControls.update(lastUpdateTimestamp > 0 ? (timestamp - lastUpdateTimestamp) / 1000 : 0);
     lastUpdateTimestamp = timestamp;
   }
   
