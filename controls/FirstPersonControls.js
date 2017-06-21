@@ -6,8 +6,9 @@ function FirstPersonControls(
   characterPos4D,
   camera3D,
   space4D,
-  keys = new KeySettings(),
   rotation4DPlanes = ["xw", "zw"],
+  rotateAroundMe = false,
+  keys = new KeySettings(),
   rotation4DSensitivity = 0.001,
   displacementSensitivity = 0.002)
 {
@@ -18,7 +19,12 @@ function FirstPersonControls(
   this.space4D = space4D;
   this.paused = true;
   this.displacementEuler = new Euler4D();
-  this.selectedObeject4D = new Object4D();
+  this.selectedObeject4D = null;
+  this.rotateAroundMe = false;
+  this.startText = document.getElementById("start");
+  this.raycaster = new THREE.Raycaster();
+    
+  this.raycaster.setFromCamera(new THREE.Vector2(0, 0), this.camera3D);
 
   this.onMouseMove = function(event)
   {
@@ -31,11 +37,8 @@ function FirstPersonControls(
   }
   
   this.onMouseDown = function(){
-    var raycaster = new THREE.Raycaster();
-    
-    raycaster.setFromCamera(new THREE.Vector2(0, 0), this.camera3D);
 
-	  var intersects = raycaster.intersectObjects( D4_scene.children );
+	  var intersects = this.raycaster.intersectObjects( D4_scene.children );
 
     var minDistance = Infinity;
 	  for(var i = 0; i < intersects.length; i++)
@@ -45,6 +48,10 @@ function FirstPersonControls(
 	      minDistance = intersects[i].distance;
 	      this.selectedObeject4D = intersects[i].object.parent4D;
 	    }
+	  }
+	  
+	  if(this.selectedObeject4D !== null){
+	    //TODO -> wireframe
 	  }
   }
   
@@ -77,10 +84,8 @@ function FirstPersonControls(
           this.space4D.rotateAround(this.characterPos4D, rotation4DPlanes[i], dt * rotation4DSensitivity);
           this.displacementEuler[rotation4DPlanes[i]] -= dt * rotation4DSensitivity;
         }
-        else
-        { 
+        else if(this.selectedObeject4D !== null)
           this.selectedObeject4D.rotation[rotation4DPlanes[i]] -= dt * rotation4DSensitivity;
-        }
       }
       this.selectedObeject4D.dirty = true;
     }
@@ -94,10 +99,8 @@ function FirstPersonControls(
           this.space4D.rotateAround(this.characterPos4D, rotation4DPlanes[i], -dt * rotation4DSensitivity);
           this.displacementEuler[rotation4DPlanes[i]] += dt * rotation4DSensitivity;
         }
-        else
-        {
+        else if(this.selectedObeject4D !== null)
           this.selectedObeject4D.rotation[rotation4DPlanes[i]] -= dt * rotation4DSensitivity;
-        }
       }
       this.selectedObeject4D.dirty = true;
     }
@@ -132,17 +135,18 @@ function FirstPersonControls(
       moveDirection.multiplyScalar(0);
     }
   }
+  
+  this.isFullScreen = function(){
+    return (document.webkitFullscreenElement === this.container || document.mozFullscreenElement === this.container || document.mozFullScreenElement === this.container || document.fullscreenElement === this.container)
+  }
 
   this.onFullscreenChange = function()
   {
-    if (document.webkitFullscreenElement === this.container || document.mozFullscreenElement === this.container || document.mozFullScreenElement === this.container || document.fullscreenElement === this.container)
+    if(this.isFullScreen())
     {
       this.container.requestPointerLock = this.container.requestPointerLock || this.container.mozRequestPointerLock || this.container.webkitRequestPointerLock;
       this.container.requestPointerLock();
-      this.paused = false;
     }
-    else
-      this.paused = true;
   }
 
   this.onPointerLockChange = function()
@@ -150,13 +154,21 @@ function FirstPersonControls(
     if (document.mozPointerLockElement === this.container || document.webkitPointerLockElement === this.container || document.pointerLockElement === this.container){
       console.log("Pointer Lock was successful.");
       this.paused = false;
+      this.startText.style.display = "none";
+      if(document.getElementsByName("canvas").length == 0) window.setTimeout(start, 100);
+      else window.setTimeout(resize, 100);
     }
     else{
       console.log("Pointer Lock was lost.");
+      if(this.isFullScreen()){
+        document.exitFullscreen = document.webkitExitFullscreen || document.exitFullscreen || document.mozExitFullscreen || document.mozExitFullScreen;
+        document.exitFullscreen();
+        window.setTimeout(resize, 100);
+      }
       this.paused = true;
+      this.startText.style.display = "";
     }
-    if(this.container.innerHTML.length < 2) window.setTimeout(start, 100);
-    else window.setTimeout(resize, 100);
+
   }
 }
 

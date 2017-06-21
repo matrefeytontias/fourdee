@@ -33,13 +33,6 @@ function main()
 {
   build3(D4_scene, D4_space);
   
- /*cube = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshBasicMaterial({color : 0x0000ff}) );
-  
-  cube.position.x = 1;
-  cube.position.y = 1;
-  
-  D4_scene.add(cube);
-  */
   D4_camera.position.y = 0.8;
   
   light = new THREE.PointLight(0xffffff, 1, 100);
@@ -48,11 +41,11 @@ function main()
   // End level;
 
   //Start controls
-  var fpControls = new FirstPersonControls(D4_container, new THREE.Vector4(), D4_camera, D4_space, new KeySettings(), ["xw", "zw"]);
+  var fpControls = new FirstPersonControls(D4_container, new THREE.Vector4(), D4_camera, D4_space, ["xw", "zw"]);
   var tpControls = new ThirdPersonControls(D4_camera, D4_scene, D4_space);
   fpControls.listen();
 
-  document.getElementById("center-text").style.display = activeControls === fpControls ? "" : "none";
+  document.getElementById("start").style.display = activeControls === fpControls ? "" : "none";
 }
 
 function resize(){
