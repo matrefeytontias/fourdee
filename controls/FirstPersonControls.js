@@ -36,8 +36,9 @@ function FirstPersonControls(
 
   }
 
-  this.onMouseDown = function(){
-
+  this.onMouseDown = function()
+  {
+    this.raycaster.setFromCamera(new THREE.Vector2(), this.camera3D);
 	  var intersects = this.raycaster.intersectObjects( D4_scene.children );
 
     var minDistance = Infinity;
@@ -55,8 +56,9 @@ function FirstPersonControls(
 	  }
   }
 
-  this.onMouseUp = function(){
-    this.selectedObeject4D = new Object4D();
+  this.onMouseUp = function()
+  {
+    this.selectedObeject4D = null;
   }
 
   this.onKeyDown = function(event)
