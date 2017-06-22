@@ -38,6 +38,7 @@ LevelLoader.loadJSON = function(level, space4D)
     materials[mat.name] = new window.THREE[mat.type](mat.options);
   }
   
+  // Build material packages for using several materials per mesh
   for(var name in data.materialPackages)
   {
     var mats = [];

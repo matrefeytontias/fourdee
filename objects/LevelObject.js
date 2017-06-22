@@ -10,7 +10,7 @@ LevelObject.prototype = new Mesh4D();
 LevelObject.prototype.constructor = LevelObject;
 
 // String[] rotations
-LevelObject.prototype.lockRotations(rotations)
+LevelObject.prototype.lockRotations = function(rotations)
 {
   for(var i = 0; i < rotations.length; i++)
   {
