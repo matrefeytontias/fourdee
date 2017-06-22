@@ -46,8 +46,6 @@ LevelLoader.loadJSON = function(level, space4D)
       mats.push(materials[data.materialPackages[name][i]].clone());
     materials[name] = mats;
   }
-  
-  console.log(materials);
 
   // Read and construct the level's objects
   var objects = {};
@@ -81,17 +79,18 @@ LevelLoader.loadJSON = function(level, space4D)
     }
 
     if(objData.selectable)
+    {
       obj.setSelectable(true);
+      if(objData.rotationLocks)
+        obj.lockRotations(objData.rotationLocks);
+    }
 
     space4D.add(obj);
   }
 
   var startPos = new THREE.Vector4();
   for(var coord in data.startingPosition)
-  {
-    console.log(coord);
     startPos[coord] = data.startingPosition[coord];
-  }
 
   return { startPos: startPos, title: data.title };
 }
