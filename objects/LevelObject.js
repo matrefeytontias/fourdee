@@ -9,6 +9,18 @@ function LevelObject(geometry, material)
 LevelObject.prototype = new Mesh4D();
 LevelObject.prototype.constructor = LevelObject;
 
+// String[] rotations
+LevelObject.prototype.lockRotations(rotations)
+{
+  for(var i = 0; i < rotations.length; i++)
+  {
+    var property = rotations[i], r = this.rotation;
+    var backup = r[property];
+    delete r[property];
+    Object.defineProperty(r, property, { get: function() { return backup; } });
+  }
+}
+
 //boolean b, THREE.Material wireframeMaterial
 LevelObject.prototype.setSelectable = function(b)
 {
