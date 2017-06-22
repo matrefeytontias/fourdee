@@ -112,7 +112,7 @@ Space4D.prototype.tryForMove = function(previousPos, amount, collisionRadius)
   {
     if(!child.positionalOnly)
     {
-      var geom3 = child.children3D[0].geometry, vertices = geom3.vertices, faces = geom3.faces;
+      var geom3 = child.get3DBody().geometry, vertices = geom3.vertices, faces = geom3.faces;
       for(var j = 0; j < faces.length; j++)
       {
         var face = faces[j];
@@ -141,7 +141,7 @@ Space4D.prototype.tryForMove = function(previousPos, amount, collisionRadius)
   collisions.sort(function (x, y) { return y.dSq - x.dSq; });
   // Only resolve collision with the closest face for now
   var proj = collisions[0].proj;
-  var child = collisions[0].obj, vertices = child.children3D[0].geometry.vertices;
+  var child = collisions[0].obj, vertices = child.get3DBody().geometry.vertices;
   var face = collisions[0].face;
   var faceNorm = collisions[0].faceNorm;
   // The movement brings the object right on the intersection point ...

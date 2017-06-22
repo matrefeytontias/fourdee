@@ -53,9 +53,15 @@ Object4D.prototype.setSelectable = function(b)
         var materials = [];
         for(var j = 0; j < this.children3D[i].material.length; j++)
         {
-          materials.push( this.children3D[i].material[j].clone() );
-          materials[j].transparent = true;
-          materials[j].opacity = 0.2;
+          var mat = this.children3D[i].material[j];
+          if(mat !== null)
+          {
+            materials.push(mat.clone());
+            materials[j].transparent = true;
+            materials[j].opacity = 0.2;
+          }
+          else
+            materials.push(null);
         }
         this.addWireframeMaterial(materials);
       }
@@ -131,7 +137,10 @@ Object4D.prototype.add3DMeshMaterial = function(material)
   return this.add3DChild(mesh3d);
 }
 
-
+Object4D.prototype.get3DBody = function ()
+{
+  return this.children3D[0];
+}
 
 /**************
  * Proj4D API *
