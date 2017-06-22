@@ -60,10 +60,10 @@ LevelLoader.loadJSON = function(level, space4D)
     {
       obj = new LevelObject(geom, materials[objData.material[0]]);
       for(var j = 1; j < objData.material.length; j++)
-        obj.add3DMeshMaterial(materials[objData.material[j]])
+        obj.add3DMeshMaterial(materials[objData.material[j]]);
     }
     else
-      obj = new LevelObject(geom, materials[objData.material].clone())
+      obj = new LevelObject(geom, materials[objData.material].clone());
     
     objects[objData.name] = obj;
 
