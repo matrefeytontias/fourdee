@@ -1,0 +1,30 @@
+{
+  "startingPosition": { "y": 0.8, "z": -5 },
+  "title": "Test me daddy !!!!!!!111!!1",
+  "materials": [
+    { "name": "cool face",
+      "type": "MeshPhongMaterial",
+      "options": { "color":"#ffffff" }
+    },
+    { "name": "rad face",
+      "type": "MeshPhongMaterial",
+      "options": { "color":"#00ffff" }
+    }
+  ],
+  "objects": [
+    { "name": "cube",
+      "geometry": "BoxGeometry4D",
+      "options": [ 3, 3, 3, 3 ],
+      "material": "rad face",
+      "position": { "y": 1.5 },
+      "rotation": { "xz": 0.25 }
+    },
+    { "name": "ground",
+      "geometry": "BoxGeometry4D",
+      "options": [ 100, 2, 100, 100 ],
+      "material": "cool face",
+      "position": { "y": -1 },
+      "rotation": { }
+    }
+  ]
+}
