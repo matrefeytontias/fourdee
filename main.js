@@ -15,7 +15,7 @@ var D4_gameHeight = D4_container.offsetHeight;
 const D4_aspectRatio = D4_gameWidth / D4_gameHeight;
 const D4_scene = new THREE.Scene();
 
-var lastUpdateTimestamp = performance.now();
+var lastUpdateTimestamp;
 
 const orthoProj = new OrthoProj();
 const stereoProj = new StereoProj(new THREE.Vector4(0, 0, 0, 10), 1);
