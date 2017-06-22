@@ -33,8 +33,20 @@ LevelLoader.loadJSON = function(level, space4D)
   {
     var mat = data.materials[i];
     // Construct the material from the class name and the options
+    if(mat.options.side != undefined) mat.options.side = THREE[mat.options.side];
+    
     materials[mat.name] = new window.THREE[mat.type](mat.options);
   }
+  
+  for(var name in data.materialPackages)
+  {
+    var mats = [];
+    for(var i = 0; i < data.materialPackages[name].length; i++)
+      mats.push(materials[data.materialPackages[name][i]].clone());
+    materials[name] = mats;
+  }
+  
+  console.log(materials);
 
   // Read and construct the level's objects
   var objects = {};
@@ -43,9 +55,17 @@ LevelLoader.loadJSON = function(level, space4D)
     var objData = data.objects[i];
     var type = window[objData.geometry];
     var geom = new (type.bind.apply(type, [type].concat(objData.options)))();
-    var obj = Array.isArray(objData.material) ?
-        new LevelObject(geom, objData.material.forEach(function (mName) { return materials[mName]; }))
-      : new LevelObject(geom, materials[objData.material]);
+
+    var obj;
+    if(Array.isArray(objData.material))
+    {
+      obj = new LevelObject(geom, materials[objData.material[0]]);
+      for(var j = 1; j < objData.material.length; j++)
+        obj.add3DMeshMaterial(materials[objData.material[j]])
+    }
+    else
+      obj = new LevelObject(geom, materials[objData.material].clone())
+    
     objects[objData.name] = obj;
 
     if(objData.position)
