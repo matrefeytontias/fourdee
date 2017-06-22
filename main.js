@@ -31,7 +31,7 @@ window.addEventListener("load", main);
 
 function main()
 {
-  build4(D4_scene, D4_space);
+  build3(D4_scene, D4_space);
   
   D4_camera.position.y = 0.8;
   

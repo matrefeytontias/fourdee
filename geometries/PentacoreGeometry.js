@@ -1,12 +1,13 @@
-const PentacoreVertices = [
-    new THREE.Vector4(-1/2,  -1/4*Math.sqrt(2/3), -Math.sqrt(3)/6, 0),
-    new THREE.Vector4(1/2, -1/4*Math.sqrt(2/3), -Math.sqrt(3)/6, 0),
-    new THREE.Vector4(0, -1/4*Math.sqrt(2/3), Math.sqrt(3)/3, 0),
-    new THREE.Vector4(0, 3/4*Math.sqrt(2/3), 0, 0),
-    new THREE.Vector4(0, 0, 0, Math.sqrt(5/2)/2)
+//Vertices of a 0,0,0,0-centred regular pentachore
+const PentachoreVertices = [
+    new THREE.Vector4(-1/2,  -1/4*Math.sqrt(2/3), -Math.sqrt(3)/6, -1/4*Math.sqrt(2/5)),
+    new THREE.Vector4(1/2, -1/4*Math.sqrt(2/3), -Math.sqrt(3)/6, -1/4*Math.sqrt(2/5)),
+    new THREE.Vector4(0, -1/4*Math.sqrt(2/3), Math.sqrt(3)/3, -1/4*Math.sqrt(2/5)),
+    new THREE.Vector4(0, 3/4*Math.sqrt(2/3), 0, -1/4*Math.sqrt(2/5)),
+    new THREE.Vector4(0, 0, 0, Math.sqrt(5/2)/2 -1/4*Math.sqrt(2/5))
 ];
 
-const PentacoreFaces = [
+const PentachoreFaces = [
     new THREE.Face3(0, 1, 2),
     new THREE.Face3(0, 1, 3),
     new THREE.Face3(0, 2, 3),
@@ -19,8 +20,8 @@ const PentacoreFaces = [
     new THREE.Face3(2, 3, 4) 
 ];
 
-// Constructs a pentacore : it's the equivalent of a thetrahedron in 3D : it's the 4-simplex 
-function PentacoreGeometry(scale = 1, width=null, height=null, depth=null, duth=null)
+// Constructs a pentachore : it's the equivalent of a thetrahedron in 3D : it's the 4-simplex 
+function PentachoreGeometry(scale = 1, width=null, height=null, depth=null, duth=null)
 {
   Geometry4D.call(this);
   
@@ -30,11 +31,11 @@ function PentacoreGeometry(scale = 1, width=null, height=null, depth=null, duth=
   else 
     mat.scale(width, height, depth, duth);
   
-  for(var i = 0; i < PentacoreVertices.length; i++)
-    this.vertices4D.push(PentacoreVertices[i].clone().applyMatrix5(mat));
-  for(var i = 0; i < PentacoreFaces.length; i++)
-    this.faces.push(PentacoreFaces[i].clone());;
+  for(var i = 0; i < PentachoreVertices.length; i++)
+    this.vertices4D.push(PentachoreVertices[i].clone().applyMatrix5(mat));
+  for(var i = 0; i < PentachoreFaces.length; i++)
+    this.faces.push(PentachoreFaces[i].clone());;
 }
 
-PentacoreGeometry.prototype = new Geometry4D();
-PentacoreGeometry.prototype.constructor = PentacoreGeometry;
+PentachoreGeometry.prototype = new Geometry4D();
+PentachoreGeometry.prototype.constructor = PentachoreGeometry;
