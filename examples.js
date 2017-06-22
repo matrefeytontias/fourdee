@@ -1,88 +1,88 @@
 function build1(scene, space){
-    var geometry = new BoxLinesGeometry4D(1, 1, 1, 1);
-    var cube = new LineSegments4D(geometry, new THREE.LineBasicMaterial({ color: 0xff0000 }));
-    cube.position.y = 0.5;
-    
+    var geometry = new BoxGeometry4D(2, 2, 2, 2);
+    var cube = new Mesh4D(geometry, [
+      new THREE.MeshBasicMaterial({
+        color: 0xffffff
+      }),
+      new THREE.MeshBasicMaterial({
+        color: 0x00ffff
+      }),
+      new THREE.MeshBasicMaterial({
+        color: 0xff0000,
+        wireframe : true,
+        wireframeLinewidth : 5,
+      }),
+      new THREE.MeshBasicMaterial({
+        color: 0x0000ff,
+        wireframe : true,
+        wireframeLinewidth : 5,
+      }),
+      new THREE.MeshBasicMaterial({
+        color: 0xffff00,
+        wireframe : true,
+        wireframeLinewidth : 5,
+      }),
+    ]);
+
+    cube.setFaceGroupMaterial(tesseractFacesGroups);
+
+    cube.setSelectable(true);
+
+    cube.position.y = 1;
+    cube.position.z = 2;
+
     space.add(cube);
-    scene.add(cube.projection);
 }
 
 function build2(scene, space){
-    var geometry = new BoxGeometry4D(2, 2, 2, 2);
-    var cube = new Mesh4D(geometry, [
-    new THREE.MeshBasicMaterial({
-      color: 0xffffff
-    }),
-    new THREE.MeshBasicMaterial({
-      color: 0x00ffff
-    }),
-    new THREE.MeshBasicMaterial({
-      color: 0xff0000,
-      wireframe : true,
-      wireframeLinewidth : 5,
-    }),
-    new THREE.MeshBasicMaterial({
-      color: 0x0000ff,
-      wireframe : true,
-      wireframeLinewidth : 5,
-    }),
-    new THREE.MeshBasicMaterial({
-      color: 0xffff00,
-      wireframe : true,
-      wireframeLinewidth : 5,
-    }),
-    ]);
-  
-    cube.setFaceGroupMaterial(tesseractFacesGroups); 
-    cube.position.y = 1;
-    cube.position.z = 2;
-  
-    space.add(cube);
-    scene.add(cube.projection);
-}
-
-function build3(scene, space){
     var geometry = new Box3DGeometry4D("xyz", 2, 2, 2);
-    var cube = new Mesh4D(geometry, 
+    var cube = new Mesh4D(geometry,
         new THREE.MeshLambertMaterial({
             color: 0x00ffff
         })
     );
+
+    cube.add3DMeshMaterial( new THREE.MeshLambertMaterial({ color: 0xff00ff, side : THREE.BackSide }) ) ;
+
     cube.rotation.zw = 1;
-    
     cube.position.y = 1;
-    
-    scene.add(cube.projection);
+
+    cube.setSelectable(true);
     space.add(cube);
-    
-    var interior = new BackSides(cube, new THREE.MeshLambertMaterial({ color: 0xff00ff }));
-    scene.add(interior);
-  
+
 }
 
-function build4(scene, space){
-      var geometry = new PentacoreGeometry(5);
-  var d4hedron = new Mesh4D(geometry, 
+function build3(scene, space)
+{
+  var geometry = new PentacoreGeometry(5);
+  var d4hedron = new Mesh4D(geometry,
     new THREE.MeshLambertMaterial({
-      color: 0xff0000,
-      side : THREE.DoubleSide
+      color: 0xff0000
     })
   );
-  
+
+  d4hedron.add3DMeshMaterial( new THREE.MeshLambertMaterial({ color: 0xff00ff, side : THREE.BackSide }) ) ;
+
   d4hedron.position.y = 1;
-  
-  scene.add(d4hedron.projection);
+  d4hedron.setSelectable(true);
+
   space.add(d4hedron);
 }
 
-function build5(scene, space){
+function build4(scene, space){
+    var ground = new Mesh4D(new BoxGeometry4D(100, 2, 100, 100), new THREE.MeshPhongMaterial({ color: 0xffffff }));
+    ground.position.y = -1;
+    space.add(ground);
+
     var geometry = new BoxGeometry4D(2, 2, 2, 2);
     var cube = new Mesh4D(geometry, [
     new THREE.MeshLambertMaterial({
-      color: 0xffffff
+      color: 0xffffff,
+      side : THREE.DoubleSide
     }),
     new THREE.MeshLambertMaterial({
-      color: 0x00ffff
+      color: 0x00ffff,
+      side : THREE.DoubleSide
     }),
     new THREE.MeshBasicMaterial({
       color: 0xff0000,
@@ -96,19 +96,17 @@ function build5(scene, space){
     }),
     new THREE.MeshLambertMaterial({
       color: 0x00ff00,
-      side : THREE.DoubleSide,
-      //wireframe : true,
-      //wireframeLinewidth : 5,
+      side : THREE.DoubleSide
     }),
     ]);
-  
-    cube.setFaceGroupMaterial(tesseractFacesGroups); 
-    
+
+    cube.setFaceGroupMaterial(tesseractFacesGroups);
     cube.geometry.filterFacesGroups([0, 1, 4], tesseractFacesGroups);
-    
+
+    cube.setSelectable(true);
+
     cube.position.y = 1;
     cube.position.z = 2;
-  
+
     space.add(cube);
-    scene.add(cube.projection);
 }
