@@ -6,8 +6,9 @@ function FirstPersonControls(
   player,
   camera3D,
   space4D,
-  keys = new KeySettings(),
   rotation4DPlanes = ["xw", "zw"],
+  rotateAroundMe = false,
+  keys = new KeySettings(),
   rotation4DSensitivity = 1,
   displacementSensitivity = 4)
 {
@@ -19,13 +20,42 @@ function FirstPersonControls(
   this.space4D = space4D;
   this.paused = true;
   this.displacementEuler = new Euler4D();
+  this.selectedObeject4D = null;
+  this.rotateAroundMe = false;
+  this.startText = document.getElementById("start");
+  this.raycaster = new THREE.Raycaster();
 
   this.onMouseMove = function(event)
   {
-    if(this.paused) return;
+    if(this.paused || this.selectedObeject4D !== null) return;
+
     this.cameraRotation.y = this.mousePosition.x / this.windowHalfX * Math.PI;
     this.cameraRotation.x += event.movementY / this.windowHalfY * 0.25 * Math.PI;
     this.cameraRotation.x = Math.min(0.25 * Math.PI, Math.max(-0.25 * Math.PI, this.cameraRotation.x));
+
+  }
+
+  this.onMouseDown = function(){
+
+    this.raycaster.setFromCamera(new THREE.Vector2(0, 0), this.camera3D);
+
+	  var intersects =  this.raycaster.intersectObjects(D4_scene.children);
+
+	  if(intersects.length != 0)
+	  {
+	    var obj4d =  intersects[0].object.parent4D;
+	    if(obj4d.selectable)
+	      this.selectedObeject4D = obj4d;
+	  }
+
+	  if(this.selectedObeject4D !== null)
+	    this.selectedObeject4D.toggleWireframe();
+  }
+
+  this.onMouseUp = function(){
+    if(this.selectedObeject4D !== null)
+      this.selectedObeject4D.toggleWireframe();
+    this.selectedObeject4D = null;
   }
 
   this.onKeyDown = function(event)
@@ -46,8 +76,13 @@ function FirstPersonControls(
     {
       for(var i = 0; i < rotation4DPlanes.length; i++)
       {
-        this.space4D.rotateAround(this.player.position, rotation4DPlanes[i], dt * rotation4DSensitivity);
-        this.displacementEuler[rotation4DPlanes[i]] -= dt * rotation4DSensitivity;
+        if(this.rotateAroundMe)
+        {
+          this.space4D.rotateAround(this.player.position, rotation4DPlanes[i], dt * rotation4DSensitivity);
+          this.displacementEuler[rotation4DPlanes[i]] -= dt * rotation4DSensitivity;
+        }
+        else if(this.selectedObeject4D !== null)
+          this.selectedObeject4D.rotation[rotation4DPlanes[i]] -= dt * rotation4DSensitivity;
       }
     }
 
@@ -55,10 +90,22 @@ function FirstPersonControls(
     {
       for(var i = 0; i < rotation4DPlanes.length; i++)
       {
-        this.space4D.rotateAround(this.player.position, rotation4DPlanes[i], -dt * rotation4DSensitivity);
-        this.displacementEuler[rotation4DPlanes[i]] += dt * rotation4DSensitivity;
+        if(this.rotateAroundMe)
+        {
+          this.space4D.rotateAround(this.player.position, rotation4DPlanes[i], -dt * rotation4DSensitivity);
+          this.displacementEuler[rotation4DPlanes[i]] += dt * rotation4DSensitivity;
+        }
+        else if(this.selectedObeject4D !== null)
+          this.selectedObeject4D.rotation[rotation4DPlanes[i]] += dt * rotation4DSensitivity;
       }
     }
+
+    if( this.selectedObeject4D !== null && (this.keyPressed[this.keys.kata] || this.keyPressed[this.keys.ana]) )
+    {
+      //this.camera3D.lookAt(this.selectedObeject4D.position);
+      this.selectedObeject4D.dirty = true;
+    }
+
 
     var direction = new THREE.Vector3(Math.cos(this.cameraRotation.y), Math.sin(-this.cameraRotation.x), Math.sin(this.cameraRotation.y));
 
@@ -108,26 +155,39 @@ function FirstPersonControls(
     this.player.velocity3D.y = backupY;
   }
 
+  this.isFullScreen = function(){
+    return (document.webkitFullscreenElement === this.container || document.mozFullscreenElement === this.container || document.mozFullScreenElement === this.container || document.fullscreenElement === this.container)
+  }
+
   this.onFullscreenChange = function()
   {
-    if (document.webkitFullscreenElement === this.container || document.mozFullscreenElement === this.container || document.mozFullScreenElement === this.container || document.fullscreenElement === this.container)
+    if(this.isFullScreen())
     {
       this.container.requestPointerLock = this.container.requestPointerLock || this.container.mozRequestPointerLock || this.container.webkitRequestPointerLock;
       this.container.requestPointerLock();
-      this.paused = false;
     }
-    else
-      this.paused = true;
   }
 
   this.onPointerLockChange = function()
   {
-    if (document.mozPointerLockElement === this.container || document.webkitPointerLockElement === this.container || document.pointerLockElement === this.container)
+    if (document.mozPointerLockElement === this.container || document.webkitPointerLockElement === this.container || document.pointerLockElement === this.container){
       console.log("Pointer Lock was successful.");
-    else
+      this.paused = false;
+      this.startText.style.display = "none";
+      if(document.getElementsByName("canvas").length == 0) window.setTimeout(start, 100);
+      else window.setTimeout(resize, 100);
+    }
+    else{
       console.log("Pointer Lock was lost.");
-    if(this.container.innerHTML.length < 2) window.setTimeout(start, 100);
-    else window.setTimeout(resize, 100);
+      if(this.isFullScreen()){
+        document.exitFullscreen = document.webkitExitFullscreen || document.exitFullscreen || document.mozExitFullscreen || document.mozExitFullScreen;
+        document.exitFullscreen();
+        window.setTimeout(resize, 100);
+      }
+      this.paused = true;
+      this.startText.style.display = "";
+    }
+
   }
 }
 
