@@ -42,7 +42,7 @@ function main()
   D4_scene.add(light);
 
   //Start controls
-  var fpControls = new FirstPersonControls(D4_container, new Player(), D4_camera, D4_space, new KeySettings(), ["xw"]);
+  var fpControls = new FirstPersonControls(D4_container, new Player(), D4_camera, D4_space, ["xw"]);
   var tpControls = new ThirdPersonControls(D4_camera, D4_scene, D4_space);
   fpControls.listen();
 
@@ -65,19 +65,18 @@ function start()
 {
   D4_container.appendChild(D4_renderer.domElement);
 
-  lastUpdateTimestamp = performance.now();
+  lastUpdateTimestamp = -1;
   resize();
   render(performance.now());
 }
 
 function render(timestamp)
 {
-
   requestAnimationFrame(render);
 
   if(!activeControls.paused)
   {
-    activeControls.update((timestamp - lastUpdateTimestamp) / 1000)
+    activeControls.update(lastUpdateTimestamp > 0 ? Math.min((timestamp - lastUpdateTimestamp) / 1000, 1 / 60) : 0)
     lastUpdateTimestamp = timestamp;
   }
 
