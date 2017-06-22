@@ -17,7 +17,8 @@
       "options": [ 3, 3, 3, 3 ],
       "material": "rad face",
       "position": { "y": 1.5 },
-      "rotation": { "xz": 0.25 }
+      "rotation": { "xz": 0.25 },
+      "selectable" : true
     },
     { "name": "ground",
       "geometry": "BoxGeometry4D",

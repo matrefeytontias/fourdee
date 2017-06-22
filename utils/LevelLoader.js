@@ -44,8 +44,8 @@ LevelLoader.loadJSON = function(level, space4D)
     var type = window[objData.geometry];
     var geom = new (type.bind.apply(type, [type].concat(objData.options)))();
     var obj = Array.isArray(objData.material) ?
-        new Mesh4D(geom, objData.material.forEach(function (mName) { return materials[mName]; }))
-      : new Mesh4D(geom, materials[objData.material]);
+        new LevelObject(geom, objData.material.forEach(function (mName) { return materials[mName]; }))
+      : new LevelObject(geom, materials[objData.material]);
     objects[objData.name] = obj;
 
     if(objData.position)

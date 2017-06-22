@@ -35,13 +35,8 @@ function build1(scene, space){
 }
 
 function build2(scene, space){
-<<<<<<< HEAD
-    var geometry = new Box3DGeometry4D("xyz", 4, 4, 4);
-    var cube = new Mesh4D(geometry, 
-=======
     var geometry = new Box3DGeometry4D("xyz", 2, 2, 2);
     var cube = new Mesh4D(geometry,
->>>>>>> master
         new THREE.MeshLambertMaterial({
             color: 0x00ffff
         })
@@ -50,14 +45,8 @@ function build2(scene, space){
     cube.add3DMeshMaterial( new THREE.MeshLambertMaterial({ color: 0xff00ff, side : THREE.BackSide }) ) ;
 
     cube.rotation.zw = 1;
-<<<<<<< HEAD
-    
-    cube.position.y = 0;
-    
-=======
     cube.position.y = 1;
 
->>>>>>> master
     cube.setSelectable(true);
     space.add(cube);
 
@@ -65,13 +54,8 @@ function build2(scene, space){
 
 function build3(scene, space)
 {
-<<<<<<< HEAD
   var geometry = new PentachoreGeometry(5);
   var d4hedron = new Mesh4D(geometry, 
-=======
-  var geometry = new PentacoreGeometry(5);
-  var d4hedron = new Mesh4D(geometry,
->>>>>>> master
     new THREE.MeshLambertMaterial({
       color: 0xff0000
     })
