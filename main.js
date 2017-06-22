@@ -34,57 +34,19 @@ window.addEventListener("load", main);
 
 function main()
 {
-  // Build Level
-  var groundGeometry = new BoxGeometry4D(100, 2, 100, 100);
-  ground = new Mesh4D(groundGeometry, new THREE.MeshPhongMaterial({ color: 0xffffff }));
-  ground.position.y = -1;
-  D4_space.add(ground);
-
-  var cubeGeometry = new BoxGeometry4D(3, 1, 3, 3);
-  cube = new Mesh4D(cubeGeometry, [
-    new THREE.MeshPhongMaterial({
-      color: 0xffffff
-    }),
-    new THREE.MeshPhongMaterial({
-      color: 0x00ffff,
-      /*emissive : 0xffffff,
-      emissiveIntensity : 0.1*/
-    }),
-    new THREE.MeshBasicMaterial({
-      color: 0x00ffff,
-      wireframe : true,
-      wireframeLinewidth : 1,
-    }),
-    new THREE.MeshBasicMaterial({
-      color: 0x00ffff,
-      wireframe : true,
-      wireframeLinewidth : 1,
-    }),
-    new THREE.MeshBasicMaterial({
-      color: 0x00ffff,
-      wireframe : true,
-      wireframeLinewidth : 1,
-    }),
-  ]);
-
-  cube.position.y = 0.5;
-  cube.setFaceMaterial(tesseractFacesGroups.faces, tesseractFacesGroups.materials);
-  D4_space.add(cube);
+  build4(D4_scene, D4_space);
 
   D4_camera.position.y = 0.8;
-  D4_camera.position.z = -5;
 
-  light = new THREE.PointLight(0xffffff, 0.5, 1000);
+  light = new THREE.PointLight(0xffffff, 1, 100);
   D4_scene.add(light);
-
-  // End level;
 
   //Start controls
   var fpControls = new FirstPersonControls(D4_container, new Player(), D4_camera, D4_space, new KeySettings(), ["xw"]);
   var tpControls = new ThirdPersonControls(D4_camera, D4_scene, D4_space);
   fpControls.listen();
 
-  document.getElementById("center-text").style.display = activeControls === fpControls ? "" : "none";
+  document.getElementById("start").style.display = activeControls === fpControls ? "" : "none";
 }
 
 function resize(){
@@ -110,6 +72,7 @@ function start()
 
 function render(timestamp)
 {
+
   requestAnimationFrame(render);
 
   if(!activeControls.paused)
@@ -117,7 +80,7 @@ function render(timestamp)
     activeControls.update((timestamp - lastUpdateTimestamp) / 1000)
     lastUpdateTimestamp = timestamp;
   }
-  
+
   light.position.copy(D4_camera.position);
 
   D4_space.project();
