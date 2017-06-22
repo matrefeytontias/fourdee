@@ -131,14 +131,6 @@ Object4D.prototype.add3DMeshMaterial = function(material)
   return this.add3DChild(mesh3d);
 }
 
-Object4D.prototype.addChildrenToScene = function(scene)
-{
-  for(var i = 0; i < this.children3D.length; i++)
-  {
-    scene.add(this.children3D[i]);
-  }
-}
-
 /**************
  * Proj4D API *
  **************/
