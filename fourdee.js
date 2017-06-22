@@ -8,17 +8,101 @@ function Object4D()
   this.rotation = new Euler4D();
   this.scale = 1.;
   this.geometry = undefined;
-  this.material = undefined;
   this.projection = undefined; // use your own 3D projection
+  this.position3D = new THREE.Vector3();
+  this.children3D = [];
   this.dirty = true;
-  this.positionalOnly = false; // use this if you do not want projection
+  this.positionalOnly = false;
+  this.selectable = false;
+  this.seleted = false;
+  this.wireframeIndexes = [];
 }
 
 // int[] faces, int[] materials
 Object4D.prototype.setFaceMaterial = function(faces, materials)
 {
-  for(var i=0; i < materials.length; i++)
+  for(var i = 0; i < materials.length; i++)
     this.geometry.faces[faces[i]].materialIndex = materials[i];
+}
+
+// int [][] faces
+Object4D.prototype.setFaceGroupMaterial = function(facesGroups)
+{
+  for(var i = 0; i < facesGroups.length; i++)
+  {
+    for(var j = 0; j < facesGroups[i].length; j++)
+    {
+      this.geometry.faces[facesGroups[i][j]].materialIndex = i;
+    }
+  }
+}
+
+//boolean b, THREE.Material wireframeMaterial
+Object4D.prototype.setSelectable = function(b)
+{
+  this.selectable = b;
+  if(b && this.wireframeIndexes.length == 0)
+  {
+    var l = this.children3D.length;
+    for(var i = 0; i < l; i++)
+    {
+
+
+      if(Array.isArray(this.children3D[i].material))
+      {
+        var materials = [];
+        for(var j = 0; j < this.children3D[i].material.length; j++)
+        {
+          var mat = this.children3D[i].material[j];
+          if(mat !== null)
+          {
+            materials.push(mat.clone());
+            materials[j].transparent = true;
+            materials[j].opacity = 0.2;
+          }
+          else
+            materials.push(null);
+        }
+        this.addWireframeMaterial(materials);
+      }
+      else{
+        var m = this.children3D[i].material.clone();
+        m.transparent = true;
+        m.opacity = 0.2;
+        this.addWireframeMaterial(m);
+      }
+    }
+    this.addWireframeMaterial()
+  }
+}
+
+Object4D.prototype.addWireframeMaterial = function(material = new THREE.MeshBasicMaterial({
+        color : 0xffffff,
+        wireframe : true,
+        wireframeLinewidth : 5}))
+{
+  this.wireframeIndexes.push(this.children3D.length);
+  var wmesh = this.add3DMeshMaterial(material);
+  wmesh.visible = false;
+}
+
+Object4D.prototype.toggleWireframe = function (){
+  if(this.wireframeIndexes.length == 0)
+    throw "no defined wireframe materials (tried to toggleWireframe)";
+  this.selected = !this.selected;
+  if(this.selected)
+  {
+    for(var i = 0; i < this.children3D.length; i++)
+      this.children3D[i].visible = false;
+    for(var i = 0; i < this.wireframeIndexes.length; i++)
+      this.children3D[this.wireframeIndexes[i]].visible = true;
+  }
+  else{
+    for(var i = 0; i < this.children3D.length; i++)
+      this.children3D[i].visible = true;
+    for(var i = 0; i < this.wireframeIndexes.length; i++)
+      this.children3D[this.wireframeIndexes[i]].visible = false;
+  }
 }
 
 Object4D.prototype.buildMatrix5 = function()
@@ -36,6 +120,26 @@ Object4D.prototype.buildMatrix5 = function()
       mat.rotate(rotationPlane, theta);
   }
   return mat;
+}
+
+Object4D.prototype.add3DChild = function(object3D)
+{
+  this.children3D.push(object3D);
+  object3D.parent4D = this;
+  object3D.frustumCulled = false;
+  return object3D;
+}
+
+Object4D.prototype.add3DMeshMaterial = function(material)
+{
+  var mesh3d = new THREE.Mesh(this.projection, material);
+
+  return this.add3DChild(mesh3d);
+}
+
+Object4D.prototype.get3DBody = function ()
+{
+  return this.children3D[0];
 }
 
 /**************

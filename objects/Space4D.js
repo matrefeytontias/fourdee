@@ -20,9 +20,8 @@ Space4D.prototype.add = function(obj)
     if(this.children[i] === obj)
       throw "Can't add same Object4D to Space4D twice";
   this.children.push(obj);
-  D4_scene.add(obj.projection);
-  // Temporary fix. Invalidate bounding box upon rotation ?
-  obj.projection.frustumCulled = false;
+  for(var i = 0; i < obj.children3D.length; i++)
+    D4_scene.add(obj.children3D[i]);
 }
 
 // Rotates the whole 4D space around a point
@@ -56,19 +55,21 @@ Space4D.prototype.project = function()
   this.visitObjects(function(child)
   {
     var geom4 = child.geometry;
+    var objMat = child.buildMatrix5();
+    var localPosition = child.position.clone().sub(child.rotation.center);
+    localPosition.applyMatrix5(objMat).add(child.rotation.center).sub(this.rotation.center).applyMatrix5(spaceMat);
+    child.position3D = this.projector.project(localPosition.add(this.rotation.center));
     if(child.dirty && !child.positionalOnly)
     {
       if(geom4 === undefined)
         throw "Pushed Object4D with undefined geometry";
       else
       {
-        var proj = child.projection;
-        if(proj === undefined)
-          throw "Pushed Object4D with undefined target 3D render type";
+        var geom3 = child.projection;
+        if(geom3 === undefined)
+          throw "Pushed Object4D with undefined target 3D geometry";
         else
         {
-          var objMat = child.buildMatrix5();
-          var geom3 = proj.geometry;
           geom3.vertices.length = 0;
           for(var vi = 0; vi < geom4.vertices4D.length; vi++)
           {
@@ -82,8 +83,8 @@ Space4D.prototype.project = function()
           geom3.computeFaceNormals();
           geom3.computeVertexNormals();
           geom3.computeFlatVertexNormals();
-          if(child.projection.isLineSegments || child.material.isLineDashedMaterial)
-            geom3.computeLineDistances();
+          geom3.computeBoundingBox();
+          geom3.computeBoundingSphere();
         }
       }
       child.dirty = false;
@@ -109,25 +110,28 @@ Space4D.prototype.tryForMove = function(previousPos, amount, collisionRadius)
   var i = 0;
   this.visitObjects(function(child)
   {
-    var geom3 = child.projection.geometry, vertices = geom3.vertices, faces = geom3.faces;
-    for(var j = 0; j < faces.length; j++)
+    if(!child.positionalOnly)
     {
-      var face = faces[j];
-      var faceNorm = cross(sub(vertices, face.b, face.a), sub(vertices, face.c, face.a));
-      // Only check collisions for faces that exist in 3D
-      if(faceNorm.length() == 0)
-        continue;
-      faceNorm.normalize();
-      // console.log(vertices[face.a], vertices[face.b], vertices[face.c]);
-      // Only check collisions for faces that face us
-      if(dot(faceNorm, amount) >= 0)
-        continue;
-      var proj = projOnTriangle(nextPos, vertices[face.a], vertices[face.b], vertices[face.c]);
-      var dSq = dist2(proj, nextPos);
-      // Objects have spherical hitboxes
-      if(dSq < sqr)
-        // There has been a collision
-        collisions.push({ proj: proj, dSq: dSq, obj: child, face: face, faceNorm: faceNorm });
+      var geom3 = child.get3DBody().geometry, vertices = geom3.vertices, faces = geom3.faces;
+      for(var j = 0; j < faces.length; j++)
+      {
+        var face = faces[j];
+        var faceNorm = cross(sub(vertices, face.b, face.a), sub(vertices, face.c, face.a));
+        // Only check collisions for faces that exist in 3D
+        if(faceNorm.length() == 0)
+          continue;
+        faceNorm.normalize();
+        // console.log(vertices[face.a], vertices[face.b], vertices[face.c]);
+        // Only check collisions for faces that face us
+        if(dot(faceNorm, amount) >= 0)
+          continue;
+        var proj = projOnTriangle(nextPos, vertices[face.a], vertices[face.b], vertices[face.c]);
+        var dSq = dist2(proj, nextPos);
+        // Objects have spherical hitboxes
+        if(dSq < sqr)
+          // There has been a collision
+          collisions.push({ proj: proj, dSq: dSq, obj: child, face: face, faceNorm: faceNorm });
+      }
     }
   });
 
@@ -137,7 +141,7 @@ Space4D.prototype.tryForMove = function(previousPos, amount, collisionRadius)
   collisions.sort(function (x, y) { return y.dSq - x.dSq; });
   // Only resolve collision with the closest face for now
   var proj = collisions[0].proj;
-  var child = collisions[0].obj, vertices = child.projection.geometry.vertices;
+  var child = collisions[0].obj, vertices = child.get3DBody().geometry.vertices;
   var face = collisions[0].face;
   var faceNorm = collisions[0].faceNorm;
   // The movement brings the object right on the intersection point ...

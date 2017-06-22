@@ -15,7 +15,7 @@ var D4_gameHeight = D4_container.offsetHeight;
 const D4_aspectRatio = D4_gameWidth / D4_gameHeight;
 const D4_scene = new THREE.Scene();
 
-var lastUpdateTimestamp = performance.now();
+var lastUpdateTimestamp;
 
 const orthoProj = new OrthoProj();
 const stereoProj = new StereoProj(new THREE.Vector4(0, 0, 0, 10), 1);
@@ -45,15 +45,13 @@ function main()
 function levelLoaded()
 {
   //Start controls
-  console.log("File done loading");
-  console.log("Loaded " + D4_space.children.length + " objects");
   D4_camera.position.copy(LevelLoader.result.startPos);
 
-  var fpControls = new FirstPersonControls(D4_container, new Player(), D4_camera, D4_space, new KeySettings(), ["xw"]);
+  var fpControls = new FirstPersonControls(D4_container, new Player(), D4_camera, D4_space, ["xw"]);
   var tpControls = new ThirdPersonControls(D4_camera, D4_scene, D4_space);
   fpControls.listen();
 
-  document.getElementById("center-text").style.display = activeControls === fpControls ? "" : "none";
+  document.getElementById("start").style.display = activeControls === fpControls ? "" : "none";
 }
 
 function resize()
@@ -79,12 +77,11 @@ function start()
 
 function render(timestamp)
 {
-  console.log(D4_camera.position);
   requestAnimationFrame(render);
 
   if(!activeControls.paused)
   {
-    activeControls.update(lastUpdateTimestamp > 0 ? (timestamp - lastUpdateTimestamp) / 1000 : 0);
+    activeControls.update(lastUpdateTimestamp > 0 ? Math.min((timestamp - lastUpdateTimestamp) / 1000, 1 / 60) : 0)
     lastUpdateTimestamp = timestamp;
   }
 
