@@ -20,14 +20,16 @@ function FirstPersonControls(
   this.space4D = space4D;
   this.paused = true;
   this.displacementEuler = new Euler4D();
-  this.selectedObeject4D = null;
+  this.selectedObject4D = null;
+  this.highlightedObject4D = null;
   this.rotateAroundMe = false;
   this.startText = document.getElementById("start");
   this.raycaster = new THREE.Raycaster();
+  this.zeroVec = new THREE.Vector2();
 
   this.onMouseMove = function(event)
   {
-    if(this.paused || this.selectedObeject4D !== null) return;
+    if(this.paused || this.selectedObject4D !== null) return;
 
     this.cameraRotation.y = this.mousePosition.x / this.windowHalfX * Math.PI;
     this.cameraRotation.x += event.movementY / this.windowHalfY * 0.25 * Math.PI;
@@ -37,7 +39,7 @@ function FirstPersonControls(
 
   this.onMouseDown = function()
   {
-    this.raycaster.setFromCamera(new THREE.Vector2(0, 0), this.camera3D);
+    this.raycaster.setFromCamera(this.zeroVec, this.camera3D);
 
 	  var intersects =  this.raycaster.intersectObjects(D4_scene.children);
 
@@ -45,18 +47,18 @@ function FirstPersonControls(
 	  {
 	    var obj4d =  intersects[0].object.parent4D;
 	    if(obj4d.selectable)
-	      this.selectedObeject4D = obj4d;
+	      this.selectedObject4D = obj4d;
 	  }
 
-	  if(this.selectedObeject4D !== null)
-	    this.selectedObeject4D.toggleWireframe();
+	  if(this.selectedObject4D !== null)
+	    this.selectedObject4D.toggleWireframe();
   }
 
   this.onMouseUp = function()
   {
-    if(this.selectedObeject4D !== null)
-      this.selectedObeject4D.toggleWireframe();
-    this.selectedObeject4D = null;
+    if(this.selectedObject4D !== null)
+      this.selectedObject4D.toggleWireframe();
+    this.selectedObject4D = null;
   }
 
   this.onKeyDown = function(event)
@@ -72,6 +74,37 @@ function FirstPersonControls(
   {
     if(this.paused) return;
 
+    // Highlight a potential selectable object
+    if(this.selectedObject4D === null)
+    {
+      this.raycaster.setFromCamera(this.zeroVec, this.camera3D);
+      var inters = this.raycaster.intersectObjects(D4_scene.children);
+      // Un-highlight the currently highlighted object if need be
+      if(this.highlightedObject4D !== null)
+      {
+        var mat = this.highlightedObject4D.get3DBody().material;
+        if(inters.length == 0 || this.highlightedObject4D !== inters[0].object)
+        {
+          if(!Array.isArray(mat))
+            mat.emissive.setHex(0);
+          else
+            mat.forEach(function(m) { if(m !== null) m.emissive.setHex(0); });
+          this.highlightedObject4D = null;
+        }
+      }
+
+      if(this.highlightedObject4D === null && inters.length > 0 && inters[0].object.parent4D.selectable)
+      {
+        // Highlight a new object
+        var mat = inters[0].object.material;
+        if(!Array.isArray(mat))
+          mat.emissive.setHex(0xff0000);
+        else
+          mat.forEach(function(m) { if(m !== null) m.emissive.setHex(0xff0000); });
+        this.highlightedObject4D = inters[0].object.parent4D;
+      }
+    }
+
     //4D rotations :
     if(this.keyPressed[this.keys.ana])
     {
@@ -82,8 +115,8 @@ function FirstPersonControls(
           this.space4D.rotateAround(this.player.position, rotation4DPlanes[i], dt * rotation4DSensitivity);
           this.displacementEuler[rotation4DPlanes[i]] -= dt * rotation4DSensitivity;
         }
-        else if(this.selectedObeject4D !== null)
-          this.selectedObeject4D.rotation[rotation4DPlanes[i]] -= dt * rotation4DSensitivity;
+        else if(this.selectedObject4D !== null)
+          this.selectedObject4D.rotation[rotation4DPlanes[i]] -= dt * rotation4DSensitivity;
       }
     }
 
@@ -96,15 +129,15 @@ function FirstPersonControls(
           this.space4D.rotateAround(this.player.position, rotation4DPlanes[i], -dt * rotation4DSensitivity);
           this.displacementEuler[rotation4DPlanes[i]] += dt * rotation4DSensitivity;
         }
-        else if(this.selectedObeject4D !== null)
-          this.selectedObeject4D.rotation[rotation4DPlanes[i]] += dt * rotation4DSensitivity;
+        else if(this.selectedObject4D !== null)
+          this.selectedObject4D.rotation[rotation4DPlanes[i]] += dt * rotation4DSensitivity;
       }
     }
 
-    if( this.selectedObeject4D !== null && (this.keyPressed[this.keys.kata] || this.keyPressed[this.keys.ana]) )
+    if( this.selectedObject4D !== null && (this.keyPressed[this.keys.kata] || this.keyPressed[this.keys.ana]) )
     {
-      //this.camera3D.lookAt(this.selectedObeject4D.position);
-      this.selectedObeject4D.dirty = true;
+      //this.camera3D.lookAt(this.selectedObject4D.position);
+      this.selectedObject4D.dirty = true;
     }
 
 

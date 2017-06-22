@@ -1,10 +1,10 @@
 function build1(scene, space){
     var geometry = new BoxGeometry4D(2, 2, 2, 2);
     var cube = new Mesh4D(geometry, [
-      new THREE.MeshBasicMaterial({
+      new THREE.MeshPhongMaterial({
         color: 0xffffff
       }),
-      new THREE.MeshBasicMaterial({
+      new THREE.MeshPhongMaterial({
         color: 0x00ffff
       }),
       new THREE.MeshBasicMaterial({
@@ -84,16 +84,8 @@ function build4(scene, space){
       color: 0x00ffff,
       side : THREE.DoubleSide
     }),
-    new THREE.MeshBasicMaterial({
-      color: 0xff0000,
-      wireframe : true,
-      wireframeLinewidth : 5,
-    }),
-    new THREE.MeshBasicMaterial({
-      color: 0x0000ff,
-      wireframe : true,
-      wireframeLinewidth : 5,
-    }),
+    null,
+    null,
     new THREE.MeshLambertMaterial({
       color: 0x00ff00,
       side : THREE.DoubleSide
