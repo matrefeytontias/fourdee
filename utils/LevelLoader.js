@@ -59,6 +59,9 @@ LevelLoader.loadJSON = function(level, space4D)
         obj.rotation[plane] = objData.rotation[plane];
     }
 
+    if(objData.selectable)
+      obj.setSelectable(true);
+
     space4D.add(obj);
   }
 
