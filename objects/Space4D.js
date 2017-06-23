@@ -112,25 +112,32 @@ Space4D.prototype.tryForMove = function(previousPos, amount, collisionRadius)
   {
     if(!child.positionalOnly)
     {
-      var geom3 = child.get3DBody().geometry, vertices = geom3.vertices, faces = geom3.faces;
-      for(var j = 0; j < faces.length; j++)
+      var bodies = child.getPhysical3DMeshes();
+      for(var i = 0; i < bodies.length; i++)
       {
-        var face = faces[j];
-        var faceNorm = cross(sub(vertices, face.b, face.a), sub(vertices, face.c, face.a));
-        // Only check collisions for faces that exist in 3D
-        if(faceNorm.length() == 0)
-          continue;
-        faceNorm.normalize();
-        // console.log(vertices[face.a], vertices[face.b], vertices[face.c]);
-        // Only check collisions for faces that face us
-        if(dot(faceNorm, amount) >= 0)
-          continue;
-        var proj = projOnTriangle(nextPos, vertices[face.a], vertices[face.b], vertices[face.c]);
-        var dSq = dist2(proj, nextPos);
-        // Objects have spherical hitboxes
-        if(dSq < sqr)
-          // There has been a collision
-          collisions.push({ proj: proj, dSq: dSq, obj: child, face: face, faceNorm: faceNorm });
+        var body = bodies[i], geom3 = body.geometry, vertices = geom3.vertices, faces = geom3.faces;
+        for(var j = 0; j < faces.length; j++)
+        {
+          var face = faces[j];
+          var faceNorm = cross(sub(vertices, face.b, face.a), sub(vertices, face.c, face.a));
+          // Only check collisions for faces that exist in 3D
+          if(faceNorm.length() == 0)
+            continue;
+          var side = Array.isArray(body.material) ? body.material[0].side : body.material.side;
+          if(side == THREE.BackSide)
+            faceNorm.negate();
+          faceNorm.normalize();
+          // console.log(vertices[face.a], vertices[face.b], vertices[face.c]);
+          // Only check collisions for faces that face us
+          if(dot(faceNorm, amount) >= 0 && side != THREE.DoubleSide)
+            continue;
+          var proj = projOnTriangle(nextPos, vertices[face.a], vertices[face.b], vertices[face.c]);
+          var dSq = dist2(proj, nextPos);
+          // Objects have spherical hitboxes
+          if(dSq < sqr)
+            // There has been a collision
+            collisions.push({ proj: proj, dSq: dSq, obj: child, face: face, faceNorm: faceNorm });
+        }
       }
     }
   });
