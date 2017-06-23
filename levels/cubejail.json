@@ -1,0 +1,57 @@
+{
+  "title": "Welcome to Cube Jail",
+  "startingPosition": { "y": 0.8 },
+  "materials": [
+    { "name": "ground material",
+      "type": "Phong",
+      "options": { "color": "#ffffff" }
+    },
+    { "name": "general cube front",
+      "type": "Phong",
+      "options": { "color": "#00ffff" }
+    },
+    { "name": "general cube back",
+      "type": "Phong",
+      "options": { "color": "#ff00ff", "side": "BackSide" }
+    },
+    { "name": "jail cube front",
+      "type": "Phong",
+      "options": { "color": "#ff00ff" }
+    },
+    { "name": "jail cube back",
+      "type": "Phong",
+      "options": { "color": "#00ffff", "side": "BackSide" }
+    }
+  ],
+  "objects": [
+    { "name": "ground",
+      "geometry": "Box3D",
+      "options": [ "xyz", 100, 2, 100 ],
+      "material": "ground material",
+      "position": { "y": -1 }
+    },
+    { "name": "start cube",
+      "geometry": "Box3D",
+      "options": [ "xyz", 1.5, 1.5, 1.5 ],
+      "material": [ "general cube front", "general cube back" ],
+      "position": { "y": 0.7 }
+    },
+    { "name": "blocking cube",
+      "geometry": "Box3D",
+      "options": [ "xyz", 1.5, 1.5, 1.5 ],
+      "material": [ "general cube front", "general cube back" ],
+      "position": { "x": 1.5, "y": 0.7 },
+      "selectable": true
+    },
+    { "name": "jail cube",
+      "geometry": "Box3D",
+      "options": [ "xyz", 6, 6, 6 ],
+      "material": [ "jail cube front", "jail cube back" ],
+      "position": { "y": 2.95 },
+      "selectable": true
+    }
+  ],
+  "scripts": [
+    "removeFaceGroups, start cube, 1"
+  ]
+}

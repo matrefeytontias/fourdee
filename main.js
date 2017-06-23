@@ -39,7 +39,7 @@ function main()
   D4_scene.add(light);
 
   window.addEventListener("levelLoaded", levelLoaded);
-  LevelLoader.loadFile("levels/test1.json", D4_space);
+  LevelLoader.loadFile("levels/cubejail.json", D4_space);
   // End level;
 }
 
