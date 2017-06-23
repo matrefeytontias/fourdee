@@ -18,9 +18,9 @@ const D4_scene = new THREE.Scene();
 var lastUpdateTimestamp;
 
 const orthoProj = new OrthoProj();
-const stereoProj = new StereoProj(new THREE.Vector4(0, 0, 0, 10), 1);
+const stereoProj = new StereoProj(new THREE.Vector4(0, 0, 0, 10), 3);
 
-const D4_space = new Space4D(orthoProj);
+const D4_space = new Space4D(stereoProj);
 
 var D4_camera = D4_PERSPECTIVE ? new THREE.PerspectiveCamera(75, D4_gameWidth / D4_gameHeight, 0.1, 1000)
                                  : new THREE.OrthographicCamera(-D4_orthoWidth / 2, D4_orthoWidth / 2, D4_orthoHeight / 2, -D4_orthoHeight / 2, 0.1, 1000);
