@@ -27,7 +27,7 @@ function FirstPersonControls(
   this.startText = document.getElementById("start");
   this.raycaster = new THREE.Raycaster();
   this.zeroVec = new THREE.Vector2();
-  
+
   this.setTpControls = function(tpControls)
   {
     this.tpControls = tpControls;
@@ -60,12 +60,12 @@ function FirstPersonControls(
 	  {
 	    this.selectedObject4D.toggleWireframe();
 	    this.memPosition = camera3D.position.clone();
-	    this.tpControls.active(this.selectedObject4D);
+	    this.tpControls.activate(this.selectedObject4D);
 	  }
   }
 
-  this.active = function()
-  { 
+  this.activate = function()
+  {
     activeControls = this;
     if(this.selectedObject4D !== null)
       this.selectedObject4D.toggleWireframe();
@@ -93,7 +93,7 @@ function FirstPersonControls(
     {
       this.raycaster.setFromCamera(this.zeroVec, this.camera3D);
       var inters = this.raycaster.intersectObjects(D4_scene.children);
-      
+
       // Un-highlight the currently highlighted object if need be
       if(this.highlightedObject4D !== null && ( inters.length == 0 || this.highlightedObject4D !== inters[0].object.parent4D ) )
       {
@@ -107,40 +107,6 @@ function FirstPersonControls(
         this.highlightedObject4D = inters[0].object.parent4D;
         this.highlightedObject4D.toggleHighlight();
       }
-    }
-
-    //4D rotations :
-    if(this.keyPressed[this.keys.ana])
-    {
-      for(var i = 0; i < rotation4DPlanes.length; i++)
-      {
-        if(this.rotateAroundMe)
-        {
-          this.space4D.rotateAround(this.player.position, rotation4DPlanes[i], dt * rotation4DSensitivity);
-          this.displacementEuler[rotation4DPlanes[i]] -= dt * rotation4DSensitivity;
-        }
-        else if(this.selectedObject4D !== null)
-          this.selectedObject4D.rotation[rotation4DPlanes[i]] -= dt * rotation4DSensitivity;
-      }
-    }
-
-    if(this.keyPressed[this.keys.kata])
-    {
-      for(var i = 0; i < rotation4DPlanes.length; i++)
-      {
-        if(this.rotateAroundMe)
-        {
-          this.space4D.rotateAround(this.player.position, rotation4DPlanes[i], -dt * rotation4DSensitivity);
-          this.displacementEuler[rotation4DPlanes[i]] += dt * rotation4DSensitivity;
-        }
-        else if(this.selectedObject4D !== null)
-          this.selectedObject4D.rotation[rotation4DPlanes[i]] += dt * rotation4DSensitivity;
-      }
-    }
-
-    if( this.selectedObject4D !== null && (this.keyPressed[this.keys.kata] || this.keyPressed[this.keys.ana]) )
-    {
-      this.selectedObject4D.dirty = true;
     }
 
 
