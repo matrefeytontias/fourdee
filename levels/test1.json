@@ -3,11 +3,11 @@
   "title": "Test me daddy !!!!!!!111!!1",
   "materials": [
     { "name": "cool face",
-      "type": "MeshPhongMaterial",
+      "type": "Phong",
       "options": { "color":"#ffffff" }
     },
     { "name": "rad face",
-      "type": "MeshPhongMaterial",
+      "type": "Phong",
       "options": { "color":"#00ffff" }
     }
   ],

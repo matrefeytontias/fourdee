@@ -24,7 +24,7 @@ function build1(scene, space){
       }),
     ]);
 
-    cube.setFaceGroupMaterial(tesseractFacesGroups);
+    cube.setFaceGroupMaterial(tesseractFaceGroups);
 
     cube.setSelectable(true);
 
@@ -55,7 +55,7 @@ function build2(scene, space){
 function build3(scene, space)
 {
   var geometry = new PentachoreGeometry(5);
-  var d4hedron = new Mesh4D(geometry, 
+  var d4hedron = new Mesh4D(geometry,
     new THREE.MeshLambertMaterial({
       color: 0xff0000
     })
@@ -92,8 +92,8 @@ function build4(scene, space){
     }),
     ]);
 
-    cube.setFaceGroupMaterial(tesseractFacesGroups);
-    cube.geometry.filterFacesGroups([0, 1, 4], tesseractFacesGroups);
+    cube.setFaceGroupMaterial(tesseractFaceGroups);
+    cube.geometry.filterFaceGroups([0, 1, 4], tesseractFaceGroups);
 
     cube.setSelectable(true);
 
