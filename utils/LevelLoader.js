@@ -13,6 +13,7 @@ LevelLoader.loadFile = function(filename, space4D)
     }
     LevelLoader.loadFinished = (xmlhttp.readyState == 4);
   }.bind(this);
+  xmlhttp.overrideMimeType("application/json");
   xmlhttp.open("GET", filename, true);
   xmlhttp.send();
 }
