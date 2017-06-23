@@ -43,7 +43,7 @@ function ThirdPersonControls(
   this.onMouseMove = function(event)
   {
     this.cameraRotation.y = this.mousePosition.x / this.windowHalfX * Math.PI;
-    this.cameraRotation.x += event.movementY / this.windowHalfY * 0.25 * Math.PI;
+    this.cameraRotation.x -= event.movementY / this.windowHalfY * 0.25 * Math.PI;
     this.cameraRotation.x = Math.min(0.25 * Math.PI, Math.max(-0.25 * Math.PI, this.cameraRotation.x));
   }
 
