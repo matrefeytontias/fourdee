@@ -77,7 +77,7 @@ function FirstPersonControls(
 
   this.onKeyDown = function(event)
   {
-    if(this.paused && this.keyPressed[this.keys.enter])
+    if(this.paused && KeySettings.keyPressed[this.keys.enter])
     {
       this.container.requestFullscreen = this.container.requestFullscreen || this.container.mozRequestFullscreen || this.container.mozRequestFullScreen ||  this.container.webkitRequestFullscreen;
       this.container.requestFullscreen();
@@ -117,16 +117,16 @@ function FirstPersonControls(
     this.camera3D.lookAt(where);
 
     //translation
-    if(this.keyPressed[this.keys.up] || this.keyPressed[this.keys.down] || this.keyPressed[this.keys.left] || this.keyPressed[this.keys.right])
+    if(KeySettings.keyPressed[this.keys.up] || KeySettings.keyPressed[this.keys.down] || KeySettings.keyPressed[this.keys.left] || KeySettings.keyPressed[this.keys.right])
     {
       var moveDirection = direction.clone(), movement = new THREE.Vector3();
       moveDirection.y = 0;
       moveDirection.multiplyScalar(displacementSensitivity*dt);
 
-      if(this.keyPressed[this.keys.up]) movement.add(moveDirection);
-      if(this.keyPressed[this.keys.down]) movement.sub(moveDirection);
-      if(this.keyPressed[this.keys.left]) movement.add(moveDirection.clone().rotate("y", Math.PI/2));
-      if(this.keyPressed[this.keys.right]) movement.add(moveDirection.clone().rotate("y", -Math.PI/2));
+      if(KeySettings.keyPressed[this.keys.up]) movement.add(moveDirection);
+      if(KeySettings.keyPressed[this.keys.down]) movement.sub(moveDirection);
+      if(KeySettings.keyPressed[this.keys.left]) movement.add(moveDirection.clone().rotate("y", Math.PI/2));
+      if(KeySettings.keyPressed[this.keys.right]) movement.add(moveDirection.clone().rotate("y", -Math.PI/2));
 
       movement.y = 0;
       this.player.velocity3D.add(movement);
@@ -135,7 +135,7 @@ function FirstPersonControls(
     // Add gravity
     this.player.velocity3D.y += -D4_GRAVITY * dt;
     // Eventually add a jump
-    if(this.canJump && this.keyPressed[this.keys.space])
+    if(this.canJump && KeySettings.keyPressed[this.keys.space])
       this.player.velocity3D.y += D4_JUMP;
     var data = space4D.tryForMove(this.camera3D.position, this.player.velocity3D, this.player.radius);
     this.player.velocity3D = data.movement;

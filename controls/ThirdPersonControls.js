@@ -55,7 +55,7 @@ function ThirdPersonControls(
   this.update = function(dt)
   {
     //4D rotations :
-    if(this.keyPressed[this.keys.ana])
+    if(KeySettings.keyPressed[this.keys.ana])
     {
       for(var i = 0; i < this.rotation4DPlanes.length; i++)
       {
@@ -69,7 +69,7 @@ function ThirdPersonControls(
       }
     }
 
-    if(this.keyPressed[this.keys.kata])
+    if(KeySettings.keyPressed[this.keys.kata])
     {
       for(var i = 0; i < this.rotation4DPlanes.length; i++)
       {
@@ -83,13 +83,13 @@ function ThirdPersonControls(
       }
     }
 
-    if( this.focusedObject4D !== null && (this.keyPressed[this.keys.kata] || this.keyPressed[this.keys.ana]) )
+    if( this.focusedObject4D !== null && (KeySettings.keyPressed[this.keys.kata] || KeySettings.keyPressed[this.keys.ana]) )
       this.focusedObject4D.dirty = true;
 
     // Translation around the object
-    if(this.keyPressed[this.keys.up])
+    if(KeySettings.keyPressed[this.keys.up])
       this.distance = Math.max(this.distance - this.displacement3DSensitivity * dt, this.focusedObject4D.projection.boundingSphere.radius);
-    if(this.keyPressed[this.keys.down])
+    if(KeySettings.keyPressed[this.keys.down])
       this.distance += this.displacement3DSensitivity * dt;
 
     var direction = new THREE.Vector3(Math.cos(this.cameraRotation.y), Math.sin(-this.cameraRotation.x), Math.sin(this.cameraRotation.y));
