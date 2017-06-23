@@ -90,7 +90,7 @@ LevelObject.prototype.toggleWireframe = function (){
   }
 }
 
-LevelObject.prototype.get3DMeshes = function()
+LevelObject.prototype.getPhysical3DMeshes = function()
 {
   var meshes = [];
   for(var i = 0; i < this.children3D.length; i++)
@@ -104,19 +104,18 @@ LevelObject.prototype.get3DMeshes = function()
 LevelObject.prototype.toggleHighlight = function()
 {
   this.highlighted = ! this.highlighted;
-  
-  var meshes = this.get3DMeshes();
-  
+
+  var meshes = this.getPhysical3DMeshes();
+
   var emColor = this.highlighted ? 0xff0000 : 0;
-  
+
   for(var i = 0; i < meshes.length; i++)
   {
     var mat = meshes[i].material;
-    console.log(mat.emissive, meshes[i]);
     if(!Array.isArray(mat))
       mat.emissive.setHex(emColor);
     else
       mat.forEach(function(m) { if(m !== null) m.emissive.setHex(emColor); });
   }
-  
+
 }
