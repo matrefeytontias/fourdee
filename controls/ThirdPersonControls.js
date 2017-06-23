@@ -2,8 +2,8 @@ function ThirdPersonControls(
   camera3D,
   scene3D,
   space4D,
-  keys = new KeySettings(),
   rotation4DPlanes = ["xw", "zw"],
+  keys = new KeySettings(),
   rotation4DSensitivity = 2)
 {
   Controls.call(this, keys);
@@ -12,7 +12,6 @@ function ThirdPersonControls(
   this.space4D = space4D;
   this.cameraRotation = camera3D.rotation.clone();
   this.focusedObject4D = null;
-  this.focusedMesh3D = null;
   this.distance = 0;
   this.rotation4DPlanes = rotation4DPlanes;
   this.rotation4DSensitivity = rotation4DSensitivity;
@@ -33,11 +32,10 @@ function ThirdPersonControls(
   {
     activeControls = this;
     this.focusedObject4D = object4D;
-    this.focusedMesh3D = object4D.get3DMeshes()[0];
     this.focusedPosition = this.focusedObject4D.position3D.clone();
     this.distance = this.focusedPosition.distanceTo(this.camera3D.position);
-    this.cameraRotation = this.fpControls.cameraRotation.clone();
-    //this.cameraRotation.x = 0;
+    this.mousePosition.x = this.windowHalfX+this.fpControls.mousePosition.x;
+    this.onMouseMove({ movementY : 0})
   }
 
   this.onMouseMove = function(event)
