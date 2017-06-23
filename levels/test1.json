@@ -1,5 +1,5 @@
 {
-  "startingPosition": { "y": 0.8, "z": -5 },
+  "startingPosition": { "y": 1, "z": -5 },
   "title": "Test me daddy !!!!!!!111!!1",
   "materials": [
     { "name": "cool face",
@@ -8,25 +8,34 @@
     },
     { "name": "rad face",
       "type": "Phong",
-      "options": { "color":"#00ffff" }
+      "options": { "color":"#00ffff", "side" : "DoubleSide" }
     }
   ],
   "objects": [
-    { "name": "cube",
-      "geometry": "BoxGeometry4D",
-      "options": [ 3, 3, 3, 3 ],
+    { "name": "prism",
+      "geometry": "Prism4D",
+      "options": [ 3 ],
       "material": "rad face",
-      "position": { "y": 1.5 },
-      "rotation": { "xz": 0.25 },
+      "position": { "y": 2 },
+      "rotation": { },
       "rotationLocks": [ "zw" ],
       "selectable" : true
     },
     { "name": "ground",
-      "geometry": "BoxGeometry4D",
-      "options": [ 100, 2, 100, 100 ],
+      "geometry": "Box3D",
+      "options": [ "xyz", 100, 2, 100 ],
       "material": "cool face",
       "position": { "y": -1 },
       "rotation": { }
+    },
+    { "name": "p",
+      "geometry": "Pyramid4D",
+      "options": [ 2, 2, 2, 2],
+      "material": "rad face",
+      "position": { "y": 2, "x": 8 },
+      "rotation": { "xw": 0.1, "yw": 0.1 },
+      "rotationLocks": [ "zw" ],
+      "selectable" : true
     }
   ]
 }
