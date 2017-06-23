@@ -31,6 +31,14 @@ Geometry4D.prototype.filterFacesGroups = function(groups, facesGroups){
   this.faces.splice(0, initialLength);
 }
 
+
+Geometry4D.prototype.removeFaces = function(faces){
+  for(var i = 0; i < faces.length; i++)
+  {
+    this.faces.splice(faces[i] - i, 1)
+  }
+}
+
 const tesseractVertices = [
     new THREE.Vector4(-0.5, -0.5, -0.5, -0.5),
     new THREE.Vector4(0.5, -0.5, -0.5, -0.5),
