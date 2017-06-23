@@ -19,6 +19,19 @@ function ThirdPersonControls(
   this.displacement3DSensitivity = displacement3DSensitivity;
   this.focusedPosition = new THREE.Vector3();
 
+  var geometry = new THREE.Geometry();
+  geometry.vertices.push(new THREE.Vector3(0.25, 1, 0));
+  geometry.vertices.push(new THREE.Vector3(0.25, -0.5, 0));
+  geometry.vertices.push(new THREE.Vector3(0.5, -0.5, 0));
+  geometry.vertices.push(new THREE.Vector3(0, -1, 0));
+  geometry.vertices.push(new THREE.Vector3(-0.5, -0.5, 0));
+  geometry.vertices.push(new THREE.Vector3(-0.25, -0.5, 0));
+  geometry.vertices.push(new THREE.Vector3(-0.25, 1, 0));
+  this.positionMarker = new THREE.LineLoop(geometry, new THREE.LineBasicMaterial());
+  this.positionMarker.scale.set(0.3, 0.3, 0.3);
+  this.positionMarker.visible = false;
+  scene3D.add(this.positionMarker);
+
   this.setFpControls = function(fpControls)
   {
     this.fpControls = fpControls;
@@ -33,11 +46,13 @@ function ThirdPersonControls(
   this.activate = function(object4D)
   {
     activeControls = this;
+    this.positionMarker.position.copy(D4_camera.position);
+    this.positionMarker.visible = true;
     this.focusedObject4D = object4D;
     this.focusedPosition = this.focusedObject4D.position3D.clone();
     this.distance = Math.max(object4D.projection.boundingSphere.radius, this.focusedPosition.distanceTo(this.camera3D.position));
     this.mousePosition.x = this.windowHalfX+this.fpControls.mousePosition.x;
-    this.onMouseMove({ movementY : 0})
+    this.onMouseMove({ movementY : 0});
   }
 
   this.onMouseMove = function(event)
@@ -50,6 +65,7 @@ function ThirdPersonControls(
   this.onMouseUp = function(){
     this.focusedObject4D = null;
     this.fpControls.activate();
+    this.positionMarker.visible = false;
   }
 
   this.update = function(dt)
@@ -104,5 +120,9 @@ function ThirdPersonControls(
     this.camera3D.position.z = pos.z;
 
     this.camera3D.lookAt(this.focusedPosition);
+
+    // Have the position marker move around a little
+    // this.positionMarker.position.y += Math.sin(performance.now() / 1000);
+    this.positionMarker.rotation.y += Math.sin(performance.now() / 1000) * 0.5;
   }
 }
