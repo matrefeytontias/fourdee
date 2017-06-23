@@ -4,13 +4,14 @@ function LevelObject(geometry, material)
   this.selectable = false;
   this.seleted = false;
   this.wireframeIndexes = [];
+  this.highlighted = false;
 }
 
 LevelObject.prototype = new Mesh4D();
 LevelObject.prototype.constructor = LevelObject;
 
 // String[] rotations
-LevelObject.prototype.lockRotations(rotations)
+LevelObject.prototype.lockRotations = function(rotations)
 {
   for(var i = 0; i < rotations.length; i++)
   {
@@ -87,4 +88,35 @@ LevelObject.prototype.toggleWireframe = function (){
     for(var i = 0; i < this.wireframeIndexes.length; i++)
       this.children3D[this.wireframeIndexes[i]].visible = false;
   }
+}
+
+LevelObject.prototype.get3DMeshes = function()
+{
+  var meshes = [];
+  for(var i = 0; i < this.children3D.length; i++)
+  {
+    if(this.wireframeIndexes.indexOf(i) == -1 )
+      meshes.push(this.children3D[i]);
+  }
+  return meshes;
+}
+
+LevelObject.prototype.toggleHighlight = function()
+{
+  this.highlighted = ! this.highlighted;
+  
+  var meshes = this.get3DMeshes();
+  
+  var emColor = this.highlighted ? 0xff0000 : 0;
+  
+  for(var i = 0; i < meshes.length; i++)
+  {
+    var mat = meshes[i].material;
+    console.log(mat.emissive, meshes[i]);
+    if(!Array.isArray(mat))
+      mat.emissive.setHex(emColor);
+    else
+      mat.forEach(function(m) { if(m !== null) m.emissive.setHex(emColor); });
+  }
+  
 }

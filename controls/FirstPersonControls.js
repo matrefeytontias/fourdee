@@ -79,29 +79,19 @@ function FirstPersonControls(
     {
       this.raycaster.setFromCamera(this.zeroVec, this.camera3D);
       var inters = this.raycaster.intersectObjects(D4_scene.children);
+      
       // Un-highlight the currently highlighted object if need be
-      if(this.highlightedObject4D !== null)
+      if(this.highlightedObject4D !== null && ( inters.length == 0 || this.highlightedObject4D !== inters[0].object.parent4D ) )
       {
-        var mat = this.highlightedObject4D.get3DBody().material;
-        if(inters.length == 0 || this.highlightedObject4D !== inters[0].object)
-        {
-          if(!Array.isArray(mat))
-            mat.emissive.setHex(0);
-          else
-            mat.forEach(function(m) { if(m !== null) m.emissive.setHex(0); });
-          this.highlightedObject4D = null;
-        }
+        this.highlightedObject4D.toggleHighlight();
+        this.highlightedObject4D = null;
       }
 
+      // Highlight a new object
       if(this.highlightedObject4D === null && inters.length > 0 && inters[0].object.parent4D.selectable)
       {
-        // Highlight a new object
-        var mat = inters[0].object.material;
-        if(!Array.isArray(mat))
-          mat.emissive.setHex(0xff0000);
-        else
-          mat.forEach(function(m) { if(m !== null) m.emissive.setHex(0xff0000); });
         this.highlightedObject4D = inters[0].object.parent4D;
+        this.highlightedObject4D.toggleHighlight();
       }
     }
 
