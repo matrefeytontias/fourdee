@@ -3,63 +3,110 @@ function ThirdPersonControls(
   scene3D,
   space4D,
   keys = new KeySettings(),
-  rotation4DPlans = ["xw", "zw"],
-  draggingSensitivity = 0.008,
-  rotation4DSensitivity = 0.002,
-  deplacementSensitivity = 0.003)
+  rotation4DPlanes = ["xw", "zw"],
+  rotation4DSensitivity = 2)
 {
   Controls.call(this, keys);
   this.camera3D = camera3D;
   this.scene3D = scene3D;
   this.space4D = space4D;
   this.cameraRotation = camera3D.rotation.clone();
-  this.cameraRotationOnMouseDown = new THREE.Euler();
-  this.mousePositionOnMouseDown = {x: 0, y: 0};
+  this.focusedObject4D = null;
+  this.focusedMesh3D = null;
+  this.distance = 0;
+  this.rotation4DPlanes = rotation4DPlanes;
+  this.rotation4DSensitivity = rotation4DSensitivity;
+  this.focusedPosition = new THREE.Vector3();
+  
+  this.setFpControls = function(fpControls)
+  {
+    this.fpControls = fpControls;
+  }
 
   this.listen = function()
   {
-      activeControls = this;
-      start();
+    activeControls = this;
+    start();
+  }
+  
+  this.active = function(object4D)
+  {
+    activeControls = this;
+    this.focusedObject4D = object4D;
+    this.focusedMesh3D = object4D.get3DMeshes()[0];
+    this.focusedPosition = this.focusedObject4D.position3D.clone();
+    this.distance = this.focusedPosition.distanceTo(this.camera3D.position);
+    this.cameraRotation = this.fpControls.cameraRotation.clone();
+    //this.cameraRotation.x = 0;
   }
 
-  this.onMouseDown = function(event)
+  this.onMouseMove = function(event)
   {
-      this.cameraRotationOnMouseDown = this.cameraRotation.clone();
-      this.mousePositionOnMouseDown.x = this.mousePosition.x;
-      this.mousePositionOnMouseDown.y = this.mousePosition.y;
+    this.cameraRotation.y = this.mousePosition.x / this.windowHalfX * Math.PI;
+    this.cameraRotation.x += event.movementY / this.windowHalfY * 0.25 * Math.PI;
+    this.cameraRotation.x = Math.min(0.25 * Math.PI, Math.max(-0.25 * Math.PI, this.cameraRotation.x));
   }
-
-  this.onMouseDrag = function(event)
-  {
-    document.body.style.cursor = "-webkit-dragging";
-
-    console.log(this.cameraRotation.x,  this.cameraRotationOnMouseDown.x, this.mousePosition.y - this.mousePositionOnMouseDown.y)
-
-    this.cameraRotation.y = this.cameraRotationOnMouseDown.y + (this.mousePosition.x - this.mousePositionOnMouseDown.x) * draggingSensitivity;
-
-    if(!this.keyPressed[this.keys.shift])
-      this.cameraRotation.x = this.cameraRotationOnMouseDown.x + (this.mousePosition.y - this.mousePositionOnMouseDown.y) * draggingSensitivity;
+  
+  this.onMouseUp = function(){
+    this.focusedObject4D = null;
+    this.fpControls.active();
   }
 
   this.update = function(dt)
   {
     //4D rotations :
     if(this.keyPressed[this.keys.ana])
-        for(var i = 0; i < rotation4DPlans.length; i++)
-            this.space4D.rotation[rotation4DPlans[i]] += dt * rotation4DSensitivity;
+    {
+      for(var i = 0; i < this.rotation4DPlanes.length; i++)
+      {
+        if(this.rotateAroundMe)
+        {
+          this.space4D.rotateAround(this.player.position, this.rotation4DPlanes[i], dt * rotation4DSensitivity);
+          this.displacementEuler[this.rotation4DPlanes[i]] -= dt * rotation4DSensitivity;
+        }
+        else if(this.focusedObject4D !== null)
+          this.focusedObject4D.rotation[this.rotation4DPlanes[i]] -= dt * rotation4DSensitivity;
+      }
+    }
 
     if(this.keyPressed[this.keys.kata])
-        for(var i = 0; i < rotation4DPlans.length; i++)
-            this.space4D.rotation[rotation4DPlans[i]] -= dt * rotation4DSensitivity;
+    {
+      for(var i = 0; i < this.rotation4DPlanes.length; i++)
+      {
+        if(this.rotateAroundMe)
+        {
+          this.space4D.rotateAround(this.player.position, this.rotation4DPlanes[i], -dt * rotation4DSensitivity);
+          this.displacementEuler[this.rotation4DPlanes[i]] += dt * rotation4DSensitivity;
+        }
+        else if(this.focusedObject4D !== null)
+          this.focusedObject4D.rotation[this.rotation4DPlanes[i]] += dt * rotation4DSensitivity;
+      }
+    }
 
-    //scene 3D rotation
-    this.scene3D.rotation.x = this.cameraRotation.x;
-    this.scene3D.rotation.y = this.cameraRotation.y;
+    if( this.focusedObject4D !== null && (this.keyPressed[this.keys.kata] || this.keyPressed[this.keys.ana]) )
+    {
+      this.focusedObject4D.dirty = true;
+    }
 
+
+    var direction = new THREE.Vector3(Math.cos(this.cameraRotation.y), Math.sin(-this.cameraRotation.x), Math.sin(this.cameraRotation.y));
+    
+    direction.multiplyScalar(this.distance);
+    
+    var pos = this.focusedPosition.clone();
+    pos.add(direction);
+    
+    this.camera3D.position.x = pos.x;
+    this.camera3D.position.y = pos.y;
+    this.camera3D.position.z = pos.z;
+    
+    this.camera3D.lookAt(this.focusedPosition);
+    
     //translation
+    /*
     if(this.keyPressed[this.keys.up]) this.camera3D.position.z -= deplacementSensitivity * dt;
     if(this.keyPressed[this.keys.down]) this.camera3D.position.z += deplacementSensitivity * dt;
     if(this.keyPressed[this.keys.left]) this.camera3D.position.x -= deplacementSensitivity * dt;
-    if(this.keyPressed[this.keys.right]) this.camera3D.position.x += deplacementSensitivity * dt;
+    if(this.keyPressed[this.keys.right]) this.camera3D.position.x += deplacementSensitivity * dt; */
   }
 }

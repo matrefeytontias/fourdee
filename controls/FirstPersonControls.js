@@ -6,6 +6,7 @@ function FirstPersonControls(
   player,
   camera3D,
   space4D,
+  tpControls,
   rotation4DPlanes = ["xw", "zw"],
   rotateAroundMe = false,
   keys = new KeySettings(),
@@ -26,6 +27,11 @@ function FirstPersonControls(
   this.startText = document.getElementById("start");
   this.raycaster = new THREE.Raycaster();
   this.zeroVec = new THREE.Vector2();
+  
+  this.setTpControls = function(tpControls)
+  {
+    this.tpControls = tpControls;
+  }
 
   this.onMouseMove = function(event)
   {
@@ -51,14 +57,22 @@ function FirstPersonControls(
 	  }
 
 	  if(this.selectedObject4D !== null)
+	  {
 	    this.selectedObject4D.toggleWireframe();
+	    this.memPosition = camera3D.position.clone();
+	    this.tpControls.active(this.selectedObject4D);
+	  }
   }
 
-  this.onMouseUp = function()
-  {
+  this.active = function()
+  { 
+    activeControls = this;
     if(this.selectedObject4D !== null)
       this.selectedObject4D.toggleWireframe();
     this.selectedObject4D = null;
+    this.camera3D.position.x = this.memPosition.x;
+    this.camera3D.position.y = this.memPosition.y;
+    this.camera3D.position.z = this.memPosition.z;
   }
 
   this.onKeyDown = function(event)
@@ -126,7 +140,6 @@ function FirstPersonControls(
 
     if( this.selectedObject4D !== null && (this.keyPressed[this.keys.kata] || this.keyPressed[this.keys.ana]) )
     {
-      //this.camera3D.lookAt(this.selectedObject4D.position);
       this.selectedObject4D.dirty = true;
     }
 
