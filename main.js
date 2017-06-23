@@ -48,9 +48,12 @@ function levelLoaded()
   //Start controls
   D4_camera.position.copy(LevelLoader.result.startPos);
 
-  var fpControls = new FirstPersonControls(D4_container, new Player(), D4_camera, D4_space, ["xw"]);
-  var tpControls = new ThirdPersonControls(D4_camera, D4_scene, D4_space);
+  var fpControls = new FirstPersonControls(D4_container, new Player(), D4_camera, D4_space);
+  var tpControls = new ThirdPersonControls(D4_camera, D4_scene, D4_space, ["xw"]);
   fpControls.listen();
+
+  fpControls.setTpControls(tpControls);
+  tpControls.setFpControls(fpControls);
 
   document.getElementById("start").style.display = activeControls === fpControls ? "" : "none";
 }

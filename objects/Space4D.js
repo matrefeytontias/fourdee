@@ -56,7 +56,7 @@ Space4D.prototype.project = function()
   {
     var geom4 = child.geometry;
     var objMat = child.buildMatrix5();
-    var localPosition = child.position.clone().sub(child.rotation.center);
+    var localPosition = child.position.clone().sub(child.rotation.center).sub(child.position);
     localPosition.applyMatrix5(objMat).add(child.rotation.center).sub(this.rotation.center).applyMatrix5(spaceMat);
     child.position3D = this.projector.project(localPosition.add(this.rotation.center));
     if(child.dirty && !child.positionalOnly)
@@ -112,25 +112,32 @@ Space4D.prototype.tryForMove = function(previousPos, amount, collisionRadius)
   {
     if(!child.positionalOnly)
     {
-      var geom3 = child.get3DBody().geometry, vertices = geom3.vertices, faces = geom3.faces;
-      for(var j = 0; j < faces.length; j++)
+      var bodies = child.getPhysical3DMeshes();
+      for(var i = 0; i < bodies.length; i++)
       {
-        var face = faces[j];
-        var faceNorm = cross(sub(vertices, face.b, face.a), sub(vertices, face.c, face.a));
-        // Only check collisions for faces that exist in 3D
-        if(faceNorm.length() == 0)
-          continue;
-        faceNorm.normalize();
-        // console.log(vertices[face.a], vertices[face.b], vertices[face.c]);
-        // Only check collisions for faces that face us
-        if(dot(faceNorm, amount) >= 0)
-          continue;
-        var proj = projOnTriangle(nextPos, vertices[face.a], vertices[face.b], vertices[face.c]);
-        var dSq = dist2(proj, nextPos);
-        // Objects have spherical hitboxes
-        if(dSq < sqr)
-          // There has been a collision
-          collisions.push({ proj: proj, dSq: dSq, obj: child, face: face, faceNorm: faceNorm });
+        var body = bodies[i], geom3 = body.geometry, vertices = geom3.vertices, faces = geom3.faces;
+        for(var j = 0; j < faces.length; j++)
+        {
+          var face = faces[j];
+          var faceNorm = cross(sub(vertices, face.b, face.a), sub(vertices, face.c, face.a));
+          // Only check collisions for faces that exist in 3D
+          if(faceNorm.length() == 0)
+            continue;
+          var side = Array.isArray(body.material) ? body.material[0].side : body.material.side;
+          if(side == THREE.BackSide)
+            faceNorm.negate();
+          faceNorm.normalize();
+          // console.log(vertices[face.a], vertices[face.b], vertices[face.c]);
+          // Only check collisions for faces that face us
+          if(dot(faceNorm, amount) >= 0 && side != THREE.DoubleSide)
+            continue;
+          var proj = projOnTriangle(nextPos, vertices[face.a], vertices[face.b], vertices[face.c]);
+          var dSq = dist2(proj, nextPos);
+          // Objects have spherical hitboxes
+          if(dSq < sqr)
+            // There has been a collision
+            collisions.push({ proj: proj, dSq: dSq, obj: child, face: face, faceNorm: faceNorm });
+        }
       }
     }
   });
@@ -150,7 +157,7 @@ Space4D.prototype.tryForMove = function(previousPos, amount, collisionRadius)
   var movRemainder = amount.clone().sub(newAmount);
   // ... and the rest of the movement is carried along the surface by subtracting the projection on the normal
   newAmount.add(movRemainder.sub(faceNorm.multiplyScalar(movRemainder.dot(faceNorm))));
-  return { collided: true, movement: this.tryForMove(previousPos, newAmount.multiplyScalar(0.5), collisionRadius).movement };
+  return { collided: true, movement: this.tryForMove(previousPos, newAmount.multiplyScalar(1), collisionRadius).movement };
 }
 
 // Projection of point on triangle

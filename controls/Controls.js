@@ -13,10 +13,11 @@ function KeySettings(up=90, down=83, left=81, right=68, ana=65, kata=69, space =
   this.enter = enter;
 }
 
+KeySettings.keyPressed = [];
+
 function Controls(keys = new KeySettings())
 {
   this.keys = keys;
-  this.keyPressed = [];
   this.cameraRotation = new THREE.Euler();
   this.mousePosition  = { x: 0, y: 0};
   this.paused = false;
@@ -43,11 +44,11 @@ function Controls(keys = new KeySettings())
 
   this.defaultOnKeyDown = function(event)
   {
-    this.keyPressed[event.keyCode] = true;
+    KeySettings.keyPressed[event.keyCode] = true;
   };
   this.defaultOnKeyUp = function(event)
   {
-    this.keyPressed[event.keyCode] = false;
+    KeySettings.keyPressed[event.keyCode] = false;
   };
 
   this.defaultOnMouseMove = function(event)
@@ -141,11 +142,11 @@ function onDocumentPointerLockChange()
 }
 
 function OnDocumentResize(){
-    
+
 }
 
 
-//TODO ? Handle compatibility 
+//TODO ? Handle compatibility
 function pointerLockError()
 {
   console.log("An error occured during pointer locking.");

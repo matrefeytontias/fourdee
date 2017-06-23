@@ -2,64 +2,107 @@ function ThirdPersonControls(
   camera3D,
   scene3D,
   space4D,
+  rotation4DPlanes = ["xw", "zw"],
   keys = new KeySettings(),
-  rotation4DPlans = ["xw", "zw"],
-  draggingSensitivity = 0.008,
-  rotation4DSensitivity = 0.002,
-  deplacementSensitivity = 0.003)
+  rotation4DSensitivity = 2,
+  displacement3DSensitivity = 3)
 {
   Controls.call(this, keys);
   this.camera3D = camera3D;
   this.scene3D = scene3D;
   this.space4D = space4D;
   this.cameraRotation = camera3D.rotation.clone();
-  this.cameraRotationOnMouseDown = new THREE.Euler();
-  this.mousePositionOnMouseDown = {x: 0, y: 0};
+  this.focusedObject4D = null;
+  this.distance = 0;
+  this.rotation4DPlanes = rotation4DPlanes;
+  this.rotation4DSensitivity = rotation4DSensitivity;
+  this.displacement3DSensitivity = displacement3DSensitivity;
+  this.focusedPosition = new THREE.Vector3();
+
+  this.setFpControls = function(fpControls)
+  {
+    this.fpControls = fpControls;
+  }
 
   this.listen = function()
   {
-      activeControls = this;
-      start();
+    activeControls = this;
+    start();
   }
 
-  this.onMouseDown = function(event)
+  this.activate = function(object4D)
   {
-      this.cameraRotationOnMouseDown = this.cameraRotation.clone();
-      this.mousePositionOnMouseDown.x = this.mousePosition.x;
-      this.mousePositionOnMouseDown.y = this.mousePosition.y;
+    activeControls = this;
+    this.focusedObject4D = object4D;
+    this.focusedPosition = this.focusedObject4D.position3D.clone();
+    this.distance = Math.max(object4D.projection.boundingSphere.radius, this.focusedPosition.distanceTo(this.camera3D.position));
+    this.mousePosition.x = this.windowHalfX+this.fpControls.mousePosition.x;
+    this.onMouseMove({ movementY : 0})
   }
 
-  this.onMouseDrag = function(event)
+  this.onMouseMove = function(event)
   {
-    document.body.style.cursor = "-webkit-dragging";
+    this.cameraRotation.y = this.mousePosition.x / this.windowHalfX * Math.PI;
+    this.cameraRotation.x -= event.movementY / this.windowHalfY * 0.25 * Math.PI;
+    this.cameraRotation.x = Math.min(0.25 * Math.PI, Math.max(-0.25 * Math.PI, this.cameraRotation.x));
+  }
 
-    console.log(this.cameraRotation.x,  this.cameraRotationOnMouseDown.x, this.mousePosition.y - this.mousePositionOnMouseDown.y)
-
-    this.cameraRotation.y = this.cameraRotationOnMouseDown.y + (this.mousePosition.x - this.mousePositionOnMouseDown.x) * draggingSensitivity;
-
-    if(!this.keyPressed[this.keys.shift])
-      this.cameraRotation.x = this.cameraRotationOnMouseDown.x + (this.mousePosition.y - this.mousePositionOnMouseDown.y) * draggingSensitivity;
+  this.onMouseUp = function(){
+    this.focusedObject4D = null;
+    this.fpControls.activate();
   }
 
   this.update = function(dt)
   {
     //4D rotations :
-    if(this.keyPressed[this.keys.ana])
-        for(var i = 0; i < rotation4DPlans.length; i++)
-            this.space4D.rotation[rotation4DPlans[i]] += dt * rotation4DSensitivity;
+    if(KeySettings.keyPressed[this.keys.ana])
+    {
+      for(var i = 0; i < this.rotation4DPlanes.length; i++)
+      {
+        if(this.rotateAroundMe)
+        {
+          this.space4D.rotateAround(this.player.position, this.rotation4DPlanes[i], dt * rotation4DSensitivity);
+          this.displacementEuler[this.rotation4DPlanes[i]] -= dt * rotation4DSensitivity;
+        }
+        else if(this.focusedObject4D !== null)
+          this.focusedObject4D.rotation[this.rotation4DPlanes[i]] -= dt * rotation4DSensitivity;
+      }
+    }
 
-    if(this.keyPressed[this.keys.kata])
-        for(var i = 0; i < rotation4DPlans.length; i++)
-            this.space4D.rotation[rotation4DPlans[i]] -= dt * rotation4DSensitivity;
+    if(KeySettings.keyPressed[this.keys.kata])
+    {
+      for(var i = 0; i < this.rotation4DPlanes.length; i++)
+      {
+        if(this.rotateAroundMe)
+        {
+          this.space4D.rotateAround(this.player.position, this.rotation4DPlanes[i], -dt * rotation4DSensitivity);
+          this.displacementEuler[this.rotation4DPlanes[i]] += dt * rotation4DSensitivity;
+        }
+        else if(this.focusedObject4D !== null)
+          this.focusedObject4D.rotation[this.rotation4DPlanes[i]] += dt * rotation4DSensitivity;
+      }
+    }
 
-    //scene 3D rotation
-    this.scene3D.rotation.x = this.cameraRotation.x;
-    this.scene3D.rotation.y = this.cameraRotation.y;
+    if( this.focusedObject4D !== null && (KeySettings.keyPressed[this.keys.kata] || KeySettings.keyPressed[this.keys.ana]) )
+      this.focusedObject4D.dirty = true;
 
-    //translation
-    if(this.keyPressed[this.keys.up]) this.camera3D.position.z -= deplacementSensitivity * dt;
-    if(this.keyPressed[this.keys.down]) this.camera3D.position.z += deplacementSensitivity * dt;
-    if(this.keyPressed[this.keys.left]) this.camera3D.position.x -= deplacementSensitivity * dt;
-    if(this.keyPressed[this.keys.right]) this.camera3D.position.x += deplacementSensitivity * dt;
+    // Translation around the object
+    if(KeySettings.keyPressed[this.keys.up])
+      this.distance = Math.max(this.distance - this.displacement3DSensitivity * dt, this.focusedObject4D.projection.boundingSphere.radius);
+    if(KeySettings.keyPressed[this.keys.down])
+      this.distance += this.displacement3DSensitivity * dt;
+
+    var direction = new THREE.Vector3(Math.cos(this.cameraRotation.y), Math.sin(-this.cameraRotation.x), Math.sin(this.cameraRotation.y));
+
+    direction.multiplyScalar(this.distance);
+
+    var pos = this.focusedPosition.clone();
+    pos.add(direction);
+
+    this.camera3D.position.x = pos.x;
+    this.camera3D.position.y = pos.y;
+    this.camera3D.position.z = pos.z;
+
+    this.camera3D.lookAt(this.focusedPosition);
   }
 }

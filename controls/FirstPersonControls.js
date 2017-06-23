@@ -6,6 +6,7 @@ function FirstPersonControls(
   player,
   camera3D,
   space4D,
+  tpControls,
   rotation4DPlanes = ["xw", "zw"],
   rotateAroundMe = false,
   keys = new KeySettings(),
@@ -26,6 +27,11 @@ function FirstPersonControls(
   this.startText = document.getElementById("start");
   this.raycaster = new THREE.Raycaster();
   this.zeroVec = new THREE.Vector2();
+
+  this.setTpControls = function(tpControls)
+  {
+    this.tpControls = tpControls;
+  }
 
   this.onMouseMove = function(event)
   {
@@ -51,19 +57,27 @@ function FirstPersonControls(
 	  }
 
 	  if(this.selectedObject4D !== null)
+	  {
 	    this.selectedObject4D.toggleWireframe();
+	    this.memPosition = camera3D.position.clone();
+	    this.tpControls.activate(this.selectedObject4D);
+	  }
   }
 
-  this.onMouseUp = function()
+  this.activate = function()
   {
+    activeControls = this;
     if(this.selectedObject4D !== null)
       this.selectedObject4D.toggleWireframe();
     this.selectedObject4D = null;
+    this.camera3D.position.x = this.memPosition.x;
+    this.camera3D.position.y = this.memPosition.y;
+    this.camera3D.position.z = this.memPosition.z;
   }
 
   this.onKeyDown = function(event)
   {
-    if(this.paused && this.keyPressed[this.keys.enter])
+    if(this.paused && KeySettings.keyPressed[this.keys.enter])
     {
       this.container.requestFullscreen = this.container.requestFullscreen || this.container.mozRequestFullscreen || this.container.mozRequestFullScreen ||  this.container.webkitRequestFullscreen;
       this.container.requestFullscreen();
@@ -79,65 +93,20 @@ function FirstPersonControls(
     {
       this.raycaster.setFromCamera(this.zeroVec, this.camera3D);
       var inters = this.raycaster.intersectObjects(D4_scene.children);
+
       // Un-highlight the currently highlighted object if need be
-      if(this.highlightedObject4D !== null)
+      if(this.highlightedObject4D !== null && ( inters.length == 0 || this.highlightedObject4D !== inters[0].object.parent4D ) )
       {
-        var mat = this.highlightedObject4D.get3DBody().material;
-        if(inters.length == 0 || this.highlightedObject4D !== inters[0].object)
-        {
-          if(!Array.isArray(mat))
-            mat.emissive.setHex(0);
-          else
-            mat.forEach(function(m) { if(m !== null) m.emissive.setHex(0); });
-          this.highlightedObject4D = null;
-        }
+        this.highlightedObject4D.toggleHighlight();
+        this.highlightedObject4D = null;
       }
 
+      // Highlight a new object
       if(this.highlightedObject4D === null && inters.length > 0 && inters[0].object.parent4D.selectable)
       {
-        // Highlight a new object
-        var mat = inters[0].object.material;
-        if(!Array.isArray(mat))
-          mat.emissive.setHex(0xff0000);
-        else
-          mat.forEach(function(m) { if(m !== null) m.emissive.setHex(0xff0000); });
         this.highlightedObject4D = inters[0].object.parent4D;
+        this.highlightedObject4D.toggleHighlight();
       }
-    }
-
-    //4D rotations :
-    if(this.keyPressed[this.keys.ana])
-    {
-      for(var i = 0; i < rotation4DPlanes.length; i++)
-      {
-        if(this.rotateAroundMe)
-        {
-          this.space4D.rotateAround(this.player.position, rotation4DPlanes[i], dt * rotation4DSensitivity);
-          this.displacementEuler[rotation4DPlanes[i]] -= dt * rotation4DSensitivity;
-        }
-        else if(this.selectedObject4D !== null)
-          this.selectedObject4D.rotation[rotation4DPlanes[i]] -= dt * rotation4DSensitivity;
-      }
-    }
-
-    if(this.keyPressed[this.keys.kata])
-    {
-      for(var i = 0; i < rotation4DPlanes.length; i++)
-      {
-        if(this.rotateAroundMe)
-        {
-          this.space4D.rotateAround(this.player.position, rotation4DPlanes[i], -dt * rotation4DSensitivity);
-          this.displacementEuler[rotation4DPlanes[i]] += dt * rotation4DSensitivity;
-        }
-        else if(this.selectedObject4D !== null)
-          this.selectedObject4D.rotation[rotation4DPlanes[i]] += dt * rotation4DSensitivity;
-      }
-    }
-
-    if( this.selectedObject4D !== null && (this.keyPressed[this.keys.kata] || this.keyPressed[this.keys.ana]) )
-    {
-      //this.camera3D.lookAt(this.selectedObject4D.position);
-      this.selectedObject4D.dirty = true;
     }
 
 
@@ -148,16 +117,16 @@ function FirstPersonControls(
     this.camera3D.lookAt(where);
 
     //translation
-    if(this.keyPressed[this.keys.up] || this.keyPressed[this.keys.down] || this.keyPressed[this.keys.left] || this.keyPressed[this.keys.right])
+    if(KeySettings.keyPressed[this.keys.up] || KeySettings.keyPressed[this.keys.down] || KeySettings.keyPressed[this.keys.left] || KeySettings.keyPressed[this.keys.right])
     {
       var moveDirection = direction.clone(), movement = new THREE.Vector3();
       moveDirection.y = 0;
       moveDirection.multiplyScalar(displacementSensitivity*dt);
 
-      if(this.keyPressed[this.keys.up]) movement.add(moveDirection);
-      if(this.keyPressed[this.keys.down]) movement.sub(moveDirection);
-      if(this.keyPressed[this.keys.left]) movement.add(moveDirection.clone().rotate("y", Math.PI/2));
-      if(this.keyPressed[this.keys.right]) movement.add(moveDirection.clone().rotate("y", -Math.PI/2));
+      if(KeySettings.keyPressed[this.keys.up]) movement.add(moveDirection);
+      if(KeySettings.keyPressed[this.keys.down]) movement.sub(moveDirection);
+      if(KeySettings.keyPressed[this.keys.left]) movement.add(moveDirection.clone().rotate("y", Math.PI/2));
+      if(KeySettings.keyPressed[this.keys.right]) movement.add(moveDirection.clone().rotate("y", -Math.PI/2));
 
       movement.y = 0;
       this.player.velocity3D.add(movement);
@@ -166,7 +135,7 @@ function FirstPersonControls(
     // Add gravity
     this.player.velocity3D.y += -D4_GRAVITY * dt;
     // Eventually add a jump
-    if(this.canJump && this.keyPressed[this.keys.space])
+    if(this.canJump && KeySettings.keyPressed[this.keys.space])
       this.player.velocity3D.y += D4_JUMP;
     var data = space4D.tryForMove(this.camera3D.position, this.player.velocity3D, this.player.radius);
     this.player.velocity3D = data.movement;
