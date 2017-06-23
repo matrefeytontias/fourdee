@@ -137,9 +137,17 @@ function FirstPersonControls(
     // Eventually add a jump
     if(this.canJump && KeySettings.keyPressed[this.keys.space])
       this.player.velocity3D.y += D4_JUMP;
-    var data = space4D.tryForMove(this.camera3D.position, this.player.velocity3D, this.player.radius);
-    this.player.velocity3D = data.movement;
-    this.canJump = (data.collided && this.player.velocity3D.y == 0);
+    
+    var velocityY = new THREE.Vector3(0, this.player.velocity3D.y, 0);
+    var dataY = space4D.tryForMove(this.camera3D.position, velocityY, this.player.radius);
+    
+    var newPosition = this.camera3D.position.clone().add(dataY.movement);
+    var velocityXZ = this.player.velocity3D.clone();
+    velocityXZ.y = 0; 
+    var dataXZ = space4D.tryForMove(newPosition, velocityXZ, this.player.radius);
+    
+    this.player.velocity3D.addVectors(dataY.movement, dataXZ.movement);
+    this.canJump = (dataY.collided && this.player.velocity3D.y == 0);
 
     var movement4D = new THREE.Vector4(this.player.velocity3D.x, 0, this.player.velocity3D.z, 0);
     movement4D.applyEuler4D(this.displacementEuler);
