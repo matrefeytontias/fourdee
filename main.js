@@ -39,7 +39,7 @@ function main()
   D4_scene.add(light);
 
   window.addEventListener("levelLoaded", levelLoaded);
-  LevelLoader.loadFile("levels/test1.json", D4_space);
+  LevelLoader.loadFile("levels/showroom.json", D4_space);
   // End level;
 }
 
@@ -49,7 +49,7 @@ function levelLoaded()
   D4_camera.position.copy(LevelLoader.result.startPos);
 
   var fpControls = new FirstPersonControls(D4_container, new Player(), D4_camera, D4_space);
-  var tpControls = new ThirdPersonControls(D4_camera, D4_scene, D4_space, ["xw"]);
+  var tpControls = new ThirdPersonControls(D4_camera, D4_scene, D4_space, ["xw", "yw"]);
   fpControls.listen();
 
   fpControls.setTpControls(tpControls);

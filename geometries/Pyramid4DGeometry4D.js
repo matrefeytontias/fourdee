@@ -1,4 +1,4 @@
-// Constructs a 3-cube from 4D dimensions
+// Constructs a solid constructed as a pyramid in 4D dimensions 
 // String dimension float width, float height, float depth
 function Pyramid4DGeometry4D(width, height, depth, duth)
 {

@@ -18,7 +18,6 @@
       "material": "rad face",
       "position": { "y": 2 },
       "rotation": { },
-      "rotationLocks": [ "zw" ],
       "selectable" : true
     },
     { "name": "ground",
@@ -37,5 +36,8 @@
       "rotationLocks": [ "zw" ],
       "selectable" : true
     }
+  ],
+  "scripts": [
+    
   ]
 }
