@@ -45,6 +45,7 @@ LevelLoader.loadJSON = function(level, space4D)
     var mats = [];
     for(var i = 0; i < data.materialPackages[name].length; i++)
       mats.push(materials[data.materialPackages[name][i]].clone());
+    mats.clone = function(){ var m = []; for(var i=0; i < this.length; i++) m.push(this[i]); return m; };
     materials[name] = mats;
   }
 

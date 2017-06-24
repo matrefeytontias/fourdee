@@ -23,13 +23,13 @@ Object4D.prototype.setFaceMaterial = function(faces, materials)
 }
 
 // int [][] faces
-Object4D.prototype.setFaceGroupMaterial = function(facesGroups)
+Object4D.prototype.setFaceGroupsMaterial = function(faceGroups)
 {
-  for(var i = 0; i < facesGroups.length; i++)
+  for(var i = 0; i < faceGroups.length; i++)
   {
-    for(var j = 0; j < facesGroups[i].length; j++)
+    for(var j = 0; j < faceGroups[i].length; j++)
     {
-      this.geometry.faces[facesGroups[i][j]].materialIndex = i;
+      this.geometry.faces[faceGroups[i][j]].materialIndex = i;
     }
   }
 }
@@ -62,6 +62,9 @@ Object4D.prototype.add3DChild = function(object3D)
 Object4D.prototype.add3DMeshMaterial = function(material)
 {
   var mesh3d = new THREE.Mesh(this.projection, material);
+  
+  if(Array.isArray(material))
+    this.setFaceGroupsMaterial(this.geometry.faceGroups);
 
   return this.add3DChild(mesh3d);
 }

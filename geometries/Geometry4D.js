@@ -44,3 +44,5 @@ Geometry4D.prototype.removeFaceGroups = function(groups)
   var f = groups.reduce(function(acc, x) { return acc.concat(fg[x]); }, []);
   this.removeFaces(f);
 }
+
+//Geometry4D.prototype.
