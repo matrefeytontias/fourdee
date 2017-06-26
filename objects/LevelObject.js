@@ -5,10 +5,30 @@ function LevelObject(geometry, material)
   this.seleted = false;
   this.wireframeIndexes = [];
   this.highlighted = false;
+  this.endRotation = null;
 }
 
 LevelObject.prototype = new Mesh4D();
 LevelObject.prototype.constructor = LevelObject;
+
+LevelObject.prototype.rotate = function(plane, dtheta)
+{
+  this.rotation[plane] += dtheta;
+}
+
+LevelObject.prototype.checkEndRotation = function(){
+  if(this.endRotation === null) return;
+  
+  if(this.rotation.isEqualTo(this.endRotation))
+  {
+    if(this.highlighted) this.toggleHighlight(0, true);
+    this.toggleHighlight(0x00ff00, true);
+    this.setSelectable(false);
+    window.setTimeout((function(obj){
+      return function(){ obj.toggleHighlight(0, true) }
+    })(this), 1000);
+  }
+}
 
 // String[] rotations
 LevelObject.prototype.lockRotations = function(rotations)
@@ -101,13 +121,16 @@ LevelObject.prototype.getPhysical3DMeshes = function()
   return meshes;
 }
 
-LevelObject.prototype.toggleHighlight = function()
+LevelObject.prototype.toggleHighlight = function(color = 0xff0000, pass = false)
 {
+  if(!this.selectable && !pass) return;
+  
   this.highlighted = ! this.highlighted;
 
   var meshes = this.getPhysical3DMeshes();
 
-  var emColor = this.highlighted ? 0xff0000 : 0;
+  var emColor = this.highlighted ? color : 0;
+  console.log(emColor);
 
   for(var i = 0; i < meshes.length; i++)
   {

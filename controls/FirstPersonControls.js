@@ -38,8 +38,8 @@ function FirstPersonControls(
     if(this.paused || this.selectedObject4D !== null) return;
 
     this.cameraRotation.y = this.mousePosition.x / this.windowHalfX * Math.PI;
-    this.cameraRotation.x += event.movementY / this.windowHalfY * 0.25 * Math.PI;
-    this.cameraRotation.x = Math.min(0.25 * Math.PI, Math.max(-0.25 * Math.PI, this.cameraRotation.x));
+    this.cameraRotation.x += event.movementY / this.windowHalfY * 0.4 * Math.PI;
+    this.cameraRotation.x = Math.min(0.4 * Math.PI, Math.max(-0.4 * Math.PI, this.cameraRotation.x));
 
   }
 
@@ -69,6 +69,7 @@ function FirstPersonControls(
     activeControls = this;
     if(this.selectedObject4D !== null)
       this.selectedObject4D.toggleWireframe();
+      this.selectedObject4D.checkEndRotation();
     this.selectedObject4D = null;
     this.camera3D.position.x = this.memPosition.x;
     this.camera3D.position.y = this.memPosition.y;

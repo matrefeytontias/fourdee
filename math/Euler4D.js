@@ -22,6 +22,23 @@ Euler4D.prototype.clone = function()
   return clone;
 }
 
+Euler4D.prototype.difference = function(euler4d)
+{
+  return Math.sqrt(
+    Math.pow(this.xy - euler4d.xy, 2) +
+    Math.pow(this.xz - euler4d.xz, 2) + 
+    Math.pow(this.xw - euler4d.xw, 2) + 
+    Math.pow(this.yz - euler4d.yz, 2) + 
+    Math.pow(this.yw - euler4d.yw, 2) +  
+    Math.pow(this.zw - euler4d.zw, 2)
+  )
+}
+
+Euler4D.prototype.isEqualTo = function(euler4d, precision = 0.2)
+{
+  return this.difference(euler4d) <= precision;
+}
+
 THREE.Vector4.prototype.applyEuler4D = function(euler)
 {
   var mat = new Matrix5();

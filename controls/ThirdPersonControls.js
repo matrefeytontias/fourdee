@@ -81,7 +81,7 @@ function ThirdPersonControls(
           this.displacementEuler[this.rotation4DPlanes[i]] -= dt * rotation4DSensitivity;
         }
         else if(this.focusedObject4D !== null)
-          this.focusedObject4D.rotation[this.rotation4DPlanes[i]] -= dt * rotation4DSensitivity;
+          this.focusedObject4D.rotate(this.rotation4DPlanes[i], - dt * rotation4DSensitivity)
       }
     }
 
@@ -95,7 +95,7 @@ function ThirdPersonControls(
           this.displacementEuler[this.rotation4DPlanes[i]] += dt * rotation4DSensitivity;
         }
         else if(this.focusedObject4D !== null)
-          this.focusedObject4D.rotation[this.rotation4DPlanes[i]] += dt * rotation4DSensitivity;
+          this.focusedObject4D.rotate(this.rotation4DPlanes[i], dt * rotation4DSensitivity)
       }
     }
 

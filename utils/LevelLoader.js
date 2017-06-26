@@ -108,6 +108,7 @@ LevelLoader.loadJSON = function(level, space4D)
     element.position.x = data.levelStructure[i][1];
     element.position.y = data.levelStructure[i][2];
     element.position.z = data.levelStructure[i][3];
+    element.endRotation = new Euler4D(data.levelEnd[i][0], data.levelEnd[i][1], data.levelEnd[i][2], data.levelEnd[i][3], data.levelEnd[i][4], data.levelEnd[i][5]);
     if(objects[data.levelStructure[i][0]].rotationLocks) 
       element.lockRotations(objects[data.levelStructure[i][0]].rotationLocks);
     space4D.add(element);

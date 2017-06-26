@@ -37,7 +37,7 @@ function main()
   light = new THREE.PointLight(0xffffff, 0.5, 1000);
   D4_scene.add(light);
 
-  var ambientLight = new THREE.AmbientLight( 0x404040 ); // soft white light
+  var ambientLight = new THREE.AmbientLight( 0x606060 ); // soft white light
   D4_scene.add( ambientLight );
   
   
