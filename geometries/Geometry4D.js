@@ -46,4 +46,16 @@ Geometry4D.prototype.removeFaceGroups = function(groups)
   this.removeFaces(f);
 }
 
+Geometry4D.prototype.clone = function()
+{
+  var clone = new Geometry4D();
+  for(var i = 0; i < this.vertices4D.length; i++)
+    clone.vertices4D.push(this.vertices4D[i].clone());
+  for(var i = 0; i < this.faces.length; i++)
+    clone.faces.push(this.faces[i].clone());
+  clone.faceGroups = this.faceGroups;
+  clone.projector = this.projector;
+  return clone;
+}
+
 //Geometry4D.prototype.

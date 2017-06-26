@@ -55,8 +55,8 @@ LevelLoader.loadJSON = function(level, space4D)
   {
     for(var i = 0; i < data.projectors.length; i++)
     {
-      var proj = data.projectors[i] == "StereoProj" ? 
-        new StereoProj(new THREE.Vector4(data.projectors.options[0], data.projectors.options[1], data.projectors.options[2], data.projectors.options[3]), data.projectors.options[4] ) :
+      var proj = data.projectors[i].type == "StereoProj" ? 
+        new StereoProj(new THREE.Vector4(data.projectors[i].options[0], data.projectors[i].options[1], data.projectors[i].options[2], data.projectors[i].options[3]), data.projectors[i].options[4] ) :
         new OrthoProj();
       projectors[data.projectors[i].name] = proj;   
     }
@@ -82,28 +82,35 @@ LevelLoader.loadJSON = function(level, space4D)
 
     objects[objData.name] = obj;
 
-    if(objData.position)
-    {
-      for(var coord in objData.position)
-        obj.position[coord] = objData.position[coord];
-    }
     if(objData.rotation)
     {
       for(var plane in objData.rotation)
+      {
         obj.rotation[plane] = objData.rotation[plane];
+      }
     }
 
     if(objData.selectable)
     {
       obj.setSelectable(true);
       if(objData.rotationLocks)
-        obj.lockRotations(objData.rotationLocks);
+        obj.rotationLocks = objData.rotationLocks;
     }
     
     if(objData.projector)
       obj.geometry.projector = projectors[objData.projector];
 
-    space4D.add(obj);
+  }
+  
+  for(var i = 0; i < data.levelStructure.length; i++)
+  {
+    var element = objects[data.levelStructure[i][0]].clone();
+    element.position.x = data.levelStructure[i][1];
+    element.position.y = data.levelStructure[i][2];
+    element.position.z = data.levelStructure[i][3];
+    if(objects[data.levelStructure[i][0]].rotationLocks) 
+      element.lockRotations(objects[data.levelStructure[i][0]].rotationLocks);
+    space4D.add(element);
   }
 
   function makeArgs(cmdLine, start, end, converter)

@@ -15,6 +15,13 @@ function Euler4D(xy = 0, xz = 0, xw = 0, yz = 0, yw = 0, zw = 0, order = "XYXZXW
   this.center = new THREE.Vector4();
 }
 
+Euler4D.prototype.clone = function()
+{
+  var clone = new Euler4D(this.xy, this.xz, this.xw, this.yz, this.yw, this.zw, this.order);
+  clone.center = this.center.clone();
+  return clone;
+}
+
 THREE.Vector4.prototype.applyEuler4D = function(euler)
 {
   var mat = new Matrix5();
@@ -30,3 +37,5 @@ THREE.Vector4.prototype.applyEuler4D = function(euler)
 
   return this.applyMatrix5(mat);
 }
+
+

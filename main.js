@@ -6,7 +6,7 @@ if(!D4_PERSPECTIVE)
 }
 const D4_GRAVITY = 0.35; // unit/s²
 const D4_FRICTION = 20; // unit/s²
-const D4_JUMP = 0.15; // unit/s
+const D4_JUMP = 0.25; // unit/s
 
 var paused = false;
 var D4_container = document.getElementById("view");

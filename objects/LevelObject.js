@@ -119,3 +119,30 @@ LevelObject.prototype.toggleHighlight = function()
   }
 
 }
+
+LevelObject.prototype.clone = function()
+{
+  var meshes = this.getPhysical3DMeshes();
+  var materials = [];
+  for(var i = 0; i < meshes.length; i++)
+  {
+    if(Array.isArray(meshes[i].material))
+    {
+      materials.push([]);
+      for(var j = 0; j < meshes[i].material.length; j++)
+        materials[i].push(meshes[i].material[j].clone());
+    }
+    else
+      materials.push(meshes[i].material.clone());
+  }
+  
+  var clone = new LevelObject(this.geometry.clone(), materials[0]);
+  for(var i = 1; i < meshes.length; i++)
+    clone.add3DMeshMaterial(materials[i]);
+  
+  clone.setSelectable(this.selectable);
+  
+  clone.rotation = this.rotation.clone();  
+  
+  return clone;
+}
