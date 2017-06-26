@@ -34,16 +34,19 @@ window.addEventListener("load", main);
 
 function main()
 {
-
   light = new THREE.PointLight(0xffffff, 0.5, 1000);
   D4_scene.add(light);
 
-
   var ambientLight = new THREE.AmbientLight( 0x404040 ); // soft white light
   D4_scene.add( ambientLight );
+  
+  
+  var url = new URL(window.location.href);
+  var level = url.searchParams.get("level");
+  level = level === null ? "showroom" : level;
+  
   window.addEventListener("levelLoaded", levelLoaded);
-  LevelLoader.loadFile("levels/cubejail.json", D4_space);
-  // End level;
+  LevelLoader.loadFile("levels/" + level + ".json", D4_space);
 }
 
 function levelLoaded()
