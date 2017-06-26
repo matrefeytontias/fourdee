@@ -1,6 +1,7 @@
 {
   "startingPosition": { "x": 3.5, "y": 1, "z": -5 },
   "title": "4D Solids showroom",
+  "userRotations" : ["xw", "yw"],
   "materials": [
     { "name": "white",
       "type": "Phong",

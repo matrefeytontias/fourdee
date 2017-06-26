@@ -1,6 +1,7 @@
 {
   "title": "Welcome to Cube Jail",
   "startingPosition": { "y": 0.8 },
+  "userRotations" : ["xw"],
   "materials": [
     { "name": "ground material",
       "type": "Phong",

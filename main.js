@@ -18,7 +18,7 @@ const D4_scene = new THREE.Scene();
 var lastUpdateTimestamp;
 
 const orthoProj = new OrthoProj();
-const stereoProj = new StereoProj(new THREE.Vector4(3.5, 0, 0, 10), 3);
+const stereoProj = new StereoProj(new THREE.Vector4(0, 0, 0, 10), 3);
 
 const D4_space = new Space4D(stereoProj);
 
@@ -42,7 +42,7 @@ function main()
   var ambientLight = new THREE.AmbientLight( 0x404040 ); // soft white light
   D4_scene.add( ambientLight );
   window.addEventListener("levelLoaded", levelLoaded);
-  LevelLoader.loadFile("levels/showroom.json", D4_space);
+  LevelLoader.loadFile("levels/cubejail.json", D4_space);
   // End level;
 }
 
@@ -52,7 +52,7 @@ function levelLoaded()
   D4_camera.position.copy(LevelLoader.result.startPos);
 
   var fpControls = new FirstPersonControls(D4_container, new Player(), D4_camera, D4_space);
-  var tpControls = new ThirdPersonControls(D4_camera, D4_scene, D4_space, ["xw", "yw"]);
+  var tpControls = new ThirdPersonControls(D4_camera, D4_scene, D4_space, LevelLoader.result.userRotations);
   fpControls.listen();
 
   fpControls.setTpControls(tpControls);

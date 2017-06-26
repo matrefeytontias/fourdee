@@ -123,5 +123,5 @@ LevelLoader.loadJSON = function(level, space4D)
   for(var coord in data.startingPosition)
     startPos[coord] = data.startingPosition[coord];
 
-  return { startPos: startPos, title: data.title };
+  return { startPos: startPos, title: data.title, userRotations : data.userRotations };
 }
