@@ -66,33 +66,7 @@ Space4D.prototype.project = function()
         throw "Pushed Object4D with undefined geometry";
       else
       {
-        var geom3 = child.projection;
-        if(geom3 === undefined)
-          throw "Pushed Object4D with undefined target 3D geometry";
-        else
-        {
-          geom3.vertices.length = 0;
-          for(var vi = 0; vi < geom4.vertices4D.length; vi++)
-          {
-            var localVertex = geom4.vertices4D[vi].clone()
-            localVertex.sub(child.rotation.center).applyMatrix5(objMat).add(child.rotation.center);
-            localVertex.sub(this.rotation.center).applyMatrix5(spaceMat).add(this.rotation.center)
-            
-            if(geom4.projector === null)
-              geom3.vertices.push(this.projector.project(localVertex).add(child.position3D));
-            else
-              geom3.vertices.push(geom4.projector.project(localVertex).add(child.position3D));
-            
-          }
-          geom3.faces = geom4.faces;
-          geom3.verticesNeedUpdate = true;
-          geom3.elementsNeedUpdate = true;
-          geom3.computeFaceNormals();
-          geom3.computeVertexNormals();
-          geom3.computeFlatVertexNormals();
-          geom3.computeBoundingBox();
-          geom3.computeBoundingSphere();
-        }
+        child.project(this.projector, spaceMat, this.rotation.center);
       }
       child.dirty = false;
     }

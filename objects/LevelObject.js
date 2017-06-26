@@ -68,27 +68,24 @@ LevelObject.prototype.setSelectable = function(b)
           else
             materials.push(null);
         }
-        this.addWireframeMaterial(materials);
+        this.addWireframeMaterial(false, materials);
       }
       else{
         var m = this.children3D[i].material.clone();
         m.transparent = true;
         m.opacity = 0.2;
-        this.addWireframeMaterial(m);
+        this.addWireframeMaterial(false, m);
       }
     }
     this.addWireframeMaterial()
   }
 }
 
-LevelObject.prototype.addWireframeMaterial = function(material = new THREE.MeshBasicMaterial({
-        color : 0xffffff,
-        wireframe : true,
-        wireframeLinewidth : 5}))
+LevelObject.prototype.addWireframeMaterial = function(line = true, material = new THREE.LineBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide, linewidth : 3 }))
 {
   this.wireframeIndexes.push(this.children3D.length);
-  var wmesh = this.add3DMeshMaterial(material);
-  wmesh.visible = false;
+  var obj = line ? this.add3DLineSegmentsMaterial(material)  : this.add3DMeshMaterial(material);
+  obj.visible = false;
 }
 
 LevelObject.prototype.toggleWireframe = function (){

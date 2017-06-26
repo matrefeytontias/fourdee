@@ -27,6 +27,10 @@ function Box3DGeometry4D(dimension, width, height, depth)
     this.faces.push(cubeFaces[i].clone());;
 
   this.faceGroups = [[0, 1], [2, 3], [4, 5], [6, 7], [8, 9], [10, 11]];
+  
+  this.edges = [
+    0, 2, 2, 3, 3, 1, 1, 0, 4, 5, 5, 7, 7, 6, 6, 4, 4, 0, 6, 2, 7, 3, 5, 1
+  ];
 }
 
 Box3DGeometry4D.prototype = new Geometry4D();
