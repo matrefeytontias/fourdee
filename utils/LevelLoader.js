@@ -49,14 +49,17 @@ LevelLoader.loadJSON = function(level, space4D)
     materials[name] = mats;
   }
   
+  //Read and constructs the level's projectors
   var projectors = {};
-  
-  for(var i = 0; i < data.projectors.length; i++)
+  if(data.projectors)
   {
-    var proj = data.projectors[i] == "StereoProj" ? 
-      new StereoProj(new THREE.Vector4(data.projectors.options[0], data.projectors.options[1], data.projectors.options[2], data.projectors.options[3]), data.projectors.options[4] ) :
-      new OrthoProj();
-    projectors[data.projectors[i].name] = proj;   
+    for(var i = 0; i < data.projectors.length; i++)
+    {
+      var proj = data.projectors[i] == "StereoProj" ? 
+        new StereoProj(new THREE.Vector4(data.projectors.options[0], data.projectors.options[1], data.projectors.options[2], data.projectors.options[3]), data.projectors.options[4] ) :
+        new OrthoProj();
+      projectors[data.projectors[i].name] = proj;   
+    }
   }
 
   // Read and construct the level's objects
