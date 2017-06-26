@@ -56,9 +56,10 @@ Space4D.prototype.project = function()
   {
     var geom4 = child.geometry;
     var objMat = child.buildMatrix5();
-    var localPosition = child.position.clone().sub(child.rotation.center).sub(child.position);
-    localPosition.applyMatrix5(objMat).add(child.rotation.center).sub(this.rotation.center).applyMatrix5(spaceMat);
-    child.position3D = this.projector.project(localPosition.add(this.rotation.center));
+    var localPosition = child.position.clone().sub(child.position).sub(child.rotation.center).applyMatrix5(objMat).add(child.rotation.center).add(child.position);
+    localPosition.sub(this.rotation.center).applyMatrix5(spaceMat).add(this.rotation.center);
+    child.position3D = this.projector.project(localPosition);
+    
     if(child.dirty && !child.positionalOnly)
     {
       if(geom4 === undefined)
@@ -73,9 +74,15 @@ Space4D.prototype.project = function()
           geom3.vertices.length = 0;
           for(var vi = 0; vi < geom4.vertices4D.length; vi++)
           {
-            var localVertex = geom4.vertices4D[vi].clone().sub(child.rotation.center);
-            localVertex.applyMatrix5(objMat).add(child.rotation.center).sub(this.rotation.center).applyMatrix5(spaceMat);
-            geom3.vertices.push(this.projector.project(localVertex.add(this.rotation.center)));
+            var localVertex = geom4.vertices4D[vi].clone()
+            localVertex.sub(child.rotation.center).applyMatrix5(objMat).add(child.rotation.center);
+            localVertex.sub(this.rotation.center).applyMatrix5(spaceMat).add(this.rotation.center)
+            
+            if(geom4.projector === null)
+              geom3.vertices.push(this.projector.project(localVertex).add(child.position3D));
+            else
+              geom3.vertices.push(geom4.projector.project(localVertex).add(child.position3D));
+            
           }
           geom3.faces = geom4.faces;
           geom3.verticesNeedUpdate = true;
