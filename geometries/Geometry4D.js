@@ -7,6 +7,7 @@ function Geometry4D()
   this.vertices4D = [];
   this.faces = [];
   this.faceGroups = [[]];
+  this.projector = null;
 }
 
 //int [] faces
