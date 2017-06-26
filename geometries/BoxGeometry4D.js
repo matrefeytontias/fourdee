@@ -14,6 +14,7 @@ function BoxGeometry4D(width, height, depth, duth)
     this.faces.push(tesseractFaces[i].clone());
 
   this.faceGroups = tesseractFaceGroups;
+  this.edges = tesseractEdges;
 }
 
 BoxGeometry4D.prototype = new Geometry4D();
