@@ -55,6 +55,7 @@ Geometry4D.prototype.clone = function()
   for(var i = 0; i < this.faces.length; i++)
     clone.faces.push(this.faces[i].clone());
   clone.faceGroups = this.faceGroups;
+  clone.edges = this.edges;
   clone.projector = this.projector;
   return clone;
 }

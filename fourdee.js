@@ -91,6 +91,7 @@ Object4D.prototype.createLineProjection = function(){
     this.lineProjection.vertices.push(this.projection.vertices[this.geometry.edges[i]]);
     this.lineProjection.vertices.push(this.projection.vertices[this.geometry.edges[i+1]]);
   }
+  console.log(this.lineProjection.vertices);
 }
 
 Object4D.prototype.buildMatrix5 = function()

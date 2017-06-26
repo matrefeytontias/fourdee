@@ -160,6 +160,7 @@ LevelObject.prototype.clone = function()
   for(var i = 1; i < meshes.length; i++)
     clone.add3DMeshMaterial(materials[i]);
   
+  console.log("clone is setted selectable : ", this.selectable);
   clone.setSelectable(this.selectable);
   
   clone.rotation = this.rotation.clone();  
