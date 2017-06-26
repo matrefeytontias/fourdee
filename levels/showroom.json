@@ -47,14 +47,22 @@
     "tesseract": ["soft blue", "white double", "red", "purple", "green"],
     "penta" : ["soft blue", "white double"]
   },
+  "projectors" : [
+    {
+      "name": "stereo",
+      "type": "StereoProj",
+      "options" : [0, 0, 0, 10, 3]
+    }
+  ],
   "objects": [
     { "name": "tess",
       "geometry": "Box",
       "options": [ 2, 2, 2, 2],
       "material": "tesseract",
       "position": { "y": 2},
-      "rotation": { "xw": 0.1, "yw": 0.1 },
-      "selectable" : true
+      "rotation": { "xw": 0.1, "yw": 0.1, "zw": 0.2 },
+      "selectable" : true,
+      "projector" : "stereo"
     },
     { "name": "pyram",
       "geometry": "Pyramid4D",
@@ -62,7 +70,8 @@
       "material": ["pyram ext", "pyram int"],
       "position": { "x": 7, "y": 2},
       "rotation": { "xw": 0.1, "yw": 0.1 },
-      "selectable" : true
+      "selectable": true,
+      "projector": "stereo"
     },
     { "name": "prism",
       "geometry": "Prism4D",
@@ -70,7 +79,8 @@
       "material": "prism double",
       "position": { "x": -7, "y": 2},
       "rotation": { "xw": 0.1, "yw": 0.1 },
-      "selectable" : true
+      "selectable" : true,
+      "projector": "stereo"
     },
     { "name": "penta",
       "geometry": "Pentachore",
@@ -78,11 +88,12 @@
       "material": "penta",
       "position": { "x": 14, "y": 2},
       "rotation": { "xw": 0.1, "yw": 0.1 },
-      "selectable" : true
+      "selectable" : true,
+      "projector": "stereo"
     },
     { "name": "ground",
       "geometry": "Box3D",
-      "options": [ "xyz", 300, 2, 300],
+      "options": [ "xyz", 50, 2, 50],
       "material": "white",
       "position": { "y": -3}
     }
