@@ -21,7 +21,7 @@ const PentachoreFaces = [
 ];
 
 // Constructs a pentachore : it's the equivalent of a thetrahedron in 3D : it's the 4-simplex 
-function PentachoreGeometry(scale = 1, width=null, height=null, depth=null, duth=null)
+function PentachoreGeometry4D(scale = 1, width=null, height=null, depth=null, duth=null)
 {
   Geometry4D.call(this);
   
@@ -35,7 +35,12 @@ function PentachoreGeometry(scale = 1, width=null, height=null, depth=null, duth
     this.vertices4D.push(PentachoreVertices[i].clone().applyMatrix5(mat));
   for(var i = 0; i < PentachoreFaces.length; i++)
     this.faces.push(PentachoreFaces[i].clone());;
+    
+  this.faceGroups = [
+    [0, 1, 2, 3],
+    [4, 5, 6, 7, 8, 9]
+  ]
 }
 
-PentachoreGeometry.prototype = new Geometry4D();
-PentachoreGeometry.prototype.constructor = PentachoreGeometry;
+PentachoreGeometry4D.prototype = new Geometry4D();
+PentachoreGeometry4D.prototype.constructor = PentachoreGeometry4D;

@@ -1,5 +1,5 @@
 {
-  "startingPosition": { "y": 1, "z": -5 },
+  "startingPosition": { "x": 3.5, "y": 1, "z": -5 },
   "title": "4D Solids showroom",
   "materials": [
     { "name": "white",
@@ -29,37 +29,61 @@
     { "name": "red",
       "type": "Phong",
       "options": { "color":"#ff0000", "side" : "DoubleSide" }
+    },
+    { "name": "white double",
+      "type": "Phong",
+      "options": { "color":"#ffffff", "side" : "DoubleSide" }
+    },
+    { "name": "green",
+      "type": "Phong",
+      "options": { "color":"#00ff00", "side" : "DoubleSide" }
     }
   ],
   "materialPackages" : {
     "prism double": ["soft blue", "red", "purple"],
     "pyram ext": ["soft blue ext", "soft blue ext", "soft blue ext", "soft blue ext", "soft blue ext", "soft blue ext", "red"],
-    "pyram int": ["purple int", "purple int", "purple int", "purple int", "purple int", "purple int", "red"]
+    "pyram int": ["purple int", "purple int", "purple int", "purple int", "purple int", "purple int", "red"],
+    "tesseract": ["soft blue", "white double", "red", "purple", "green"],
+    "penta" : ["soft blue", "white double"]
   },
   "objects": [
-    { "name": "ground",
-      "geometry": "Box3D",
-      "options": [ "xyz", 10000, 2, 10000 ],
-      "material": "white",
-      "position": { "y": -1 },
-      "rotation": { }
-    },
-    { "name": "prism",
-      "geometry": "Prism4D",
-      "options": [ 3 ],
-      "material": "prism double",
-      "position": { "y": 2 },
-      "rotation": { },
+    { "name": "tess",
+      "geometry": "Box",
+      "options": [ 2, 2, 2, 2],
+      "material": "tesseract",
+      "position": { "y": 2},
+      "rotation": { "xw": 0.1, "yw": 0.1 },
       "selectable" : true
     },
-    { "name": "p",
+    { "name": "pyram",
       "geometry": "Pyramid4D",
       "options": [ 2, 2, 2, 2],
       "material": ["pyram ext", "pyram int"],
-      "position": { "y": 2, "x": 8 },
+      "position": { "x": 7, "y": 2},
       "rotation": { "xw": 0.1, "yw": 0.1 },
-      "rotationLocks": [ "zw" ],
       "selectable" : true
+    },
+    { "name": "prism",
+      "geometry": "Prism4D",
+      "options": [ 2 ],
+      "material": "prism double",
+      "position": { "x": -7, "y": 2},
+      "rotation": { "xw": 0.1, "yw": 0.1 },
+      "selectable" : true
+    },
+    { "name": "penta",
+      "geometry": "Pentachore",
+      "options": [ 2 ],
+      "material": "penta",
+      "position": { "x": 14, "y": 2},
+      "rotation": { "xw": 0.1, "yw": 0.1 },
+      "selectable" : true
+    },
+    { "name": "ground",
+      "geometry": "Box3D",
+      "options": [ "xyz", 300, 2, 300],
+      "material": "white",
+      "position": { "y": -3}
     }
   ],
   "scripts": [

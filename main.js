@@ -18,7 +18,7 @@ const D4_scene = new THREE.Scene();
 var lastUpdateTimestamp;
 
 const orthoProj = new OrthoProj();
-const stereoProj = new StereoProj(new THREE.Vector4(0, 0, 0, 10), 3);
+const stereoProj = new StereoProj(new THREE.Vector4(3.5, 0, 0, 10), 3);
 
 const D4_space = new Space4D(stereoProj);
 
@@ -38,6 +38,9 @@ function main()
   light = new THREE.PointLight(0xffffff, 0.5, 1000);
   D4_scene.add(light);
 
+
+  var ambientLight = new THREE.AmbientLight( 0x404040 ); // soft white light
+  D4_scene.add( ambientLight );
   window.addEventListener("levelLoaded", levelLoaded);
   LevelLoader.loadFile("levels/showroom.json", D4_space);
   // End level;
@@ -73,6 +76,8 @@ function resize()
 function start()
 {
   D4_container.appendChild(D4_renderer.domElement);
+
+  D4_renderer.setClearColor( new THREE.Color( 0x111111 ), 0.8 );
 
   lastUpdateTimestamp = -1;
   resize();
