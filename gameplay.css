@@ -41,3 +41,15 @@
     background-color: rgb(72, 140, 249);
     
 }
+
+#start-text, #end-text{
+  position: fixed;
+  font-size : 28px;
+  text-shadow : 0 0 10px white;
+  padding : 8px;
+  top : 40%;
+  width : 100%;
+  text-align: center;
+  z-index: 10;
+  color : white;
+}

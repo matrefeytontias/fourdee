@@ -13,8 +13,8 @@ function Level(container, space4D, camera, scene)
   this.fpControls = undefined;
   this.tpControls = undefined;
   this.player = new Player();
-  this.endTextDom = $("end-text");
-  this.startTextDom = $("start-text");
+  this.endTextDom = $("#end-text");
+  this.startTextDom = $("#start-text");
 }
 
 Level.prototype.initialize = function(loadedLevel)
@@ -56,8 +56,15 @@ Level.prototype.checkEnd = function()
   return false;
 }
 
+Level.prototype.start = function()
+{
+  this.startTextDom.html(this.startText);
+  console.log(this.startText);
+  this.startTextDom.animate({opacity : 0}, 100*this.startText.length);
+}
+
 Level.prototype.end = function()
 {
-  alert("bravo")
-  //this.endTextDom.animate({opacity : 0}, 1000);
+  this.endTextDom.html(this.endText);
+  this.endTextDom.animate({opacity : 0}, 100*this.endText.length);
 }

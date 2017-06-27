@@ -75,7 +75,7 @@ function start()
 {
   D4_container.appendChild(D4_renderer.domElement);
   
-  console.log(D4_renderer.domElement)
+  levelObject.start();
 
   D4_renderer.setClearColor( new THREE.Color( 0x111111 ), 0.8 );
 
