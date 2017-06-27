@@ -128,7 +128,7 @@ function FirstPersonControls(
     else{
       console.log("Pointer Lock was lost.");
       if(this.isFullScreen()){
-        document.exitFullscreen = document.webkitExitFullscreen || document.exitFullscreen || document.mozExitFullscreen || document.mozExitFullScreen;
+        document.exitFullscreen = document.webkitExitFullscreen || document.exitFullscreen || document.mozCancelFullScreen || document.mozExitFullScreen;
         document.exitFullscreen();
         window.setTimeout(resize, 100);
       }
