@@ -1,0 +1,43 @@
+#start{
+  position : fixed;
+  top : 48%;
+  left : 45%;
+  color : white;
+  z-index : 10;
+  font-size : 28px;
+  text-shadow : 0 0 10px white;
+  background-color : rgba(0, 0, 0, 0.2);
+  border-radius : 10px;
+  padding : 8px;
+}
+
+#cursor{
+  font-weight: bold;
+  position : fixed;
+  top : 49%;
+  left : 49%;
+  color : white;
+  z-index : 10;
+  font-size : 36px;
+  text-shadow : 0 0 3px white;
+}
+
+#mana-container{
+    position: fixed;
+    bottom: 15px;
+    left : 20%;
+    height: 15px;
+    width : 60%;
+    border : solid 3px #cccccc;
+    border-radius: 5px;
+    background-color: rgba(72, 140, 249, 0.3)
+    /*overflow : hidden; */
+}
+
+#mana-bar{
+    position: relative;
+    width : 100%;
+    height: 100%;
+    background-color: rgb(72, 140, 249);
+    
+}

@@ -24,8 +24,12 @@ Level.prototype.initialize = function(loadedLevel)
   this.endText = loadedLevel.endText;
   this.levelEnd = loadedLevel.levelEnd;
   
+  this.camera.position.copy(loadedLevel.startPos);
+  
+  var manaBar = new ManaBar(10);
+  
   this.fpControls = new FirstPersonControls(this, this.container, this.player, this.camera, this.space4D);
-  this.tpControls = new ThirdPersonControls(this.camera, this.scene, this.space4D, loadedLevel.userRotations);
+  this.tpControls = new ThirdPersonControls(this.camera, this.scene, this.space4D, manaBar, loadedLevel.userRotations);
   this.fpControls.listen();
 
   this.fpControls.setTpControls(this.tpControls);
