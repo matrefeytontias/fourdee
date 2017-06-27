@@ -63,22 +63,36 @@ Geometry4D.prototype.extrude3DGeometry = function(geom3, duth)
 
 // Some functions to add vertices and faces while going easy on the GC
 // Takes an index and a limit above which we push instead of setting
+// Also, does not take in duplicate and returns the index of the vertex
 // To be used in Space4D.project
 // int i, int l, THREE.Vector4 v / THREE.Face3 f
-THREE.Geometry.prototype.addVertexP = function(i, l, v)
+THREE.Geometry.prototype.addVertexP = function(index, limit, v)
 {
-  if(i < l)
-    this.vertices[i].copy(v);
+  for(var i = 0; i < this.vertices.length; i++)
+  {
+    var vtx = this.vertices[i];
+    if(v.x == vtx.x && v.y == vtx.y && v.z == vtx.z)
+      return i;
+  }
+  if(index < limit)
+    this.vertices[index].copy(v);
   else
     this.vertices.push(v);
+  return index;
 }
 
-Geometry4D.prototype.addVertexP = function(i, l, v)
+Geometry4D.prototype.addVertexP = function(index, limit, v)
 {
-  if(i < l)
-    this.vertices[i].copy(v);
+  for(var i = 0; i < this.vertices.length; i++)
+  {
+    if(v.equals(this.vertices[i]))
+      return i;
+  }
+  if(index < limit)
+    this.vertices[index].copy(v);
   else
     this.vertices.push(v);
+  return index;
 }
 
 THREE.Face3.prototype.setABC = function(a, b, c)
@@ -86,10 +100,18 @@ THREE.Face3.prototype.setABC = function(a, b, c)
   this.a = a; this.b = b; this.c = c;
 }
 
-THREE.Geometry.prototype.addFaceP = function(i, l, a, b, c)
+// Returns whether the face was actually added
+THREE.Geometry.prototype.addFaceP = function(index, limit, a, b, c)
 {
-  if(i < l)
-    this.faces[i].setABC(a, b, c);
+  for(var i = 0; i < this.faces.length; i++)
+  {
+    var face = this.faces[i];
+    if(face.a == a && face.b == b && face.c == c)
+      return false;
+  }
+  if(index < limit)
+    this.faces[index].setABC(a, b, c);
   else
     this.faces.push(new THREE.Face3(a, b, c));
+  return true;
 }

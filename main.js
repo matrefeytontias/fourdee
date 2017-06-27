@@ -21,6 +21,11 @@ var ground, cube, light;
 
 window.addEventListener("load", main);
 
+THREE.Vector3.prototype.toString = function()
+{
+  return "x: " + this.x + ", y: " + this.y + ", z: " + this.z + "\n";
+}
+
 THREE.Vector4.prototype.toString = function()
 {
   return "x: " + this.x + ", y: " + this.y + ", z: " + this.z + ", w: " + this.w + "\n";

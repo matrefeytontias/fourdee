@@ -53,14 +53,11 @@ Space4D.prototype.project = function()
       ****/
       var cells = geom4.cells, vertices = geom4.vertices;
       // Do some kind of object pooling
-      var faceOffset = 0;
       var faceIndex = 0;
       var faceIndexLimit = geom3.faces.length;
       var vertexIndex = 0;
       var vertexIndexLimit = geom3.vertices.length;
       // Find the projection in 3D space of the object's center
-      // var center4 = child.position;
-      // var center3 = this.intersector.project(center4);
       for(var c = 0; c < cells.length; c++)
       {
         // console.log("Computing cell " + c);
@@ -70,25 +67,30 @@ Space4D.prototype.project = function()
         var vc = vertices[cell.c].clone().applyMatrix5(objMat);
         var vd = vertices[cell.d].clone().applyMatrix5(objMat);
         var inters = this.intersector.intersectTetra(va, vb, vc, vd);
-        inters.forEach(function(v) { var pv = this.intersector.project(v); geom3.addVertexP(vertexIndex, vertexIndexLimit, pv); vertexIndex++; }.bind(this));
+        // This method generates a lot of duplicated vertices, so we let Geometry4D give us the correct face offsets
+        var faceOffsets = [];
+        inters.forEach(function(v)
+          {
+            var pv = this.intersector.project(v);
+            var newOff = geom3.addVertexP(vertexIndex, vertexIndexLimit, pv);
+            faceOffsets.push(newOff);
+            vertexIndex += newOff == vertexIndex ? 1 : 0;
+          }.bind(this));
         if(inters.length >= 3)
         {
-          geom3.addFaceP(faceIndex, faceIndexLimit, faceOffset + 0, faceOffset + 1, faceOffset + 2);
-          faceIndex++;
+          faceIndex += geom3.addFaceP(faceIndex, faceIndexLimit, faceOffsets[0], faceOffsets[1], faceOffsets[2]);
         }
         if(inters.length == 4)
         {
-          // addFaceP(geom3.faces, faceIndex, faceIndexLimit, faceOffset + 0, faceOffset + 1, faceOffset + 2);
-          geom3.addFaceP(faceIndex, faceIndexLimit, faceOffset + 0, faceOffset + 2, faceOffset + 3);
-          geom3.addFaceP(faceIndex, faceIndexLimit, faceOffset + 0, faceOffset + 3, faceOffset + 1);
-          geom3.addFaceP(faceIndex, faceIndexLimit, faceOffset + 1, faceOffset + 2, faceOffset + 3);
-          faceIndex += 3;
+          // geom3.addFaceP(faceIndex, faceIndexLimit, faceOffsets[0], faceOffsets[1], faceOffsets[2]);
+          faceIndex += geom3.addFaceP(faceIndex, faceIndexLimit, faceOffsets[0], faceOffsets[2], faceOffsets[3]);
+          faceIndex += geom3.addFaceP(faceIndex, faceIndexLimit, faceOffsets[0], faceOffsets[3], faceOffsets[1]);
+          faceIndex += geom3.addFaceP(faceIndex, faceIndexLimit, faceOffsets[1], faceOffsets[2], faceOffsets[3]);
         }
-        faceOffset += inters.length;
       }
       if(faceIndex < faceIndexLimit)
         geom3.faces.splice(faceIndex, faceIndexLimit - faceIndex);
-      // console.log(geom3.vertices.length);
+      console.log(geom3.vertices.join(""));
       geom3.verticesNeedUpdate = true;
       geom3.elementsNeedUpdate = true;
       geom3.computeFaceNormals();
