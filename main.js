@@ -6,7 +6,7 @@ if(!D4_PERSPECTIVE)
 }
 const D4_GRAVITY = 0.35; // unit/s²
 const D4_FRICTION = 20; // unit/s²
-const D4_JUMP = 0.25; // unit/s
+var D4_JUMP = 0.25; // unit/s
 
 var paused = false;
 var D4_container = document.getElementById("view");
@@ -14,8 +14,6 @@ var D4_gameWidth = D4_container.offsetWidth;
 var D4_gameHeight = D4_container.offsetHeight;
 const D4_aspectRatio = D4_gameWidth / D4_gameHeight;
 const D4_scene = new THREE.Scene();
-
-var D4_context;
 
 var lastUpdateTimestamp;
 
@@ -31,6 +29,8 @@ var D4_camera = D4_PERSPECTIVE ? new THREE.PerspectiveCamera(75, D4_gameWidth / 
 const D4_renderer = new THREE.WebGLRenderer({ antialias: true });
 
 var ground, cube, light;
+
+var levelObject;
 
 window.addEventListener("load", main);
 
@@ -48,22 +48,15 @@ function main()
   level = level === null ? "showroom" : level;
   
   window.addEventListener("levelLoaded", levelLoaded);
-  LevelLoader.loadFile("levels/" + level + ".json", D4_space);
+  
+  levelObject = new Level(D4_container, D4_space, D4_camera, D4_scene);
+  
+  LevelLoader.loadFile("levels/" + level + ".json", levelObject);
 }
 
 function levelLoaded()
 {
-  //Start controls
-  D4_camera.position.copy(LevelLoader.result.startPos);
-
-  var fpControls = new FirstPersonControls(D4_container, new Player(), D4_camera, D4_space);
-  var tpControls = new ThirdPersonControls(D4_camera, D4_scene, D4_space, LevelLoader.result.userRotations);
-  fpControls.listen();
-
-  fpControls.setTpControls(tpControls);
-  tpControls.setFpControls(fpControls);
-
-  document.getElementById("start").style.display = activeControls === fpControls ? "" : "none";
+  levelObject.initialize(LevelLoader.result);
 }
 
 function resize()
@@ -81,9 +74,6 @@ function resize()
 function start()
 {
   D4_container.appendChild(D4_renderer.domElement);
-  
-  
-  D4_context = D4_renderer.domElement.getContext("2D");
   
   console.log(D4_renderer.domElement)
 

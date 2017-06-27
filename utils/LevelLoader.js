@@ -1,14 +1,14 @@
 LevelLoader = {};
 
-// String filename, Space4D space4D
-LevelLoader.loadFile = function(filename, space4D)
+// String filename, Space4D levelObject
+LevelLoader.loadFile = function(filename, levelObject)
 {
   var xmlhttp = new XMLHttpRequest();
   xmlhttp.onreadystatechange = function()
   {
     if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
     {
-      LevelLoader.result = LevelLoader.loadJSON(xmlhttp.responseText, space4D);
+      LevelLoader.result = LevelLoader.loadJSON(xmlhttp.responseText, levelObject);
       window.dispatchEvent(new Event("levelLoaded"));
     }
     LevelLoader.loadFinished = (xmlhttp.readyState == 4);
@@ -22,9 +22,9 @@ LevelLoader.loadFinished = false;
 LevelLoader.result = undefined;
 
 // Returns { THREE.Vector4 startPos, String title },
-// builds the level and adds it to space4D.
-// String level, Space4D space4D
-LevelLoader.loadJSON = function(level, space4D)
+// builds the level and adds it to levelObject.
+// String level, Space4D levelObject
+LevelLoader.loadJSON = function(level, levelObject)
 {
   var data = JSON.parse(level);
 
@@ -102,16 +102,17 @@ LevelLoader.loadJSON = function(level, space4D)
 
   }
   
-  for(var i = 0; i < data.levelStructure.length; i++)
+  for(var i in data.levelStructure)
   {
     var element = objects[data.levelStructure[i][0]].clone();
     element.position.x = data.levelStructure[i][1];
     element.position.y = data.levelStructure[i][2];
     element.position.z = data.levelStructure[i][3];
-    element.endRotation = new Euler4D(data.levelEnd[i][0], data.levelEnd[i][1], data.levelEnd[i][2], data.levelEnd[i][3], data.levelEnd[i][4], data.levelEnd[i][5]);
+    if(data.endLocks[i])
+      element.endRotation = new Euler4D(data.endLocks[i][0], data.endLocks[i][1], data.endLocks[i][2], data.endLocks[i][3], data.endLocks[i][4], data.endLocks[i][5]);
     if(objects[data.levelStructure[i][0]].rotationLocks) 
       element.lockRotations(objects[data.levelStructure[i][0]].rotationLocks);
-    space4D.add(element);
+    levelObject.add(element);
   }
 
   function makeArgs(cmdLine, start, end, converter)
@@ -142,10 +143,20 @@ LevelLoader.loadJSON = function(level, space4D)
       }
     }
   }
+  
+  if(data.jump == false)
+    D4_JUMP = 0;
 
   var startPos = new THREE.Vector4();
   for(var coord in data.startingPosition)
     startPos[coord] = data.startingPosition[coord];
 
-  return { startPos: startPos, title: data.title, userRotations : data.userRotations };
+  return { 
+    startPos : startPos, 
+    title : data.title, 
+    userRotations : data.userRotations, 
+    startText : data.startText, 
+    endText : data.endText,
+    levelEnd : data.levelEnd
+  };
 }

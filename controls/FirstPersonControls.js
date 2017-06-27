@@ -2,6 +2,7 @@
 // Space4D space4D, KeySettings keys, String[] rotation4DPlanes,
 // float rotation4DSensitivity, float displacementSensitivity
 function FirstPersonControls(
+  level,
   container,
   player,
   camera3D,
@@ -14,6 +15,7 @@ function FirstPersonControls(
   displacementSensitivity = 4)
 {
   Controls.call(this, keys);
+  this.level = level;
   this.container = container;
   this.player = player;
   this.canJump = false;
@@ -165,6 +167,10 @@ function FirstPersonControls(
     else
       this.player.velocity3D.multiplyScalar((velLen - D4_FRICTION * dt) / velLen);
     this.player.velocity3D.y = backupY;
+    
+    
+    if(this.level.checkEnd())
+      this.level.end();
   }
 
   this.isFullScreen = function(){
