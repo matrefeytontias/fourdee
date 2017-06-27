@@ -4,32 +4,36 @@
 
 function Object4D()
 {
-  this.position = new THREE.Vector4();
+  this.position = new THREE.Vector4(0, 0, 0, 0);
   this.rotation = new Euler4D();
   this.scale = 1.;
-  this.geometry = undefined;
+  this.geometry = undefined; // Geometry4D
   this.projection = undefined; // projection is the THREE.Geometry 3D created by projection of the object
-  this.position3D = new THREE.Vector3();
   this.children3D = [];
   this.dirty = true;
-  this.positionalOnly = false;
+}
+
+Object4D.prototype.getCellVertices = function(i)
+{
+  var c = this.geometry.cells[i];
+  
 }
 
 // int[] faces, int[] materials
-Object4D.prototype.setFaceMaterial = function(faces, materials)
+Object4D.prototype.setCellMaterial = function(cells, materials)
 {
   for(var i = 0; i < materials.length; i++)
-    this.geometry.faces[faces[i]].materialIndex = materials[i];
+    this.geometry.cells[cells[i]].materialIndex = materials[i];
 }
 
 // int [][] faces
-Object4D.prototype.setFaceGroupMaterial = function(facesGroups)
+Object4D.prototype.setCellGroupMaterial = function(cellGroups)
 {
-  for(var i = 0; i < facesGroups.length; i++)
+  for(var i = 0; i < cellGroups.length; i++)
   {
-    for(var j = 0; j < facesGroups[i].length; j++)
+    for(var j = 0; j < cellGroups[i].length; j++)
     {
-      this.geometry.faces[facesGroups[i][j]].materialIndex = i;
+      this.geometry.cells[cellGroups[i][j]].materialIndex = i;
     }
   }
 }
@@ -69,58 +73,4 @@ Object4D.prototype.add3DMeshMaterial = function(material)
 Object4D.prototype.get3DBody = function ()
 {
   return this.children3D[0];
-}
-
-/**************
- * Proj4D API *
- **************/
-
-// Mostly aesthetic ...
-function Proj4D() { }
-
-// Override this in your own projection
-// Vector4 v
-Proj4D.prototype.project = function(v) { }
-
-//
-// Linear algebra projection : (x, y, z, w) -> (x, y, z, 0)
-//
-function OrthoProj()
-{
-  Proj4D.call(this);
-}
-
-OrthoProj.prototype = new Proj4D();
-OrthoProj.prototype.project = function(v)
-{
-  return new THREE.Vector3(v.x, v.y, v.z);
-}
-
-//
-// Stereographical projection : uses a 3-sphere to project the 4D point onto the hyperplane w = 0
-//
-// THREE.Vector4 center, float radius, THREE.Vector4 planeNormal, THREE.Vector4 planePoint
-function StereoProj(center, radius)
-{
-  Proj4D.call(this);
-  this.sphereCenter = center;
-  this.sphereRadius = radius;
-  // The pole is the sphere's furthest point from the hyperplane w = 0
-  this.spherePole = (new THREE.Vector4(0, 0, 0, radius * ((center.w > 0) * 2 - 1))).add(center);
-}
-
-StereoProj.prototype = new Proj4D();
-StereoProj.prototype.project = function(v)
-{
-  // Projection of the point on the 3-sphere
-  var sphereProj = v.clone().sub(this.sphereCenter);
-  sphereProj.multiplyScalar(this.sphereRadius / sphereProj.length()).add(this.sphereCenter);
-
-  var u = sphereProj.clone().sub(this.spherePole).normalize();
-  if(u.w != 0)
-  {
-    var t = -this.spherePole.w / u.w;
-    u = u.multiplyScalar(t).add(this.spherePole);
-  }
-  return new THREE.Vector3(u.x, u.y, u.z);
 }

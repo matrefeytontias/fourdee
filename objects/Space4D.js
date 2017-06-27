@@ -2,11 +2,11 @@
  * Space4D API *
  ***************/
 
-// Proj4D projector
-function Space4D(projector)
+// Proj4D intersector
+function Space4D(intersector)
 {
   Object4D.call(this);
-  this.projector = projector;
+  this.intersector = intersector;
   this.children = [];
 }
 
@@ -18,26 +18,18 @@ Space4D.prototype.add = function(obj)
 {
   for(var i = 0; i < this.children.length; i++)
     if(this.children[i] === obj)
-      throw "Can't add same Object4D to Space4D twice";
+      throw "Cannot add same Object4D to Space4D twice";
   this.children.push(obj);
   for(var i = 0; i < obj.children3D.length; i++)
     D4_scene.add(obj.children3D[i]);
 }
 
-// Rotates the whole 4D space around a point
-// Vector4 center, String plane (eg "xw"), float theta
-Space4D.prototype.rotateAround = function(center, plane, theta)
+// Rotate the intersector on the given plane
+Space4D.prototype.rotate = function(plane, theta)
 {
   var rot = new Matrix5();
   rot["makeRotate" + plane.toUpperCase()](theta);
-  rot.translate(center.x, center.y, center.z, center.w);
-  for(var i = 0; i < this.children.length; i++)
-  {
-    var obj = this.children[i];
-    obj.position.sub(center).applyMatrix5(rot);
-    obj.rotation[plane] += theta;
-    obj.dirty = true;
-  }
+  intersector.applyMatrix5(rot);
 }
 
 // (Object4D -> void) callback
@@ -50,7 +42,70 @@ Space4D.prototype.visitObjects = function(callback)
 // Updates the children Object4D with their 3D projection if need be
 Space4D.prototype.project = function()
 {
-  var spaceMat = this.buildMatrix5();
+  this.visitObjects(function(child)
+  {
+    if(child.dirty)
+    {
+      var objMat = child.buildMatrix5();
+      var geom3 = child.projection, geom4 = child.geometry;
+      /****
+       * Take a 3D slice of the source geometry, ie every tetrahedron / cell{3}
+      ****/
+      var cells = geom4.cells, vertices = geom4.vertices;
+      // Do some kind of object pooling
+      var faceOffset = 0;
+      var faceIndex = 0;
+      var faceIndexLimit = geom3.faces.length;
+      var vertexIndex = 0;
+      var vertexIndexLimit = geom3.vertices.length;
+      // Find the projection in 3D space of the object's center
+      // var center4 = child.position;
+      // var center3 = this.intersector.project(center4);
+      for(var c = 0; c < cells.length; c++)
+      {
+        // console.log("Computing cell " + c);
+        var cell = cells[c];
+        var va = vertices[cell.a].clone().applyMatrix5(objMat);
+        var vb = vertices[cell.b].clone().applyMatrix5(objMat);
+        var vc = vertices[cell.c].clone().applyMatrix5(objMat);
+        var vd = vertices[cell.d].clone().applyMatrix5(objMat);
+        var inters = this.intersector.intersectTetra(va, vb, vc, vd);
+        inters.forEach(function(v) { var pv = this.intersector.project(v); geom3.addVertexP(vertexIndex, vertexIndexLimit, pv); vertexIndex++; }.bind(this));
+        if(inters.length >= 3)
+        {
+          geom3.addFaceP(faceIndex, faceIndexLimit, faceOffset + 0, faceOffset + 1, faceOffset + 2);
+          faceIndex++;
+        }
+        if(inters.length == 4)
+        {
+          // addFaceP(geom3.faces, faceIndex, faceIndexLimit, faceOffset + 0, faceOffset + 1, faceOffset + 2);
+          geom3.addFaceP(faceIndex, faceIndexLimit, faceOffset + 0, faceOffset + 2, faceOffset + 3);
+          geom3.addFaceP(faceIndex, faceIndexLimit, faceOffset + 0, faceOffset + 3, faceOffset + 1);
+          geom3.addFaceP(faceIndex, faceIndexLimit, faceOffset + 1, faceOffset + 2, faceOffset + 3);
+          faceIndex += 3;
+        }
+        faceOffset += inters.length;
+      }
+      if(faceIndex < faceIndexLimit)
+        geom3.faces.splice(faceIndex, faceIndexLimit - faceIndex);
+      // console.log(geom3.vertices.length);
+      geom3.verticesNeedUpdate = true;
+      geom3.elementsNeedUpdate = true;
+      geom3.computeFaceNormals();
+      geom3.computeVertexNormals();
+      geom3.computeFlatVertexNormals();
+      child.dirty = false;
+      var miny = 123456789, maxy = -123456789;
+      for(var i = 0; i < geom3.vertices.length; i++)
+      {
+        miny = Math.min(geom3.vertices[i].y, miny);
+        maxy = Math.max(geom3.vertices[i].y, maxy);
+      }
+      console.log(miny, maxy);
+    }
+  });
+  
+  /*var spaceMat = this.buildMatrix5();
 
   this.visitObjects(function(child)
   {
@@ -58,7 +113,7 @@ Space4D.prototype.project = function()
     var objMat = child.buildMatrix5();
     var localPosition = child.position.clone().sub(child.rotation.center).sub(child.position);
     localPosition.applyMatrix5(objMat).add(child.rotation.center).sub(this.rotation.center).applyMatrix5(spaceMat);
-    child.position3D = this.projector.project(localPosition.add(this.rotation.center));
+    child.position3D = this.intersector.project(localPosition.add(this.rotation.center));
     if(child.dirty && !child.positionalOnly)
     {
       if(geom4 === undefined)
@@ -75,7 +130,7 @@ Space4D.prototype.project = function()
           {
             var localVertex = geom4.vertices4D[vi].clone().sub(child.rotation.center);
             localVertex.applyMatrix5(objMat).add(child.rotation.center).sub(this.rotation.center).applyMatrix5(spaceMat);
-            geom3.vertices.push(this.projector.project(localVertex.add(this.rotation.center)));
+            geom3.vertices.push(this.intersector.project(localVertex.add(this.rotation.center)));
           }
           geom3.faces = geom4.faces;
           geom3.verticesNeedUpdate = true;
@@ -89,7 +144,7 @@ Space4D.prototype.project = function()
       }
       child.dirty = false;
     }
-  });
+  });*/
 }
 
 // Assumes that the player cannot get pinched and that the previousPos is valid

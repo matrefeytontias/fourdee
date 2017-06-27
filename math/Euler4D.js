@@ -12,7 +12,7 @@ function Euler4D(xy = 0, xz = 0, xw = 0, yz = 0, yw = 0, zw = 0, order = "XYXZXW
   this.yw = yw;
   this.zw = zw;
   this.order = order;
-  this.center = new THREE.Vector4();
+  this.center = new THREE.Vector4(0, 0, 0, 0);
 }
 
 THREE.Vector4.prototype.applyEuler4D = function(euler)
