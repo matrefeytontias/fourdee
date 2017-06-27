@@ -6,8 +6,7 @@ function FirstPersonControls(
   player,
   camera3D,
   space4D,
-  tpControls,
-  rotation4DPlanes = ["xw", "zw"],
+  mana,
   rotateAroundMe = false,
   keys = new KeySettings(),
   rotation4DSensitivity = 1,
@@ -25,6 +24,8 @@ function FirstPersonControls(
   this.highlightedObject4D = null;
   this.rotateAroundMe = false;
   this.startText = document.getElementById("start");
+  this.cursor = document.getElementById("cursor");
+  this.cursor.style.display = "none";
   this.raycaster = new THREE.Raycaster();
   this.zeroVec = new THREE.Vector2();
 
@@ -74,6 +75,7 @@ function FirstPersonControls(
     this.camera3D.position.x = this.memPosition.x;
     this.camera3D.position.y = this.memPosition.y;
     this.camera3D.position.z = this.memPosition.z;
+    this.cursor.style.display = "";
   }
 
   this.onKeyDown = function(event)
@@ -186,6 +188,7 @@ function FirstPersonControls(
       console.log("Pointer Lock was successful.");
       this.paused = false;
       this.startText.style.display = "none";
+      this.cursor.style.display = "";
       if(document.getElementsByName("canvas").length == 0) window.setTimeout(start, 100);
       else window.setTimeout(resize, 100);
     }
@@ -198,6 +201,7 @@ function FirstPersonControls(
       }
       this.paused = true;
       this.startText.style.display = "";
+      this.cursor.style.display = "none";
     }
 
   }

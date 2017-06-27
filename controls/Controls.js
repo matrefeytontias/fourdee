@@ -41,6 +41,8 @@ function Controls(keys = new KeySettings())
   this.onMouseOut = function(event) { };
   this.onFullscreenChange = function() { };
   this.onPointerLockChange = function() { };
+  
+  this.draw = function(ctx){ };
 
   this.defaultOnKeyDown = function(event)
   {

@@ -56,8 +56,9 @@ function levelLoaded()
   //Start controls
   D4_camera.position.copy(LevelLoader.result.startPos);
 
+  var manaBar = new ManaBar(10);
   var fpControls = new FirstPersonControls(D4_container, new Player(), D4_camera, D4_space);
-  var tpControls = new ThirdPersonControls(D4_camera, D4_scene, D4_space, LevelLoader.result.userRotations);
+  var tpControls = new ThirdPersonControls(D4_camera, D4_scene, D4_space, manaBar, LevelLoader.result.userRotations);
   fpControls.listen();
 
   fpControls.setTpControls(tpControls);
@@ -108,4 +109,5 @@ function render(timestamp)
 
   D4_space.project();
   D4_renderer.render(D4_scene, D4_camera);
+  
 }

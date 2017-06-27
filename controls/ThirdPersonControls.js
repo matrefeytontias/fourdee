@@ -2,12 +2,14 @@ function ThirdPersonControls(
   camera3D,
   scene3D,
   space4D,
+  manaBar,
   rotation4DPlanes = ["xw", "zw"],
   keys = new KeySettings(),
   rotation4DSensitivity = 2,
   displacement3DSensitivity = 3)
 {
   Controls.call(this, keys);
+  this.manaBar = manaBar;
   this.camera3D = camera3D;
   this.scene3D = scene3D;
   this.space4D = space4D;
@@ -53,6 +55,7 @@ function ThirdPersonControls(
     this.distance = Math.max(object4D.projection.boundingSphere.radius, this.focusedPosition.distanceTo(this.camera3D.position));
     this.mousePosition.x = this.windowHalfX+this.fpControls.mousePosition.x;
     this.onMouseMove({ movementY : 0});
+    document.getElementById("cursor").style.display = "none";
   }
 
   this.onMouseMove = function(event)
@@ -71,7 +74,7 @@ function ThirdPersonControls(
   this.update = function(dt)
   {
     //4D rotations :
-    if(KeySettings.keyPressed[this.keys.ana])
+    if(KeySettings.keyPressed[this.keys.ana] && !this.manaBar.empty())
     {
       for(var i = 0; i < this.rotation4DPlanes.length; i++)
       {
@@ -85,7 +88,7 @@ function ThirdPersonControls(
       }
     }
 
-    if(KeySettings.keyPressed[this.keys.kata])
+    if(KeySettings.keyPressed[this.keys.kata] && !this.manaBar.empty())
     {
       for(var i = 0; i < this.rotation4DPlanes.length; i++)
       {
@@ -99,8 +102,12 @@ function ThirdPersonControls(
       }
     }
 
-    if( this.focusedObject4D !== null && (KeySettings.keyPressed[this.keys.kata] || KeySettings.keyPressed[this.keys.ana]) )
+    if( this.focusedObject4D !== null && (KeySettings.keyPressed[this.keys.kata] || KeySettings.keyPressed[this.keys.ana])  && !this.manaBar.empty() )
+    {
       this.focusedObject4D.dirty = true;
+      this.manaBar.use(dt * rotation4DSensitivity);
+      this.manaBar.updateDom();
+    }
 
     // Translation around the object
     if(KeySettings.keyPressed[this.keys.up])

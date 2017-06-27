@@ -21,9 +21,11 @@
   <script src="controls/Controls.js"></script>
   <script src="controls/FirstPersonControls.js"></script>
   <script src="controls/ThirdPersonControls.js"></script>
+  <script src="controls/ManaBar.js"></script>
   <script src="utils/LevelLoader.js"></script>
   <script src="utils/levelStateLog.js"></script>
   <script src="examples.js"></script>
+  <link rel="stylesheet" href="gameplay.css" type="text/css" />
   <style>
     body { 
       margin: 0; 
@@ -46,23 +48,17 @@
       z-index : 10;
     }
     
-    #start{
-      position : fixed;
-      top : 48%;
-      left : 45%;
-      color : white;
-      z-index : 100;
-      font-size : 28px;
-      text-shadow : 0 0 10px white;
-      background-color : rgba(0, 0, 0, 0.2);
-      border-radius : 10px;
-      padding : 8px;
-    }
   </style>
 </head>
 <body>
   <div id="view">
     <div id="start">Press Enter</div>
+    <div id="cursor">
+      +
+    </div>
+    <div id="mana-container">
+      <div id="mana-bar"></div>
+    </div>
   </div>
   <script src="main.js"></script>
 </body>
