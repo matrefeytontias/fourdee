@@ -22,15 +22,18 @@ const stereoProj = new StereoProj(new THREE.Vector4(0, 0, 0, 10), 3);
 
 const D4_space = new Space4D(orthoProj);
 
-var D4_camera = D4_PERSPECTIVE ? new THREE.PerspectiveCamera(75, D4_gameWidth / D4_gameHeight, 0.1, 1000)
-                                 : new THREE.OrthographicCamera(-D4_orthoWidth / 2, D4_orthoWidth / 2, D4_orthoHeight / 2, -D4_orthoHeight / 2, 0.1, 1000);
+var D4_camera = new THREE.PerspectiveCamera(75, D4_gameWidth / D4_gameHeight, 0.1, 1000);
 
+
+var skyCamera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
 
 const D4_renderer = new THREE.WebGLRenderer({ antialias: true });
 
+const skyRender = new THREE.WebGLRenderer({ antialias: true });
+
 var ground, cube, light;
 
-var levelObject;
+var level, levelName;
 
 window.addEventListener("load", main);
 
@@ -44,19 +47,23 @@ function main()
   
   
   var url = new URL(window.location.href);
-  var level = url.searchParams.get("level");
-  level = level === null ? "showroom" : level;
+  levelName = url.searchParams.get("level");
+  levelName = levelName === null ? "showroom" : levelName;
   
   window.addEventListener("levelLoaded", levelLoaded);
   
-  levelObject = new Level(D4_container, D4_space, D4_camera, D4_scene);
+  level = new Level(D4_container, D4_space, D4_camera, D4_scene);
   
-  LevelLoader.loadFile("levels/" + level + ".json", levelObject);
+  $("#retry").click(function(){
+    window.location.href = window.location.origin + window.location.pathname + "?level=" + levelName;
+  })
+  
+  LevelLoader.loadFile("levels/" + levelName + ".json", level);
 }
 
 function levelLoaded()
 {
-  levelObject.initialize(LevelLoader.result);
+  level.initialize(LevelLoader.result);
 }
 
 function resize()
@@ -75,9 +82,16 @@ function start()
 {
   D4_container.appendChild(D4_renderer.domElement);
   
-  levelObject.start();
+  document.getElementById("sky-view").appendChild(skyRender.domElement);
+  
+  level.start();
 
+  skyRender.setClearColor( new THREE.Color( 0x111111 ), 0.8 );
+  skyRender.setSize(200, 200);
   D4_renderer.setClearColor( new THREE.Color( 0x111111 ), 0.8 );
+  
+  skyCamera.position.y = 10;
+  skyCamera.lookAt(new THREE.Vector3(0, 0, 0));
 
   lastUpdateTimestamp = -1;
   resize();
@@ -97,6 +111,9 @@ function render(timestamp)
   light.position.copy(D4_camera.position);
 
   D4_space.project();
+  
   D4_renderer.render(D4_scene, D4_camera);
+  
+  skyRender.render(D4_scene, skyCamera);
   
 }

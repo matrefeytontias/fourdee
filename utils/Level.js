@@ -15,6 +15,7 @@ function Level(container, space4D, camera, scene)
   this.player = new Player();
   this.endTextDom = $("#end-text");
   this.startTextDom = $("#start-text");
+  this.titleDom = $("#level-title");
 }
 
 Level.prototype.initialize = function(loadedLevel)
@@ -23,6 +24,8 @@ Level.prototype.initialize = function(loadedLevel)
   this.startText = loadedLevel.startText;
   this.endText = loadedLevel.endText;
   this.levelEnd = loadedLevel.levelEnd;
+  
+  this.titleDom.html(this.title);
   
   this.camera.position.copy(loadedLevel.startPos);
   
@@ -58,13 +61,14 @@ Level.prototype.checkEnd = function()
 
 Level.prototype.start = function()
 {
+  $("#tuto").hide();
   this.startTextDom.html(this.startText);
   console.log(this.startText);
-  this.startTextDom.animate({opacity : 0}, 100*this.startText.length);
+  this.startTextDom.animate({opacity : 0}, 80*this.startText.length + 3000);
 }
 
 Level.prototype.end = function()
 {
   this.endTextDom.html(this.endText);
-  this.endTextDom.animate({opacity : 0}, 100*this.endText.length);
+  this.endTextDom.animate({opacity : 0}, 80*this.endText.length + 3000);
 }

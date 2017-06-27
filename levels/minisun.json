@@ -1,9 +1,9 @@
 {
   "startingPosition": { "x": 3.5, "y": 1, "z": -5 },
-  "title": "minisun",
+  "title": "flower",
   "userRotations" : ["xw", "zw"],
   "jump": false,
-  "startText": "- Draw me a sun ! <br> - <i>... Hum... well ok</i>",
+  "startText": "- Draw me a flower ! <br> - <i>... Hum... well ok</i>",
   "endText": "Thank you !",
   "levelEnd": "all locked",
   "materials": [
@@ -21,15 +21,15 @@
     },
     { "name": "od",
       "type": "Phong",
-      "options": { "color":"#ff9966", "side" : "DoubleSide" }
+      "options": { "color":"#ffd73a", "side" : "DoubleSide" }
     },
     { "name": "oe",
       "type": "Phong",
-      "options": { "color":"#ff9966" }
+      "options": { "color":"#ffd73a" }
     },
     { "name": "oi",
       "type": "Phong",
-      "options": { "color":"#ff9966", "side" : "BackSide" }
+      "options": { "color":"#ffd73a", "side" : "BackSide" }
     },
     { "name": "wd",
       "type": "Phong",
