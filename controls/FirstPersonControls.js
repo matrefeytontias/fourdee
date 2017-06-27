@@ -1,6 +1,6 @@
 // HTMLDOMElement container, Player player, THREE.Camera camera3D,
 // Space4D space4D, String[] rotation4DPlanes, float rotation4DSensitivity,
-// float displacementSensitivity KeySettings keys,
+// float displacementSensitivity, KeySettings keys
 function FirstPersonControls(
   container,
   player,
@@ -8,7 +8,7 @@ function FirstPersonControls(
   space4D,
   rotation4DPlanes = ["zw"],
   rotation4DSensitivity = 1,
-  displacementSensitivity = 2,
+  displacementSensitivity = 4,
   keys = new KeySettings())
 {
   Controls.call(this, keys);
@@ -22,6 +22,11 @@ function FirstPersonControls(
   this.startText = document.getElementById("start");
   this.raycaster = new THREE.Raycaster();
   this.zeroVec = new THREE.Vector2();
+  // Stuff to animate rotation
+  this.rotating = false;
+  this.rotationBase = 0;
+  this.dtheta = 0;
+  this.rotationEaser = t => Math.sin(t * Math.PI / 2);
 
   this.onMouseMove = function(event)
   {
@@ -52,12 +57,22 @@ function FirstPersonControls(
     this.camera3D.lookAt(where);
 
     // Either translate or rotate, but not both
-    if(KeySettings.keyPressed[this.keys.ana] || KeySettings.keyPressed[this.keys.kata])
+    if(!this.rotating && (KeySettings.keyPressed[this.keys.ana] || KeySettings.keyPressed[this.keys.kata]))
     {
       // Do the rotation work
-      var theta = (KeySettings.keyPressed[this.keys.ana] ? -1 : 1) * rotation4DSensitivity * dt;
+      this.dtheta = (KeySettings.keyPressed[this.keys.ana] ? -1 : 1) * Math.PI / 2;
+      this.rotating = true;
+      this.rotationBase = 0;
+    }
+
+    if(this.rotating)
+    {
+      var theta = (this.rotationEaser(dt + this.rotationBase) - this.rotationEaser(this.rotationBase)) * this.dtheta;
       D4_space.rotateAround(D4_camera.position, rotation4DPlanes[0], theta);
       this.displacementEuler[rotation4DPlanes[0]] -= theta;
+      this.rotationBase += dt;
+      if(this.rotationBase >= 1)
+        this.rotating = false;
     }
     else if(KeySettings.keyPressed[this.keys.up] || KeySettings.keyPressed[this.keys.down] || KeySettings.keyPressed[this.keys.left] || KeySettings.keyPressed[this.keys.right])
     {
