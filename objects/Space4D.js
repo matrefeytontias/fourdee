@@ -90,20 +90,12 @@ Space4D.prototype.project = function()
       }
       if(faceIndex < faceIndexLimit)
         geom3.faces.splice(faceIndex, faceIndexLimit - faceIndex);
-      console.log(geom3.vertices.join(""));
       geom3.verticesNeedUpdate = true;
       geom3.elementsNeedUpdate = true;
       geom3.computeFaceNormals();
       geom3.computeVertexNormals();
       geom3.computeFlatVertexNormals();
       child.dirty = false;
-      var miny = 123456789, maxy = -123456789;
-      for(var i = 0; i < geom3.vertices.length; i++)
-      {
-        miny = Math.min(geom3.vertices[i].y, miny);
-        maxy = Math.max(geom3.vertices[i].y, maxy);
-      }
-      console.log(miny, maxy);
     }
   });
   
