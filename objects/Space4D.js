@@ -24,15 +24,16 @@ Space4D.prototype.add = function(obj)
     D4_scene.add(obj.children3D[i]);
 }
 
-// Rotate the intersector on the given plane around the given point
-// Said point becomes the new origin
-Space4D.prototype.rotateAround = function(center, plane, theta)
+// Rotate the intersector on the given plane around the given 3D point in itself
+// THREE.Vector3 center3, string plane, float theta
+Space4D.prototype.rotateAround = function(center3, plane, theta)
 {
   if(theta != 0)
   {
+    var center4 = this.intersector.switchBase(center3);
     var rot = new Matrix5();
     rot["makeRotate" + plane.toUpperCase()](theta);
-    // this.intersector.origin.copy(center);
+    this.intersector.origin.sub(center4).applyMatrix5(rot).add(center4);
     this.intersector.applyMatrix5(rot);
     this.dirty = true;
   }
@@ -104,7 +105,7 @@ Space4D.prototype.project = function()
       child.dirty = false;
     }
   });
-  
+
   this.dirty = false;
 }
 
