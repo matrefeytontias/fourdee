@@ -12,7 +12,7 @@ function Intersector()
   this.origin = new THREE.Vector4(0, 0, 0, 0);
   this.angle = 0;
   // "e" term of the cartesian equation
-  this.e = this.normal.dot(this.origin);
+  this.e = -this.normal.dot(this.origin);
 }
 
 Intersector.prototype.switchBase = function(v)
@@ -55,7 +55,7 @@ Intersector.prototype.rotate = function(a)
   t = this.normal.z;
   this.normal.z = this.normal.z * c + this.normal.w * s;
   this.normal.w = -t * s + this.normal.w * c;
-  
+
   this.angle += a;
 }
 
@@ -68,7 +68,7 @@ Intersector.prototype.applyMatrix5 = function(m)
   this.uz.applyMatrix5(m);
   this.normal.applyMatrix5(m);
   // Update e
-  this.e = this.normal.dot(this.origin);
+  this.e = -this.normal.dot(this.origin);
 }
 
 // Cartesian equation for the hyperplane
@@ -100,7 +100,7 @@ Intersector.prototype.intersectTetra = function(v1, v2, v3, v4)
       s4 = sign(this.hyperplane(v4));
   if(Math.abs(s1 + s2 + s3 + s4) == 4)
     return [];
-  
+
   // Second case : if one or more vertices are inside the hyperplane, their number alone
   // determines the shape of the intersection
   var r = [];
@@ -109,7 +109,7 @@ Intersector.prototype.intersectTetra = function(v1, v2, v3, v4)
   if(s2 == 0) r.push(v2.clone());
   if(s3 == 0) r.push(v3.clone());
   if(s4 == 0) r.push(v4.clone());
-  
+
   // Third case : the hard one, where the intersection is a triangle or a quad.
   // We intersect all edges with the hyperplane to find points.
   // We know that the line cuts the hyperplane
@@ -127,4 +127,3 @@ Intersector.prototype.intersectTetra = function(v1, v2, v3, v4)
     r.push(this.lineSpaceIntersect(v3, v4));
   return r;
 }
-
