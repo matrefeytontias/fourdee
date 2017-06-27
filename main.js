@@ -33,16 +33,25 @@ THREE.Vector4.prototype.toString = function()
 
 function main()
 {
-  light = new THREE.PointLight(0xffffff, 0.5, 1000);
+  light = new THREE.PointLight(0xffffff, 1., 1000);
   D4_scene.add(light);
+  
+  D4_scene.add(new THREE.AmbientLight(0xffffff, 0.25));
 
   // window.addEventListener("levelLoaded", levelLoaded);
   // LevelLoader.loadFile("levels/cubejail.json", D4_space);
   var geom = new Geometry4D();
   geom.extrude3DGeometry(new THREE.BoxGeometry(1, 1, 1), 1);
-  cube = new Mesh4D(geom, new THREE.MeshPhongMaterial({ color: 0xffffff/*, side:THREE.DoubleSide */}));
+  cube = new Mesh4D(geom, new THREE.MeshPhongMaterial({ color: 0xffffff, side: THREE.DoubleSide }));
   cube.position.y = 0.5;
+  cube.position.z = -5;
   D4_space.add(cube);
+  
+  geom = new Geometry4D();
+  geom.extrude3DGeometry(new THREE.BoxGeometry(20, 1, 20), 20);
+  ground = new Mesh4D(geom, new THREE.MeshPhongMaterial({ color: 0xffffff, side: THREE.DoubleSide }));
+  ground.position.y = -0.5;
+  D4_space.add(ground);
   
   levelLoaded();
   // End level;
@@ -53,7 +62,6 @@ function levelLoaded()
   // Start controls
   // D4_camera.position.copy(LevelLoader.result.startPos);
   D4_camera.position.y = 0.5;
-  D4_camera.position.z = 5;
   D4_camera.lookAt(D4_scene.position);
 
   var fpControls = new FirstPersonControls(D4_container, new Player(), D4_camera, D4_space);

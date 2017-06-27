@@ -24,12 +24,18 @@ Space4D.prototype.add = function(obj)
     D4_scene.add(obj.children3D[i]);
 }
 
-// Rotate the intersector on the given plane
-Space4D.prototype.rotate = function(plane, theta)
+// Rotate the intersector on the given plane around the given point
+// Said point becomes the new origin
+Space4D.prototype.rotateAround = function(center, plane, theta)
 {
-  var rot = new Matrix5();
-  rot["makeRotate" + plane.toUpperCase()](theta);
-  intersector.applyMatrix5(rot);
+  if(theta != 0)
+  {
+    var rot = new Matrix5();
+    rot["makeRotate" + plane.toUpperCase()](theta);
+    // this.intersector.origin.copy(center);
+    this.intersector.applyMatrix5(rot);
+    this.dirty = true;
+  }
 }
 
 // (Object4D -> void) callback
@@ -44,7 +50,7 @@ Space4D.prototype.project = function()
 {
   this.visitObjects(function(child)
   {
-    if(child.dirty)
+    if(child.dirty || this.dirty)
     {
       var objMat = child.buildMatrix5();
       var geom3 = child.projection, geom4 = child.geometry;
@@ -99,46 +105,7 @@ Space4D.prototype.project = function()
     }
   });
   
-  /*var spaceMat = this.buildMatrix5();
-
-  this.visitObjects(function(child)
-  {
-    var geom4 = child.geometry;
-    var objMat = child.buildMatrix5();
-    var localPosition = child.position.clone().sub(child.rotation.center).sub(child.position);
-    localPosition.applyMatrix5(objMat).add(child.rotation.center).sub(this.rotation.center).applyMatrix5(spaceMat);
-    child.position3D = this.intersector.project(localPosition.add(this.rotation.center));
-    if(child.dirty && !child.positionalOnly)
-    {
-      if(geom4 === undefined)
-        throw "Pushed Object4D with undefined geometry";
-      else
-      {
-        var geom3 = child.projection;
-        if(geom3 === undefined)
-          throw "Pushed Object4D with undefined target 3D geometry";
-        else
-        {
-          geom3.vertices.length = 0;
-          for(var vi = 0; vi < geom4.vertices4D.length; vi++)
-          {
-            var localVertex = geom4.vertices4D[vi].clone().sub(child.rotation.center);
-            localVertex.applyMatrix5(objMat).add(child.rotation.center).sub(this.rotation.center).applyMatrix5(spaceMat);
-            geom3.vertices.push(this.intersector.project(localVertex.add(this.rotation.center)));
-          }
-          geom3.faces = geom4.faces;
-          geom3.verticesNeedUpdate = true;
-          geom3.elementsNeedUpdate = true;
-          geom3.computeFaceNormals();
-          geom3.computeVertexNormals();
-          geom3.computeFlatVertexNormals();
-          geom3.computeBoundingBox();
-          geom3.computeBoundingSphere();
-        }
-      }
-      child.dirty = false;
-    }
-  });*/
+  this.dirty = false;
 }
 
 // Assumes that the player cannot get pinched and that the previousPos is valid

@@ -18,12 +18,12 @@ function Intersector()
 Intersector.prototype.switchBase = function(v)
 {
   if(v.isVector3)
-    return new THREE.Vector4(
+    return (new THREE.Vector4(
       this.ux.x * v.x + this.uy.x * v.y + this.uz.x * v.z,
       this.ux.y * v.x + this.uy.y * v.y + this.uz.y * v.z,
       this.ux.z * v.x + this.uy.z * v.y + this.uz.z * v.z,
       this.ux.w * v.x + this.uy.w * v.y + this.uz.w * v.z
-    ).add(this.origin);
+    )).add(this.origin);
   else if(v.isVector4)
     return this.project(v);
   else
@@ -59,12 +59,16 @@ Intersector.prototype.rotate = function(a)
   this.angle += a;
 }
 
+// This updates the plane's equation's e factor, so the origin
+// needs to be updated BEFORE this gets called
 Intersector.prototype.applyMatrix5 = function(m)
 {
-  ux.applyMatrix5(m);
-  uy.applyMatrix5(m);
-  uz.applyMatrix5(m);
-  normal.applyMatrix5(m);
+  this.ux.applyMatrix5(m);
+  this.uy.applyMatrix5(m);
+  this.uz.applyMatrix5(m);
+  this.normal.applyMatrix5(m);
+  // Update e
+  this.e = this.normal.dot(this.origin);
 }
 
 // Cartesian equation for the hyperplane

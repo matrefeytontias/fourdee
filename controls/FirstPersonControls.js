@@ -51,8 +51,17 @@ function FirstPersonControls(
     where.add(direction);
     this.camera3D.lookAt(where);
 
-    //translation
-    if(KeySettings.keyPressed[this.keys.up] || KeySettings.keyPressed[this.keys.down] || KeySettings.keyPressed[this.keys.left] || KeySettings.keyPressed[this.keys.right])
+    // Either translate or rotate, but not both
+    if(KeySettings.keyPressed[this.keys.ana] || KeySettings.keyPressed[this.keys.kata])
+    {
+      // Do the rotation work
+      var theta = (KeySettings.keyPressed[this.keys.ana] ? -1 : 1) * rotation4DSensitivity * dt;
+      D4_space.rotateAround(D4_space.intersector.switchBase(D4_camera.position), rotation4DPlanes[0], theta);
+      // Rotating the space resets the intersector's origin to be the camera, so it should be set to 0
+      // D4_camera.position.set(0, 0, 0);
+      this.displacementEuler[rotation4DPlanes[0]] -= theta;
+    }
+    else if(KeySettings.keyPressed[this.keys.up] || KeySettings.keyPressed[this.keys.down] || KeySettings.keyPressed[this.keys.left] || KeySettings.keyPressed[this.keys.right])
     {
       var moveDirection = direction.clone(), movement = new THREE.Vector3();
       moveDirection.y = 0;
