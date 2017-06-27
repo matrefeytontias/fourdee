@@ -6,7 +6,7 @@ function FirstPersonControls(
   player,
   camera3D,
   space4D,
-  rotation4DPlanes = ["xy"],
+  rotation4DPlanes = ["zw"],
   rotation4DSensitivity = 1,
   displacementSensitivity = 2,
   keys = new KeySettings())
@@ -22,7 +22,7 @@ function FirstPersonControls(
   this.startText = document.getElementById("start");
   this.raycaster = new THREE.Raycaster();
   this.zeroVec = new THREE.Vector2();
-
+  
   this.onMouseMove = function(event)
   {
     if(this.paused) return;
@@ -44,7 +44,7 @@ function FirstPersonControls(
   this.update = function(dt)
   {
     if(this.paused) return;
-
+    
     var direction = new THREE.Vector3(Math.cos(this.cameraRotation.y), Math.sin(-this.cameraRotation.x), Math.sin(this.cameraRotation.y));
 
     var where = this.camera3D.position.clone();
@@ -56,9 +56,9 @@ function FirstPersonControls(
     {
       // Do the rotation work
       var theta = (KeySettings.keyPressed[this.keys.ana] ? -1 : 1) * rotation4DSensitivity * dt;
-      //D4_space.rotateAround(D4_space.intersector.switchBase(D4_camera.position), rotation4DPlanes[0], theta);
-      D4_space.intersector.rotation[rotation4DPlanes[0]] += theta;
-      D4_space.dirty = true;
+      D4_space.rotateAround(D4_space.intersector.switchBase(D4_camera.position), rotation4DPlanes[0], theta);
+      // Rotating the space resets the intersector's origin to be the camera, so it should be set to 0
+      // D4_camera.position.set(0, 0, 0);
       this.displacementEuler[rotation4DPlanes[0]] -= theta;
     }
     else if(KeySettings.keyPressed[this.keys.up] || KeySettings.keyPressed[this.keys.down] || KeySettings.keyPressed[this.keys.left] || KeySettings.keyPressed[this.keys.right])
@@ -83,15 +83,15 @@ function FirstPersonControls(
     // Eventually add a jump
     if(this.canJump && KeySettings.keyPressed[this.keys.space])
       this.player.velocity3D.y += D4_JUMP;
-
+    
     var velocityY = new THREE.Vector3(0, this.player.velocity3D.y, 0);
     var dataY = space4D.tryForMove(this.camera3D.position, velocityY, this.player.radius);
-
+    
     var newPosition = this.camera3D.position.clone().add(dataY.movement);
     var velocityXZ = this.player.velocity3D.clone();
-    velocityXZ.y = 0;
+    velocityXZ.y = 0; 
     var dataXZ = space4D.tryForMove(newPosition, velocityXZ, this.player.radius);
-
+    
     this.player.velocity3D.addVectors(dataY.movement, dataXZ.movement);
     this.canJump = (dataY.collided && this.player.velocity3D.y == 0);*/
 

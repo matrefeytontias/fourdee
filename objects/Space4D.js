@@ -13,11 +13,6 @@ function Space4D(intersector)
 Space4D.prototype = new Object4D();
 Space4D.prototype.constructor = Space4D;
 
-Space4D.prototype.attachCamera = function(camera)
-{
-  this.intersector.camera = camera;
-}
-
 // Object4D obj
 Space4D.prototype.add = function(obj)
 {
@@ -37,7 +32,7 @@ Space4D.prototype.rotateAround = function(center, plane, theta)
   {
     var rot = new Matrix5();
     rot["makeRotate" + plane.toUpperCase()](theta);
-    this.intersector.origin.copy(center);
+    // this.intersector.origin.copy(center);
     this.intersector.applyMatrix5(rot);
     this.dirty = true;
   }
@@ -53,10 +48,6 @@ Space4D.prototype.visitObjects = function(callback)
 // Updates the children Object4D with their 3D projection if need be
 Space4D.prototype.project = function()
 {
-  // Refresh the intersector with the issued rotations
-  if(this.dirty)
-    this.intersector.refresh();
-  
   this.visitObjects(function(child)
   {
     if(child.dirty || this.dirty)
@@ -113,7 +104,7 @@ Space4D.prototype.project = function()
       child.dirty = false;
     }
   });
-
+  
   this.dirty = false;
 }
 

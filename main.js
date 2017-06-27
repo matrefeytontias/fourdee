@@ -15,8 +15,6 @@ const D4_space = new Space4D(new Intersector());
 
 var D4_camera = new THREE.PerspectiveCamera(75, D4_gameWidth / D4_gameHeight, 0.1, 1000);
 
-D4_space.attachCamera(D4_camera);
-
 const D4_renderer = new THREE.WebGLRenderer({ antialias: true });
 
 var ground, cube, light;
@@ -37,7 +35,7 @@ function main()
 {
   light = new THREE.PointLight(0xffffff, 1., 1000);
   D4_scene.add(light);
-
+  
   D4_scene.add(new THREE.AmbientLight(0xffffff, 0.25));
 
   // window.addEventListener("levelLoaded", levelLoaded);
@@ -48,13 +46,13 @@ function main()
   cube.position.y = 0.5;
   cube.position.z = -5;
   D4_space.add(cube);
-
+  
   geom = new Geometry4D();
   geom.extrude3DGeometry(new THREE.BoxGeometry(20, 1, 20), 20);
   ground = new Mesh4D(geom, new THREE.MeshPhongMaterial({ color: 0xffffff, side: THREE.DoubleSide }));
   ground.position.y = -0.5;
   D4_space.add(ground);
-
+  
   levelLoaded();
   // End level;
 }
