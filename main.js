@@ -15,6 +15,8 @@ var D4_gameHeight = D4_container.offsetHeight;
 const D4_aspectRatio = D4_gameWidth / D4_gameHeight;
 const D4_scene = new THREE.Scene();
 
+var D4_context;
+
 var lastUpdateTimestamp;
 
 const orthoProj = new OrthoProj();
@@ -79,6 +81,11 @@ function resize()
 function start()
 {
   D4_container.appendChild(D4_renderer.domElement);
+  
+  
+  D4_context = D4_renderer.domElement.getContext("2D");
+  
+  console.log(D4_renderer.domElement)
 
   D4_renderer.setClearColor( new THREE.Color( 0x111111 ), 0.8 );
 
