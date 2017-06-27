@@ -68,7 +68,7 @@ Geometry4D.prototype.extrude3DGeometry = function(geom3, duth)
 // int i, int l, THREE.Vector4 v / THREE.Face3 f
 THREE.Geometry.prototype.addVertexP = function(index, limit, v)
 {
-  for(var i = 0; i < this.vertices.length; i++)
+  for(var i = 0; i < index; i++)
   {
     var vtx = this.vertices[i];
     if(v.x == vtx.x && v.y == vtx.y && v.z == vtx.z)
@@ -83,9 +83,10 @@ THREE.Geometry.prototype.addVertexP = function(index, limit, v)
 
 Geometry4D.prototype.addVertexP = function(index, limit, v)
 {
-  for(var i = 0; i < this.vertices.length; i++)
+  for(var i = 0; i < index; i++)
   {
-    if(v.equals(this.vertices[i]))
+    var vtx = this.vertices[i];
+    if(v.x == vtx.x && v.y == vtx.y && v.z == vtx.z && v.w == vtx.w)
       return i;
   }
   if(index < limit)
@@ -103,7 +104,7 @@ THREE.Face3.prototype.setABC = function(a, b, c)
 // Returns whether the face was actually added
 THREE.Geometry.prototype.addFaceP = function(index, limit, a, b, c)
 {
-  for(var i = 0; i < this.faces.length; i++)
+  for(var i = 0; i < index; i++)
   {
     var face = this.faces[i];
     if(face.a == a && face.b == b && face.c == c)
