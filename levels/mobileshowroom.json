@@ -1,9 +1,8 @@
 {
-  "startingPosition": { "x": 3.5, "y": 1, "z": 5 },
+  "startingPosition": { "x": -7.5, "y": 0, "z": 5 },
   "title": "4D Solids showroom",
   "startText" : "Welcome",
   "levelEnd" : "false",
-  "userRotations" : ["xw"],
   "materials": [
     { "name": "white",
       "type": "Phong",
@@ -80,8 +79,8 @@
   ],
   "materialPackages" : {
     "prism double": ["bd", "od", "wd"],
-    "pyram ext": ["be", "wd"],
-    "pyram int": ["oi"],
+    "pyram ext": ["be", "we"],
+    "pyram int": ["bi", "wi"],
     "tesseract": ["od", "bd", "wd", "wd", "wd"],
     "penta" : ["od", "bd"]
   },
@@ -98,7 +97,7 @@
       "options": [ 3, 3, 3, 3],
       "material": "tesseract",
       "position": { "y": 2},
-      "rotation": { "xw": 0.01, "yw": 0.01, "zw": 0.02 },
+      "rotation": { },
       "selectable" : true,
       "projector" : "stereo"
     },
@@ -107,7 +106,7 @@
       "options": [ 3, 3, 3, 3],
       "material": ["pyram ext", "pyram int"],
       "position": { "x": 7, "y": 2},
-      "rotation": { "xw": 0.01, "yw": 0.01 },
+      "rotation": { },
       "selectable": true,
       "projector": "stereo"
     },
@@ -116,7 +115,7 @@
       "options": [ 3 ],
       "material": "prism double",
       "position": { "x": -7, "y": 2},
-      "rotation": { "xw": 0.01, "yw": 0.01 },
+      "rotation": {},
       "selectable" : true,
       "projector": "stereo"
     },
@@ -125,7 +124,7 @@
       "options": [ 3 ],
       "material": "penta",
       "position": { "x": 14, "y": 2},
-      "rotation": { "xw": 0.01, "yw": 0.01 },
+      "rotation": { },
       "selectable" : true,
       "projector": "stereo"
     },
@@ -137,10 +136,9 @@
     }
   ],
   "levelStructure": [
-    ["ground", 0, -3, 0],
+    ["prism", -7, 2, 0],
     ["tess", 0, 2, 0],
     ["pyram", 7, 2, 0],
-    ["prism", -7, 2, 0],
     ["penta", 14, 2, 0]
   ],
   "scripts": [

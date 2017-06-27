@@ -14,6 +14,7 @@ LevelObject.prototype.constructor = LevelObject;
 LevelObject.prototype.rotate = function(plane, dtheta)
 {
   this.rotation[plane] += dtheta;
+  this.dirty = true;
 }
 
 LevelObject.prototype.checkEndRotation = function(){

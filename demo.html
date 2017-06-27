@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <script src="three.min.js"></script>
+  <script src="fourdee.js"></script>
+  <script src="geometries/Geometry4D.js"></script>
+  <script src="geometries/BoxGeometry4D.js"></script>
+  <script src="geometries/Box3DGeometry4D.js"></script>
+  <script src="geometries/PentacoreGeometry.js"></script>
+  <script src="geometries/Prism4DGeometry4D.js"></script>
+  <script src="geometries/Pyramid4DGeometry4D.js"></script>
+  <script src="math/Euler4D.js"></script>
+  <script src="math/Matrix5.js"></script>
+  <script src="math/Vector5.js"></script>
+  <script src="objects/Mesh4D.js"></script>
+  <script src="objects/Points4D.js"></script>
+  <script src="objects/Space4D.js"></script>
+  <script src="objects/Player.js"></script>
+  <script src="objects/LevelObject.js"></script>
+  <script src="controls/Controls.js"></script>
+  <script src="controls/MobileControls.js"></script>
+  <script src="utils/Level.js"></script>
+  <script src="utils/LevelLoader.js"></script>
+  <script src="utils/levelStateLog.js"></script>
+  <script src="jquery-3.2.1.min.js"></script>
+  <script src="controls/ManaBar.js"></script>
+  <style>
+    body { 
+      margin: 0; 
+      background-color : black;
+    }
+    
+    #view
+    {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+    }
+    #start{
+      position : fixed;
+      width : 100%;
+      top : 48%;
+      text-align: center;
+      color : white;
+      font-size : 28px;
+      text-shadow : 0 0 10px white;
+    }
+  </style>
+</head>
+<body>
+  <div id="view">
+  </div>
+  
+  <div style="display : none">
+        <div id="cursor">
+      +
+    </div>
+    <div id="mana-container">
+      <div id="mana-bar"></div>
+    </div>
+    <div id="start-text"></div>
+    <div id="end-text"></div>
+    <div id="sky-view"></div>
+    <div id="goal-img">
+      <img  src="images/flower.png"></img>
+    </div>
+    <div id="level-title"></div>
+    
+    <div id="tuto">
+      <div id="controls">
+        Use ZQSD to move. <br />
+        Keep mouse pressed on a highlighted object to select it <br />
+        Use A/E to make it rotate along the fourth dimension
+      </div>
+      <div id="goal-tuto">
+        
+      </div>
+      <div id="mana-tuto">
+        Here is you 4D-rotation-mana, spend it wisely ;)
+      </div>
+    </div>
+    
+    <a href="#" id="retry">retry</a>
+    
+    <a id="selection" href="levelSelection.html">back to level selection</a>
+    
+  </div>
+  
+  <script src="mobilemain.js"></script>
+</body>
+</html>
