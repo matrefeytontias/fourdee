@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <script src="jquery-3.2.1.min.js"></script>
+  <script src="utils/cookies.js"></script>
   <script type="text/javascript">
     var levelList = [
       {name : "showroom", file : "showroom"},
@@ -10,10 +11,24 @@
     ]
     
     $(document).ready(function(){
+      var levelName = new URL(window.location.href).searchParams.get("level");
+      var score = parseInt(new URL(window.location.href).searchParams.get("score"));
+      
+      if(checkCookie(levelName) && parseInt(getCookie(levelName)) < score)
+        setCookie(levelName, score+"");
+      
       for(var i = 0; i < levelList.length; i++)
       {
         var a = $("#model a").clone();
-        a.html(i + " - " + levelList[i].name);
+        if(i > 0 && checkCookie(levelList[i].name))
+        {
+          if(levelList[i].name == levelName)
+            a.html(i + " - " + levelList[i].name + " <span class='score'>" + score + "</span> <span class='highscore'> " + getCookie(levelList[i].name) + "</span>" );
+          else
+            a.html(i + " - " + levelList[i].name + " <span class='highscore'> " + getCookie(levelList[i].name) + "</span>" );
+        }
+        else
+          a.html(i + " - " + levelList[i].name);
         a.attr("href", "index.html?level="+levelList[i].file);
         $("#levels").append(a);
       }
@@ -34,12 +49,31 @@
     }
     
     #levels a{
+      position : relative;
       color : white;
       text-decoration : none;
       display : block;
       font-size : 26px;
       text-shadow : 0 0 6px white;
       padding : 6px;
+    }
+    
+    .score{
+      position : absolute;
+      bottom : 6px;
+      right : 40px;
+      font-size : 20px;
+      font-style : italic;
+      color : green;
+      text-shadow : 0 0 6px green;
+    }
+    
+    .highscore{
+      position : absolute;
+      bottom : 6px;
+      right : 10px;
+      font-size : 20px;
+      font-style : italic;
     }
     
     #levels a:hover{

@@ -16,6 +16,8 @@ function Level(container, space4D, camera, scene)
   this.endTextDom = $("#end-text");
   this.startTextDom = $("#start-text");
   this.titleDom = $("#level-title");
+  this.manaBar = undefined;
+  this.title = undefined;
 }
 
 Level.prototype.initialize = function(loadedLevel)
@@ -29,10 +31,10 @@ Level.prototype.initialize = function(loadedLevel)
   
   this.camera.position.copy(loadedLevel.startPos);
   
-  var manaBar = new ManaBar(10);
+  this.manaBar = new ManaBar(10);
   
   this.fpControls = new FirstPersonControls(this, this.container, this.player, this.camera, this.space4D);
-  this.tpControls = new ThirdPersonControls(this.camera, this.scene, this.space4D, manaBar, loadedLevel.userRotations);
+  this.tpControls = new ThirdPersonControls(this.camera, this.scene, this.space4D, this.manaBar, loadedLevel.userRotations);
   this.fpControls.listen();
 
   this.fpControls.setTpControls(this.tpControls);
@@ -71,4 +73,9 @@ Level.prototype.end = function()
 {
   this.endTextDom.html(this.endText);
   this.endTextDom.animate({opacity : 0}, 80*this.endText.length + 3000);
+  
+  window.setTimeout((function(levelName, manaPercent){
+    return function(){ window.location.href = "levelSelection.html?level="+levelName+"&score="+manaPercent; }
+  })(this.title, this.manaBar.getManaPercent()), 
+  80*this.endText.length + 1500)
 }
