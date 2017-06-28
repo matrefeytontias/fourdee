@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
+  <script src="jquery-3.2.1.min.js"></script>
   <script src="three.min.js"></script>
   <script src="fourdee.js"></script>
   <script src="geometries/Geometry4D.js"></script>
@@ -23,7 +24,6 @@
   <script src="utils/Level.js"></script>
   <script src="utils/LevelLoader.js"></script>
   <script src="utils/levelStateLog.js"></script>
-  <script src="jquery-3.2.1.min.js"></script>
   <script src="controls/ManaBar.js"></script>
   <style>
     body { 
@@ -37,54 +37,44 @@
       width: 100%;
       height: 100%;
     }
-    #start{
+    
+    #view span, #left, #right{
+      -webkit-user-select: none;  
+      -moz-user-select: none;    
+      -ms-user-select: none;      
+      user-select: none;
+    }
+
+    #view>span{
       position : fixed;
       width : 100%;
-      top : 48%;
+      top : 20px;
       text-align: center;
       color : white;
-      font-size : 28px;
+      font-size : 1.8em;
       text-shadow : 0 0 10px white;
+    }
+    
+    #left, #right{
+      position : fixed;
+      width : 25%;
+      top : 30%;
+      text-align: center;
+      color : white;
+      font-size : 100px;
+      text-shadow : 0 0 10px white;
+    }
+    
+    #right{
+      right : 0;
     }
   </style>
 </head>
 <body>
   <div id="view">
-  </div>
-  
-  <div style="display : none">
-        <div id="cursor">
-      +
-    </div>
-    <div id="mana-container">
-      <div id="mana-bar"></div>
-    </div>
-    <div id="start-text"></div>
-    <div id="end-text"></div>
-    <div id="sky-view"></div>
-    <div id="goal-img">
-      <img  src="images/flower.png"></img>
-    </div>
-    <div id="level-title"></div>
-    
-    <div id="tuto">
-      <div id="controls">
-        Use ZQSD to move. <br />
-        Keep mouse pressed on a highlighted object to select it <br />
-        Use A/E to make it rotate along the fourth dimension
-      </div>
-      <div id="goal-tuto">
-        
-      </div>
-      <div id="mana-tuto">
-        Here is you 4D-rotation-mana, spend it wisely ;)
-      </div>
-    </div>
-    
-    <a href="#" id="retry">retry</a>
-    
-    <a id="selection" href="levelSelection.html">back to level selection</a>
-    
+    <span>short touch : change rotation | long touch : toogle wireframe</span>
+    <div id="right"> <span> > </span> </div>
+    <div id="left"> <span> < </span> </div>
   </div>
   
   <script src="mobilemain.js"></script>
