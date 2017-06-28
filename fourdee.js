@@ -19,6 +19,28 @@ Object4D.prototype.getCellVertices = function(i)
   
 }
 
+Object4D.prototype.getAABB = function()
+{
+  var vertices = geometry.vertices;
+  var minx = 123456789, maxx = -123456789,
+      miny = 123456789, maxy = -123456789,
+      minz = 123456789, maxz = -123456789,
+      minw = 123456789, maxw = -123456789;
+  for(var i = 0; i < vertices.length; i++)
+  {
+    var v = vertices[i];
+    minx = Math.min(v.x, minx);
+    maxx = Math.max(v.x, maxx);
+    miny = Math.min(v.y, miny);
+    maxy = Math.max(v.y, maxy);
+    minz = Math.min(v.z, minz);
+    maxz = Math.max(v.z, maxz);
+    minw = Math.min(v.w, minw);
+    maxw = Math.max(v.w, maxw);
+  }
+  return new AABB4(this.position, new THREE.Vector4(maxx - minx, maxy - miny, maxz - minz, maxw - minw));
+}
+
 // int[] faces, int[] materials
 Object4D.prototype.setCellMaterial = function(cells, materials)
 {
