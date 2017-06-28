@@ -58,7 +58,7 @@ function main()
   D4_space.add(ground);
   geom = new Geometry4D();
   geom.extrude3DGeometry(new THREE.BoxGeometry(20, 1, 20), 10);
-  ground = new Mesh4D(geom, new THREE.MeshPhongMaterial({ color: 0x0000ff, side: THREE.DoubleSide }));
+  ground = new Mesh4D(geom, new THREE.MeshPhongMaterial({ color: 0xccccff, side: THREE.DoubleSide }));
   ground.position.y = -0.5;
   ground.position.w = 5;
   D4_space.add(ground);
