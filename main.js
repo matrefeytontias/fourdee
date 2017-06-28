@@ -19,6 +19,8 @@ const D4_renderer = new THREE.WebGLRenderer({ antialias: true });
 
 var ground, cube, light;
 
+var coordsOutput = document.getElementById("coords");
+
 window.addEventListener("load", main);
 
 THREE.Vector3.prototype.toString = function()
@@ -33,6 +35,7 @@ THREE.Vector4.prototype.toString = function()
 
 function main()
 {
+  var mat = new THREE.MeshPhongMaterial({ color: 0xffffff, side: THREE.DoubleSide });
   light = new THREE.PointLight(0xffffff, 1., 1000);
   D4_scene.add(light);
 
@@ -42,15 +45,22 @@ function main()
   // LevelLoader.loadFile("levels/cubejail.json", D4_space);
   var geom = new Geometry4D();
   geom.extrude3DGeometry(new THREE.BoxGeometry(3, 3, 3), 3);
-  cube = new Mesh4D(geom, new THREE.MeshPhongMaterial({ color: 0xffffff, side: THREE.DoubleSide }));
-  cube.position.y = 1.5;
+  cube = new Mesh4D(geom, mat);
+  cube.position.y = 1.45;
   cube.position.z = -5;
   D4_space.add(cube);
 
   geom = new Geometry4D();
-  geom.extrude3DGeometry(new THREE.BoxGeometry(20, 1, 20), 20);
-  ground = new Mesh4D(geom, new THREE.MeshPhongMaterial({ color: 0xffffff, side: THREE.DoubleSide }));
+  geom.extrude3DGeometry(new THREE.BoxGeometry(20, 1, 20), 10);
+  ground = new Mesh4D(geom, mat);
   ground.position.y = -0.5;
+  ground.position.w = -5;
+  D4_space.add(ground);
+  geom = new Geometry4D();
+  geom.extrude3DGeometry(new THREE.BoxGeometry(20, 1, 20), 10);
+  ground = new Mesh4D(geom, new THREE.MeshPhongMaterial({ color: 0x0000ff, side: THREE.DoubleSide }));
+  ground.position.y = -0.5;
+  ground.position.w = 5;
   D4_space.add(ground);
 
   levelLoaded();
@@ -105,4 +115,6 @@ function render(timestamp)
 
   D4_space.project();
   D4_renderer.render(D4_scene, D4_camera);
+  
+  coordsOutput.innerHTML = D4_space.intersector.ux + "<br>" + D4_space.intersector.uy + "<br>" + D4_space.intersector.uz + "<br>" + D4_space.intersector.origin;
 }
