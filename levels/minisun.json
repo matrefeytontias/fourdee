@@ -6,6 +6,8 @@
   "startText": "- Draw me a flower ! <br> - <i>... Hum... well ok</i>",
   "endText": "Thank you !",
   "levelEnd": "all locked",
+  "targetImage" : "flower.png",
+  "mana" : 10,
   "materials": [
     { "name": "bd",
       "type": "Phong",

@@ -27,11 +27,19 @@ Level.prototype.initialize = function(loadedLevel)
   this.endText = loadedLevel.endText;
   this.levelEnd = loadedLevel.levelEnd;
   
+  if(this.levelEnd == "all locked")
+  {
+    $("#goal-img").show();
+    $("#goal-img img").attr("src", "images/"+loadedLevel.targetImage);
+    $("#sky-view").show();
+    $(".goal-tuto").show();
+  }
+  
   this.titleDom.html(this.title);
   
   this.camera.position.copy(loadedLevel.startPos);
   
-  this.manaBar = new ManaBar(10);
+  this.manaBar = new ManaBar(loadedLevel.mana);
   
   this.fpControls = new FirstPersonControls(this, this.container, this.player, this.camera, this.space4D);
   this.tpControls = new ThirdPersonControls(this.camera, this.scene, this.space4D, this.manaBar, loadedLevel.userRotations);
