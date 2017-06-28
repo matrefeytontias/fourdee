@@ -34,7 +34,7 @@ Euler4D.prototype.difference = function(euler4d)
   )
 }
 
-Euler4D.prototype.isEqualTo = function(euler4d, precision = 0.2)
+Euler4D.prototype.isEqualTo = function(euler4d, precision = 0.33)
 {
   return this.difference(euler4d) <= precision;
 }

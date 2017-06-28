@@ -72,6 +72,7 @@ Level.prototype.checkEnd = function()
 Level.prototype.start = function()
 {
   $("#tuto").hide();
+  $("#rotations").css("background-color", "rgba(0, 0, 0, 0)");
   this.startTextDom.html(this.startText);
   console.log(this.startText);
   this.startTextDom.animate({opacity : 0}, 80*this.startText.length + 3000);

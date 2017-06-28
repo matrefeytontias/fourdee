@@ -1,48 +1,14 @@
 {
-  "startingPosition": { "x": 3.5, "y": 1, "z": 5 },
-  "title": "4D Solids showroom",
-  "startText" : "Welcome",
-  "levelEnd" : "false",
+  "startingPosition": { "x": 3.5, "y": 1, "z": -5 },
+  "title": "flower-again",
   "userRotations" : ["xw", "yw", "zw"],
-  "mana" : 100000,
-  "jump" : false,
+  "jump": false,
+  "startText": "- Draw me an other flower ! <br> - <i>Easy !</i>",
+  "endText": "Easy isn't it ?",
+  "levelEnd": "all locked",
+  "targetImage" : "flower2.png",
+  "mana" : 18,
   "materials": [
-    { "name": "white",
-      "type": "Phong",
-      "options": { "color":"#ffffff" }
-    },
-    { "name": "soft blue",
-      "type": "Phong",
-      "options": { "color":"#00ffff", "side" : "DoubleSide" }
-    },
-    { "name": "soft blue ext",
-      "type": "Phong",
-      "options": { "color":"#00ffff" }
-    },
-    { "name": "blue",
-      "type": "Phong",
-      "options": { "color":"#0000ff", "side" : "DoubleSide" }
-    },
-    { "name": "purple",
-      "type": "Phong",
-      "options": { "color":"#ff00ff", "side" : "DoubleSide" }
-    },
-    { "name": "purple int",
-      "type": "Phong",
-      "options": { "color":"#ff00ff", "side" : "BackSide" }
-    },
-    { "name": "red",
-      "type": "Phong",
-      "options": { "color":"#ff0000", "side" : "DoubleSide" }
-    },
-    { "name": "white double",
-      "type": "Phong",
-      "options": { "color":"#ffffff", "side" : "DoubleSide" }
-    },
-    { "name": "green",
-      "type": "Phong",
-      "options": { "color":"#00ff00", "side" : "DoubleSide" }
-    },
     { "name": "bd",
       "type": "Phong",
       "options": { "color":"#33ccff", "side" : "DoubleSide" }
@@ -57,15 +23,15 @@
     },
     { "name": "od",
       "type": "Phong",
-      "options": { "color":"#ff9966", "side" : "DoubleSide" }
+      "options": { "color":"#ffd73a", "side" : "DoubleSide" }
     },
     { "name": "oe",
       "type": "Phong",
-      "options": { "color":"#ff9966" }
+      "options": { "color":"#ffd73a" }
     },
     { "name": "oi",
       "type": "Phong",
-      "options": { "color":"#ff9966", "side" : "BackSide" }
+      "options": { "color":"#ffd73a", "side" : "BackSide" }
     },
     { "name": "wd",
       "type": "Phong",
@@ -97,54 +63,74 @@
   "objects": [
     { "name": "tess",
       "geometry": "Box",
-      "options": [ 3, 3, 3, 3],
+      "options": [ 2, 2, 2, 2],
       "material": "tesseract",
       "position": { "y": 2},
-      "rotation": { "xw": 0.01, "yw": 0.01, "zw": 0.02 },
+      "rotation": { },
+      "rotationLocks": ["yw", "zw"],
       "selectable" : true,
       "projector" : "stereo"
     },
-    { "name": "pyram",
+    { "name": "pyram-x",
       "geometry": "Pyramid4D",
-      "options": [ 3, 3, 3, 3],
+      "options": [ 2, 2, 2, 2],
       "material": ["pyram ext", "pyram int"],
       "position": { "x": 7, "y": 2},
-      "rotation": { "xw": 0.01, "yw": 0.01 },
+      "rotation": { },
+      "rotationLocks": ["zw"],
+      "selectable": true,
+      "projector": "stereo"
+    },
+    { "name": "pyram-z",
+      "geometry": "Pyramid4D",
+      "options": [ 2, 2, 2, 2],
+      "material": ["pyram ext", "pyram int"],
+      "position": { "x": 7, "y": 2},
+      "rotation": {  },
+      "rotationLocks": [],
       "selectable": true,
       "projector": "stereo"
     },
     { "name": "prism",
       "geometry": "Prism4D",
-      "options": [ 3 ],
+      "options": [ 2 ],
       "material": "prism double",
       "position": { "x": -7, "y": 2},
-      "rotation": { "xw": 0.01, "yw": 0.01 },
+      "rotation": { },
       "selectable" : true,
       "projector": "stereo"
     },
     { "name": "penta",
       "geometry": "Pentachore",
-      "options": [ 3 ],
+      "options": [ 2 ],
       "material": "penta",
       "position": { "x": 14, "y": 2},
-      "rotation": { "xw": 0.01, "yw": 0.01 },
+      "rotation": { },
       "selectable" : true,
       "projector": "stereo"
     },
     { "name": "ground",
       "geometry": "Box3D",
       "options": [ "xyz", 50, 2, 50],
-      "material": "white",
+      "material": "wd",
       "position": { "y": -3}
     }
   ],
-  "levelStructure": [
-    ["ground", 0, -3, 0],
-    ["tess", 0, 2, 0],
-    ["pyram", 7, 2, 0],
-    ["prism", -7, 2, 0],
-    ["penta", 14, 2, 0]
-  ],
+  "levelStructure": {
+    "tess": ["tess", 0, 2, 0],
+    "x1": ["pyram-x", 3, 2, 0],
+    "x2": ["pyram-x", -3, 2, 0],
+    "z1": ["pyram-z", 0, 2, 3],
+    "z2": ["pyram-z", 0, 2, -3],
+    "g": ["ground", 0, -2, 0]
+  },
+  "endLocks": {
+    "tess": [0 ,0 ,3.132038000025204 ,0 ,0 ,0],
+    "x1": [0 ,0 ,1.6991186666865061 ,0 ,0 ,0],
+    "x2": [0 ,0 ,-1.699105999994208 ,0 ,0 ,0],
+    "z1": [0 ,0 ,1.5324313333233777 ,0 ,1.5657639999859378 ,7.895837999982703],
+    "z2": [0 ,0 ,0 ,0 ,1.5658026666521137 ,-1.6324040000035893]
+  },
   "scripts": [
     
   ]
