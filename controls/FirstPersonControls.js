@@ -18,7 +18,6 @@ function FirstPersonControls(
   this.camera3D = camera3D;
   this.space4D = space4D;
   this.paused = true;
-  this.displacementEuler = new Euler4D();
   this.startText = document.getElementById("start");
   this.raycaster = new THREE.Raycaster();
   this.zeroVec = new THREE.Vector2();
@@ -69,7 +68,6 @@ function FirstPersonControls(
     {
       var theta = (this.rotationEaser(dt + this.rotationBase) - this.rotationEaser(this.rotationBase)) * this.dtheta;
       D4_space.rotateAroundCamera(D4_camera, rotation4DPlanes[0], theta);
-      this.displacementEuler[rotation4DPlanes[0]] -= theta;
       this.rotationBase += dt;
       if(this.rotationBase >= 1)
       {
@@ -111,12 +109,9 @@ function FirstPersonControls(
     this.player.velocity3D.addVectors(dataY.movement, dataXZ.movement);
     this.canJump = (dataY.collided && this.player.velocity3D.y == 0);*/
 
-    var movement4D = new THREE.Vector4(this.player.velocity3D.x, 0, this.player.velocity3D.z, 0);
-    movement4D.applyEuler4D(this.displacementEuler);
-
     this.camera3D.position.add(this.player.velocity3D);
-    this.player.position.add(movement4D);
-
+    this.player.position = D4_space.intersector.switchBase(this.camera3D.position);
+    
     // Bring the velocity back to zero by applying friction to the XZ part
     var backupY = this.player.velocity3D.y;
     this.player.velocity3D.y = 0;
