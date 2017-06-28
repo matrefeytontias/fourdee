@@ -4,6 +4,7 @@
   "startText" : "Welcome",
   "levelEnd" : "false",
   "userRotations" : ["xw"],
+  "mana" : 100000,
   "materials": [
     { "name": "white",
       "type": "Phong",

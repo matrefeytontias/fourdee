@@ -158,6 +158,7 @@ LevelLoader.loadJSON = function(level, levelObject)
     startText : data.startText, 
     endText : data.endText,
     levelEnd : data.levelEnd,
-    targetImage : data.targetImage
+    targetImage : data.targetImage,
+    mana : data.mana
   };
 }

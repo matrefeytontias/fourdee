@@ -37,7 +37,7 @@ Level.prototype.initialize = function(loadedLevel)
   
   this.camera.position.copy(loadedLevel.startPos);
   
-  var manaBar = new ManaBar(10);
+  var manaBar = new ManaBar(loadedLevel.mana);
   
   this.fpControls = new FirstPersonControls(this, this.container, this.player, this.camera, this.space4D);
   this.tpControls = new ThirdPersonControls(this.camera, this.scene, this.space4D, manaBar, loadedLevel.userRotations);
