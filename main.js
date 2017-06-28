@@ -53,12 +53,12 @@ function main()
   geom = new Geometry4D();
   geom.extrude3DGeometry(new THREE.BoxGeometry(1, 1, 1), 1);
   var cubeYes = new Mesh4D(geom, new THREE.MeshPhongMaterial({ color: 0x00ff00, side:THREE.DoubleSide }));
-  cubeYes.position.set(-7, 0.5, -6, 0);
+  cubeYes.position.set(-7, 0.51, -6, 0);
   D4_space.add(cubeYes);
   geom = new Geometry4D();
   geom.extrude3DGeometry(new THREE.BoxGeometry(1, 1, 1), 1);
   var cubeNo = new Mesh4D(geom, new THREE.MeshPhongMaterial({ color: 0xff0000, side:THREE.DoubleSide }));
-  cubeNo.position.set(-7, 0.5, 2, 0);
+  cubeNo.position.set(-7, 0.51, 2, 0);
   D4_space.add(cubeNo);
 
   // Add two grounds to separate the space with w < 0 and w > 0
