@@ -17,7 +17,7 @@ var D4_camera = new THREE.PerspectiveCamera(75, D4_gameWidth / D4_gameHeight, 0.
 
 const D4_renderer = new THREE.WebGLRenderer({ antialias: true });
 
-var ground, cube, light;
+var light;
 
 var coordsOutput = document.getElementById("coords");
 
@@ -44,24 +44,36 @@ function main()
   // window.addEventListener("levelLoaded", levelLoaded);
   // LevelLoader.loadFile("levels/cubejail.json", D4_space);
   var geom = new Geometry4D();
-  geom.extrude3DGeometry(new THREE.BoxGeometry(3, 3, 3), 3);
-  cube = new Mesh4D(geom, mat);
-  cube.position.y = 1.45;
-  cube.position.z = -5;
+  geom.extrude3DGeometry(new THREE.BoxGeometry(20, 2.5, 1), 1);
+  var cube = new Mesh4D(geom, mat);
+  cube.position.set(0, 1.20, 0, 0);
   D4_space.add(cube);
+  
+  // Add a couple cubes to see where we must and must not be
+  geom = new Geometry4D();
+  geom.extrude3DGeometry(new THREE.BoxGeometry(1, 1, 1), 1);
+  var cubeYes = new Mesh4D(geom, new THREE.MeshPhongMaterial({ color: 0x00ff00, side:THREE.DoubleSide }));
+  cubeYes.position.set(-7, 0.5, -6, 0);
+  D4_space.add(cubeYes);
+  geom = new Geometry4D();
+  geom.extrude3DGeometry(new THREE.BoxGeometry(1, 1, 1), 1);
+  var cubeNo = new Mesh4D(geom, new THREE.MeshPhongMaterial({ color: 0xff0000, side:THREE.DoubleSide }));
+  cubeNo.position.set(-7, 0.5, 2, 0);
+  D4_space.add(cubeNo);
 
+  // Add two grounds to separate the space with w < 0 and w > 0
   geom = new Geometry4D();
   geom.extrude3DGeometry(new THREE.BoxGeometry(20, 1, 20), 10);
-  ground = new Mesh4D(geom, mat);
-  ground.position.y = -0.5;
-  ground.position.w = -5;
-  D4_space.add(ground);
+  var groundNeg = new Mesh4D(geom, mat);
+  groundNeg.position.y = -0.5;
+  groundNeg.position.w = -5;
+  D4_space.add(groundNeg);
   geom = new Geometry4D();
   geom.extrude3DGeometry(new THREE.BoxGeometry(20, 1, 20), 10);
-  ground = new Mesh4D(geom, new THREE.MeshPhongMaterial({ color: 0xccccff, side: THREE.DoubleSide }));
-  ground.position.y = -0.5;
-  ground.position.w = 5;
-  D4_space.add(ground);
+  var groundPos = new Mesh4D(geom, new THREE.MeshPhongMaterial({ color: 0xccccff, side: THREE.DoubleSide }));
+  groundPos.position.y = -0.5;
+  groundPos.position.w = 5;
+  D4_space.add(groundPos);
 
   levelLoaded();
   // End level;
@@ -72,6 +84,7 @@ function levelLoaded()
   // Start controls
   // D4_camera.position.copy(LevelLoader.result.startPos);
   D4_camera.position.y = 1.0;
+  D4_camera.position.z = 5;
   D4_camera.lookAt(D4_scene.position);
 
   var p = new Player();
