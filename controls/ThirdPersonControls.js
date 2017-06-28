@@ -57,6 +57,8 @@ function ThirdPersonControls(
     this.mousePosition.x = this.windowHalfX+this.fpControls.mousePosition.x;
     this.onMouseMove({ movementY : 0});
     document.getElementById("cursor").style.display = "none";
+    this.changeChurrentRotation(0);
+    this.updateRotationInfo();
   }
 
   this.onMouseMove = function(event)
@@ -78,9 +80,28 @@ function ThirdPersonControls(
       this.changeChurrentRotation();
   }
   
-  this.changeChurrentRotation = function()
+  this.changeChurrentRotation = function(delta = 1)
   {
-    this.currentRotation = (this.currentRotation + 1)%this.rotation4DPlanes.length;
+    this.currentRotation = (this.currentRotation + delta)%this.rotation4DPlanes.length;
+    while( this.focusedObject4D.isRotationLocked(this.rotation4DPlanes[this.currentRotation]) )
+      this.currentRotation = (this.currentRotation + 1)%this.rotation4DPlanes.length;
+    this.updateRotationInfo();
+  }
+  
+  this.updateRotationInfo = function()
+  {
+    $("#rotations").show();
+    $("#rotations span").css("color", "black");
+    $("#rotations span").css("text-shadow", "0 0 0 black");
+    for(var i = 0; i < this.rotation4DPlanes.length; i++)
+    {
+      console.log(this.rotation4DPlanes[i]);
+      if(this.focusedObject4D !== null && (!this.focusedObject4D.isRotationLocked(this.rotation4DPlanes[i]))){
+        console.log(this.rotation4DPlanes[i])
+        $("#"+this.rotation4DPlanes[i]).css("text-shadow", "0 0 2px white");
+      }
+    }
+    $("#"+this.rotation4DPlanes[this.currentRotation]).css("color", "white");
   }
 
   this.update = function(dt)

@@ -93,7 +93,7 @@
   text-align : center;
   color : white;
   font-size : 20px;
-  text-shadow : 0 0 3px white;
+  text-shadow : 0 0 1px white;
 }
 
 #retry, #selection{
@@ -137,4 +137,41 @@
 
 .goal-tuto #topdown{
   top : 90px;
+}
+
+#rotations{
+  position: fixed;
+  width: 55px;
+  top : 40%;
+  font-size : 26px;
+  text-shadow : 0 0 2px white;
+  background-color : rgba(255, 255, 255, 0.2);
+  border-radius : 0 5px 5px 0;
+}
+
+#rotations span{
+  display: block;
+  margin-left : 10px;
+}
+
+#rotation-help{
+  position: fixed;
+  width : 500px;
+  top : 40%;
+  font-size : 26px;
+  text-shadow : 0 0 2px white;
+  color : white;
+}
+
+#rotation-help div{
+  position: absolute;
+}
+
+#r1{ left : 60px; }
+#r2{ top : 30px; left : 60px; }
+#r3{ top : 60px; left : 60px; }
+
+#rotation-control{
+  top : 100px;
+  left : 10px;
 }

@@ -135,7 +135,6 @@ LevelObject.prototype.toggleHighlight = function(color = 0xff0000, pass = false)
   var meshes = this.getPhysical3DMeshes();
 
   var emColor = this.highlighted ? color : 0;
-  console.log(emColor);
 
   for(var i = 0; i < meshes.length; i++)
   {

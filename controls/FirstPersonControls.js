@@ -78,6 +78,7 @@ function FirstPersonControls(
     this.camera3D.position.y = this.memPosition.y;
     this.camera3D.position.z = this.memPosition.z;
     this.cursor.style.display = "";
+    $("#rotations").hide();
   }
 
   this.onKeyDown = function(event)
@@ -195,6 +196,7 @@ function FirstPersonControls(
       this.paused = false;
       this.startText.style.display = "none";
       this.cursor.style.display = "";
+      $("#rotations").hide();
       if(document.getElementsByName("canvas").length == 0) window.setTimeout(start, 100);
       else window.setTimeout(resize, 100);
     }
