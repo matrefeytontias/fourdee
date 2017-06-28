@@ -42,7 +42,6 @@ Intersector.prototype.snap = function()
     this.uy[coord] = Math.abs(this.uy[coord]) < EPSILON ? 0 : (Math.abs(1 - Math.abs(this.uy[coord])) < EPSILON ? Math.sign(this.uy[coord]) : this.uy[coord]);
     this.uz[coord] = Math.abs(this.uz[coord]) < EPSILON ? 0 : (Math.abs(1 - Math.abs(this.uz[coord])) < EPSILON ? Math.sign(this.uz[coord]) : this.uz[coord]);
     this.normal[coord] = Math.abs(this.normal[coord]) < EPSILON ? 0 : (Math.abs(1 - Math.abs(this.normal[coord])) < EPSILON ? Math.sign(this.normal[coord]) : this.normal[coord]);
-    this.origin[coord] = Math.abs(this.origin[coord]) < EPSILON ? 0 : (Math.abs(1 - Math.abs(this.origin[coord])) < EPSILON ? Math.sign(this.origin[coord]) : this.origin[coord]);
   }
   this.e = -this.normal.dot(this.origin);
 }

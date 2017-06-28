@@ -68,7 +68,7 @@ function FirstPersonControls(
     if(this.rotating)
     {
       var theta = (this.rotationEaser(dt + this.rotationBase) - this.rotationEaser(this.rotationBase)) * this.dtheta;
-      D4_space.rotateAround(D4_camera.position, rotation4DPlanes[0], theta);
+      D4_space.rotateAroundCamera(D4_camera, rotation4DPlanes[0], theta);
       this.displacementEuler[rotation4DPlanes[0]] -= theta;
       this.rotationBase += dt;
       if(this.rotationBase >= 1)

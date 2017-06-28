@@ -26,14 +26,15 @@ Space4D.prototype.add = function(obj)
 
 // Rotate the intersector on the given plane around the given 3D point in itself
 // THREE.Vector3 center3, string plane, float theta
-Space4D.prototype.rotateAround = function(center3, plane, theta)
+Space4D.prototype.rotateAroundCamera = function(camera, plane, theta)
 {
   if(theta != 0)
   {
-    var center4 = this.intersector.switchBase(center3);
+    var center4 = this.intersector.switchBase(camera.position);
     var rot = new Matrix5();
     rot["makeRotate" + plane.toUpperCase()](theta);
-    this.intersector.origin.sub(center4).applyMatrix5(rot).add(center4);
+    this.intersector.origin.copy(center4);
+    camera.position.set(0, 0, 0);
     this.intersector.applyMatrix5(rot);
     this.dirty = true;
   }
