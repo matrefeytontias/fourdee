@@ -1,0 +1,114 @@
+{
+  "startingPosition": { "x": 3.5, "y": 1, "z": -5 },
+  "title": "4",
+  "userRotations" : ["xw", "yw", "zw"],
+  "jump": false,
+  "startText": "I'm telling you it's a four",
+  "endText": "You see ! It's a four !",
+  "levelEnd": "all locked",
+  "targetImage" : "four.png",
+  "mana" : 8,
+  "materials": [
+    { "name": "bd",
+      "type": "Phong",
+      "options": { "color":"#33ccff", "side" : "DoubleSide" }
+    },
+    { "name": "be",
+      "type": "Phong",
+      "options": { "color":"#33ccff" }
+    },
+    { "name": "bi",
+      "type": "Phong",
+      "options": { "color":"#33ccff", "side" : "BackSide" }
+    },
+    { "name": "od",
+      "type": "Phong",
+      "options": { "color":"#ffd73a", "side" : "DoubleSide" }
+    },
+    { "name": "oe",
+      "type": "Phong",
+      "options": { "color":"#ffd73a" }
+    },
+    { "name": "oi",
+      "type": "Phong",
+      "options": { "color":"#ffd73a", "side" : "BackSide" }
+    },
+    { "name": "wd",
+      "type": "Phong",
+      "options": { "color":"#ffffff", "side" : "DoubleSide" }
+    },
+    { "name": "we",
+      "type": "Phong",
+      "options": { "color":"#ffffff" }
+    },
+    { "name": "wi",
+      "type": "Phong",
+      "options": { "color":"#ffffff", "side" : "BackSide" }
+    }
+  ],
+  "materialPackages" : {
+    "prism double": ["bd", "od", "wd"],
+    "pyram ext": ["be", "wd"],
+    "pyram int": ["oi"],
+    "tesseract": ["od", "bd", "wd", "wd", "wd"],
+    "tesseract2": ["wd", "wd", "bd", "od", "bd"],
+    "penta" : ["od", "bd"]
+  },
+  "projectors" : [
+    {
+      "name": "stereo",
+      "type": "StereoProj",
+      "options" : [0, 0, 0, 10, 3]
+    }
+  ],
+  "objects": [
+    { "name": "tess",
+      "geometry": "Box",
+      "options": [ 2, 2, 2, 2],
+      "material": "tesseract",
+      "position": { "y": 2},
+      "rotation": { },
+      "rotationLocks": [],
+      "selectable" : true,
+      "projector" : "stereo"
+    },
+    { "name": "long tess",
+      "geometry": "Box",
+      "options": [ 2, 2, 2, 6],
+      "material": "tesseract2",
+      "position": { "y": 2},
+      "rotation": { },
+      "rotationLocks": [],
+      "selectable" : true,
+      "projector" : "stereo"
+    },
+    { "name": "ground",
+      "geometry": "Box3D",
+      "options": [ "xyz", 50, 2, 50],
+      "material": "wd",
+      "position": { "y": -3}
+    }
+  ],
+  "levelStructure": {
+    "t1": ["long tess", 0.01, 2, -0.65],
+    "t2": ["long tess", 0, 2.01, 0.65],
+    "t3": ["long tess", -1.65, 1.99, 0],
+    "c1": ["tess", -3.35, 2, -1.7],
+    "c2": ["tess", -1.5, 2, -3.7],
+    "c3": ["tess", -1.3, 2, -5.3],
+    "c4": ["tess", 1.2, 2, 0],
+    "g": ["ground", 0, -2, 0]
+  },
+  "endLocks": {
+    "t1": [0 ,0 ,0 ,0 ,0 ,1.6323953333490258],
+    "t2": [0 ,0 ,0 ,0 ,0 ,-1.7323640000031446],
+    "t3": [0 ,0 ,-1.532471333318002 ,0 ,3.164901999999711 ,0],
+    "c1": [0 ,0 ,0.9328220000112193 ,0 ,0 ,0],
+    "c2": [0 ,0 ,0.8661786666717186 ,0 ,0 ,0],
+    "c3": [0 ,0 ,0.1998886666619607 ,0 ,0 ,0],
+    "c4": [0 ,0 ,-0.2998300000108429 ,0 ,0 ,0]
+  },
+  "scripts": [
+    
+  ]
+}

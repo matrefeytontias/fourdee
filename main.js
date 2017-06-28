@@ -89,7 +89,7 @@ function start()
   skyRender.setSize(200, 200);
   D4_renderer.setClearColor( new THREE.Color( 0x111111 ), 0.8 );
   
-  skyCamera.position.y = 10;
+  skyCamera.position.y = 11;
   skyCamera.lookAt(new THREE.Vector3(0, 0, 0));
 
   lastUpdateTimestamp = -1;
