@@ -8,15 +8,18 @@
     var levelList = [
       {name : "showroom", file : "showroom"},
       {name : "flower", file : "minisun"},
-      {name : "flower again", file : "minisun2"}
+      {name : "another-flower", file : "minisun3"},
+      {name : "flower-again", file : "minisun2"}
     ]
     
     $(document).ready(function(){
       var levelName = new URL(window.location.href).searchParams.get("level");
       var score = parseInt(new URL(window.location.href).searchParams.get("score"));
       
+      if(!checkCookie(levelName))
+        setCookie(levelName, score);
       if(checkCookie(levelName) && parseInt(getCookie(levelName)) < score)
-        setCookie(levelName, score+"");
+        setCookie(levelName, score);
       
       for(var i = 0; i < levelList.length; i++)
       {

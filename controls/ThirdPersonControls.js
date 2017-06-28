@@ -95,9 +95,7 @@ function ThirdPersonControls(
     $("#rotations span").css("text-shadow", "0 0 0 black");
     for(var i = 0; i < this.rotation4DPlanes.length; i++)
     {
-      console.log(this.rotation4DPlanes[i]);
       if(this.focusedObject4D !== null && (!this.focusedObject4D.isRotationLocked(this.rotation4DPlanes[i]))){
-        console.log(this.rotation4DPlanes[i])
         $("#"+this.rotation4DPlanes[i]).css("text-shadow", "0 0 2px white");
       }
     }

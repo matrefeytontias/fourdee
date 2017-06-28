@@ -1,0 +1,137 @@
+{
+  "startingPosition": { "x": 3.5, "y": 1, "z": -5 },
+  "title": "another-flower",
+  "userRotations" : ["xw", "zw"],
+  "jump": false,
+  "startText": "- Flowers are pretty ! I want an other one.",
+  "endText": "Yeaaah ! Flower !",
+  "levelEnd": "all locked",
+  "targetImage" : "flower3bis.png",
+  "mana" : 18,
+  "materials": [
+    { "name": "bd",
+      "type": "Phong",
+      "options": { "color":"#33ccff", "side" : "DoubleSide" }
+    },
+    { "name": "be",
+      "type": "Phong",
+      "options": { "color":"#33ccff" }
+    },
+    { "name": "bi",
+      "type": "Phong",
+      "options": { "color":"#33ccff", "side" : "BackSide" }
+    },
+    { "name": "od",
+      "type": "Phong",
+      "options": { "color":"#ffd73a", "side" : "DoubleSide" }
+    },
+    { "name": "oe",
+      "type": "Phong",
+      "options": { "color":"#ffd73a" }
+    },
+    { "name": "oi",
+      "type": "Phong",
+      "options": { "color":"#ffd73a", "side" : "BackSide" }
+    },
+    { "name": "wd",
+      "type": "Phong",
+      "options": { "color":"#ffffff", "side" : "DoubleSide" }
+    },
+    { "name": "we",
+      "type": "Phong",
+      "options": { "color":"#ffffff" }
+    },
+    { "name": "wi",
+      "type": "Phong",
+      "options": { "color":"#ffffff", "side" : "BackSide" }
+    }
+  ],
+  "materialPackages" : {
+    "prism double": ["bd", "od", "wd"],
+    "pyram ext": ["be", "wd"],
+    "pyram int": ["oi"],
+    "tesseract": ["od", "bd", "wd", "wd", "wd"],
+    "penta" : ["od", "bd"]
+  },
+  "projectors" : [
+    {
+      "name": "stereo",
+      "type": "StereoProj",
+      "options" : [0, 0, 0, 10, 3]
+    }
+  ],
+  "objects": [
+    { "name": "tess",
+      "geometry": "Box",
+      "options": [ 2, 2, 2, 2],
+      "material": "tesseract",
+      "position": { "y": 2},
+      "rotation": { },
+      "rotationLocks": ["zw"],
+      "selectable" : true,
+      "projector" : "stereo"
+    },
+    { "name": "pyram-x",
+      "geometry": "Pyramid4D",
+      "options": [ 2, 2, 2, 2],
+      "material": ["pyram ext", "pyram int"],
+      "position": { "x": 7, "y": 2},
+      "rotation": { },
+      "rotationLocks": [],
+      "selectable": true,
+      "projector": "stereo"
+    },
+    { "name": "pyram-z",
+      "geometry": "Pyramid4D",
+      "options": [ 2, 2, 2, 2],
+      "material": ["pyram ext", "pyram int"],
+      "position": { "x": 7, "y": 2},
+      "rotation": {  },
+      "rotationLocks": [],
+      "selectable": true,
+      "projector": "stereo"
+    },
+    { "name": "prism",
+      "geometry": "Prism4D",
+      "options": [ 2 ],
+      "material": "prism double",
+      "position": { "x": -7, "y": 2},
+      "rotation": { },
+      "selectable" : true,
+      "projector": "stereo"
+    },
+    { "name": "penta",
+      "geometry": "Pentachore",
+      "options": [ 2 ],
+      "material": "penta",
+      "position": { "x": 14, "y": 2},
+      "rotation": { },
+      "selectable" : true,
+      "projector": "stereo"
+    },
+    { "name": "ground",
+      "geometry": "Box3D",
+      "options": [ "xyz", 50, 2, 50],
+      "material": "wd",
+      "position": { "y": -3}
+    }
+  ],
+  "levelStructure": {
+    "tess": ["tess", 0, 2, 0],
+    "x1": ["pyram-x", 3, 2, 0],
+    "x2": ["pyram-x", -3, 2, 0],
+    "z1": ["pyram-z", 0, 2, 3],
+    "z2": ["pyram-z", 0, 2, -3],
+    "g": ["ground", 0, -2, 0]
+  },
+  "endLocks": {
+    "tess": [0 ,0 ,3.132494666678636 ,0 ,0 ,0],
+    "x1": [0 ,0 ,1.7989619999949356 ,0 ,0 ,0],
+    "x2": [0 ,0 ,-1.7989753333390883 ,0 ,0 ,0.0333166666746062],
+    "z1": [0 ,0 ,1.4991393333262144 ,0 ,0 ,1.5657699999865144],
+    "z2": [0 ,0 ,1.5324266666658029 ,0 ,0 ,-1.5657700000010664]
+  },
+  "scripts": [
+    
+  ]
+}
