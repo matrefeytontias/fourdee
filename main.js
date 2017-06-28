@@ -133,5 +133,5 @@ function render(timestamp)
   D4_space.project();
   D4_renderer.render(D4_scene, D4_camera);
   
-  coordsOutput.innerHTML = D4_space.intersector.ux + "<br>" + D4_space.intersector.uy + "<br>" + D4_space.intersector.uz + "<br>" + D4_space.intersector.origin;
+  // coordsOutput.innerHTML = D4_space.intersector.ux + "<br>" + D4_space.intersector.uy + "<br>" + D4_space.intersector.uz + "<br>" + D4_space.intersector.origin;
 }
