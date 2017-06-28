@@ -122,3 +122,19 @@
   font-size : 18px;
   text-shadow : 0 0 3px white;
 }
+
+.goal-tuto div{
+  position: fixed;
+  right : 220px;
+  color : white;
+  font-size : 18px;
+  text-shadow : 0 0 3px white;
+}
+
+.goal-tuto #target{
+  top : 290px;
+}
+
+.goal-tuto #topdown{
+  top : 90px;
+}

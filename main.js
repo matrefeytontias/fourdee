@@ -33,7 +33,11 @@ const skyRender = new THREE.WebGLRenderer({ antialias: true });
 
 var ground, cube, light;
 
-var level, levelName;
+var level;
+
+var levelName = new URL(window.location.href).searchParams.get("level");
+if(levelName === null)
+  window.location.href = "levelSelection.html";
 
 window.addEventListener("load", main);
 
@@ -44,11 +48,6 @@ function main()
 
   var ambientLight = new THREE.AmbientLight( 0x606060 ); // soft white light
   D4_scene.add( ambientLight );
-  
-  
-  var url = new URL(window.location.href);
-  levelName = url.searchParams.get("level");
-  levelName = levelName === null ? "showroom" : levelName;
   
   window.addEventListener("levelLoaded", levelLoaded);
   
