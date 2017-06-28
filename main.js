@@ -2,6 +2,8 @@ const D4_GRAVITY = 0.5; // unit/s²
 const D4_FRICTION = 20; // unit/s²
 const D4_JUMP = 0.15; // unit/s
 
+const GROUND_RESOLUTION = 8;
+
 var paused = false;
 var D4_container = document.getElementById("view");
 var D4_gameWidth = D4_container.offsetWidth;
@@ -33,6 +35,18 @@ THREE.Vector4.prototype.toString = function()
   return "x: " + this.x + ", y: " + this.y + ", z: " + this.z + ", w: " + this.w + "\n";
 }
 
+// Make a bumpy box out of a box by adding a random dY to the top vertices
+function bumpBox(geom, magnitude)
+{
+  for(var i = 0; i < geom.vertices.length; i++)
+  {
+    var v = geom.vertices[i];
+    if(v.y > 0)
+      v.y += (Math.random() - 0.5) * magnitude;
+  }
+  return geom;
+}
+
 function main()
 {
   var mat = new THREE.MeshPhongMaterial({ color: 0xffffff, side: THREE.DoubleSide });
@@ -48,7 +62,7 @@ function main()
   var cube = new Mesh4D(geom, mat);
   cube.position.set(0, 1.20, 0, 0);
   D4_space.add(cube);
-  
+
   // Add a couple cubes to see where we must and must not be
   geom = new Geometry4D();
   geom.extrude3DGeometry(new THREE.BoxGeometry(1, 1, 1), 1);
@@ -63,13 +77,13 @@ function main()
 
   // Add two grounds to separate the space with w < 0 and w > 0
   geom = new Geometry4D();
-  geom.extrude3DGeometry(new THREE.BoxGeometry(20, 1, 20), 10);
+  geom.extrude3DGeometry(bumpBox(new THREE.BoxGeometry(20, 1, 20, GROUND_RESOLUTION, 1, GROUND_RESOLUTION), 0.2), 10);
   var groundNeg = new Mesh4D(geom, mat);
   groundNeg.position.y = -0.5;
   groundNeg.position.w = -5;
   D4_space.add(groundNeg);
   geom = new Geometry4D();
-  geom.extrude3DGeometry(new THREE.BoxGeometry(20, 1, 20), 10);
+  geom.extrude3DGeometry(bumpBox(new THREE.BoxGeometry(20, 1, 20, GROUND_RESOLUTION, 1, GROUND_RESOLUTION), 0.2), 10);
   var groundPos = new Mesh4D(geom, new THREE.MeshPhongMaterial({ color: 0xccccff, side: THREE.DoubleSide }));
   groundPos.position.y = -0.5;
   groundPos.position.w = 5;
@@ -90,7 +104,7 @@ function levelLoaded()
   var p = new Player();
   p.hasGravity = true;
   p.position = D4_space.switchBase(D4_camera.position);
-  
+
   var fpControls = new FirstPersonControls(D4_container, p, D4_camera, D4_space);
   fpControls.listen();
 
@@ -132,6 +146,6 @@ function render(timestamp)
 
   D4_space.project();
   D4_renderer.render(D4_scene, D4_camera);
-  
+
   // coordsOutput.innerHTML = D4_space.intersector.ux + "<br>" + D4_space.intersector.uy + "<br>" + D4_space.intersector.uz + "<br>" + D4_space.intersector.origin;
 }
