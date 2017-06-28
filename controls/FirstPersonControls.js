@@ -72,7 +72,10 @@ function FirstPersonControls(
       this.displacementEuler[rotation4DPlanes[0]] -= theta;
       this.rotationBase += dt;
       if(this.rotationBase >= 1)
+      {
         this.rotating = false;
+        D4_space.intersector.snap();
+      }
     }
     else if(KeySettings.keyPressed[this.keys.up] || KeySettings.keyPressed[this.keys.down] || KeySettings.keyPressed[this.keys.left] || KeySettings.keyPressed[this.keys.right])
     {

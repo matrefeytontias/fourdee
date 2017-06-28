@@ -30,6 +30,23 @@ Intersector.prototype.switchBase = function(v)
     throw "Can only switch base between Vector3 and Vector4.\nWhat even where you trying to switch mate ?";
 }
 
+const EPSILON = 0.001;
+const params = "xyzw";
+// Gets rid of imprecisions
+Intersector.prototype.snap = function()
+{
+  for(var i = 0; i < params.length; i++)
+  {
+    var coord = params.charAt(i);
+    this.ux[coord] = Math.abs(this.ux[coord]) < EPSILON ? 0 : (Math.abs(1 - Math.abs(this.ux[coord])) < EPSILON ? Math.sign(this.ux[coord]) : this.ux[coord]);
+    this.uy[coord] = Math.abs(this.uy[coord]) < EPSILON ? 0 : (Math.abs(1 - Math.abs(this.uy[coord])) < EPSILON ? Math.sign(this.uy[coord]) : this.uy[coord]);
+    this.uz[coord] = Math.abs(this.uz[coord]) < EPSILON ? 0 : (Math.abs(1 - Math.abs(this.uz[coord])) < EPSILON ? Math.sign(this.uz[coord]) : this.uz[coord]);
+    this.normal[coord] = Math.abs(this.normal[coord]) < EPSILON ? 0 : (Math.abs(1 - Math.abs(this.normal[coord])) < EPSILON ? Math.sign(this.normal[coord]) : this.normal[coord]);
+    this.origin[coord] = Math.abs(this.origin[coord]) < EPSILON ? 0 : (Math.abs(1 - Math.abs(this.origin[coord])) < EPSILON ? Math.sign(this.origin[coord]) : this.origin[coord]);
+  }
+  this.e = -this.normal.dot(this.origin);
+}
+
 // Express a vector in the intersector's base
 Intersector.prototype.project = function(v)
 {
