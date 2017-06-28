@@ -25,6 +25,14 @@ Level.prototype.initialize = function(loadedLevel)
   this.endText = loadedLevel.endText;
   this.levelEnd = loadedLevel.levelEnd;
   
+  if(this.levelEnd == "all locked")
+  {
+    $("#goal-img").show();
+    $("#goal-img img").attr("src", "images/"+loadedLevel.targetImage);
+    $("#sky-view").show();
+    $(".goal-tuto").show();
+  }
+  
   this.titleDom.html(this.title);
   
   this.camera.position.copy(loadedLevel.startPos);
