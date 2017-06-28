@@ -67,12 +67,12 @@ function FirstPersonControls(
     if(this.rotating)
     {
       var theta = (this.rotationEaser(dt + this.rotationBase) - this.rotationEaser(this.rotationBase)) * this.dtheta;
-      D4_space.rotateAroundCamera(D4_camera, rotation4DPlanes[0], theta);
+      this.space4D.rotateAroundCamera(D4_camera, rotation4DPlanes[0], theta);
       this.rotationBase += dt;
       if(this.rotationBase >= 1)
       {
         this.rotating = false;
-        D4_space.intersector.snap();
+        this.space4D.intersector.snap();
       }
     }
     else if(KeySettings.keyPressed[this.keys.up] || KeySettings.keyPressed[this.keys.down] || KeySettings.keyPressed[this.keys.left] || KeySettings.keyPressed[this.keys.right])
@@ -87,40 +87,40 @@ function FirstPersonControls(
       if(KeySettings.keyPressed[this.keys.right]) movement.add(moveDirection.clone().rotate("y", -Math.PI/2));
 
       movement.y = 0;
-      this.player.velocity3D.add(movement);
+      this.player.velocity.add(this.space4D.switchBaseVelocity(movement));
     }
 
-    /*
-    // No gravity, no physics
-    // Add gravity
-    this.player.velocity3D.y += -D4_GRAVITY * dt;
+    // Add gravity if need be
+    if(this.player.hasGravity)
+      this.player.velocity.y += -D4_GRAVITY * dt;
     // Eventually add a jump
     if(this.canJump && KeySettings.keyPressed[this.keys.space])
-      this.player.velocity3D.y += D4_JUMP;
+      this.player.velocity.y += D4_JUMP;
 
-    var velocityY = new THREE.Vector3(0, this.player.velocity3D.y, 0);
-    var dataY = space4D.tryForMove(this.camera3D.position, velocityY, this.player.radius);
+    // Solve collisions along Y first, then XZW
+    var velocityY = new THREE.Vector4(0, this.player.velocity.y, 0, 0);
+    var dataY = space4D.tryForMove(this.player, velocityY);
+    
+    this.player.position.add(dataY.movement);
+    var velocityXZW = this.player.velocity.clone();
+    velocityXZW.y = 0;
+    var dataXZW = space4D.tryForMove(this.player, velocityXZW);
+    
+    this.player.position.add(dataXZW.movement);
+    this.player.velocity.addVectors(dataY.movement, dataXZW.movement);
+    this.canJump = (dataY.collided && this.player.velocity.y == 0);
 
-    var newPosition = this.camera3D.position.clone().add(dataY.movement);
-    var velocityXZ = this.player.velocity3D.clone();
-    velocityXZ.y = 0;
-    var dataXZ = space4D.tryForMove(newPosition, velocityXZ, this.player.radius);
-
-    this.player.velocity3D.addVectors(dataY.movement, dataXZ.movement);
-    this.canJump = (dataY.collided && this.player.velocity3D.y == 0);*/
-
-    this.camera3D.position.add(this.player.velocity3D);
-    this.player.position = D4_space.intersector.switchBase(this.camera3D.position);
+    this.camera3D.position.add(this.space4D.switchBaseVelocity(this.player.velocity));
     
     // Bring the velocity back to zero by applying friction to the XZ part
-    var backupY = this.player.velocity3D.y;
-    this.player.velocity3D.y = 0;
-    var velLen = this.player.velocity3D.length();
+    var backupY = this.player.velocity.y;
+    this.player.velocity.y = 0;
+    var velLen = this.player.velocity.length();
     if(velLen <= D4_FRICTION * dt)
-      this.player.velocity3D.set(0, 0, 0);
+      this.player.velocity.set(0, 0, 0, 0);
     else
-      this.player.velocity3D.multiplyScalar((velLen - D4_FRICTION * dt) / velLen);
-    this.player.velocity3D.y = backupY;
+      this.player.velocity.multiplyScalar((velLen - D4_FRICTION * dt) / velLen);
+    this.player.velocity.y = backupY;
   }
 
   this.isFullScreen = function(){

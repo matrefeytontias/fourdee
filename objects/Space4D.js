@@ -47,6 +47,19 @@ Space4D.prototype.visitObjects = function(callback)
     callback.bind(this)(this.children[i]);
 }
 
+Space4D.prototype.switchBase = function(v)
+{
+  return this.intersector.switchBase(v);
+}
+
+// Same as this.switchBase but does not take the origin into account
+Space4D.prototype.switchBaseVelocity = function(v)
+{
+  return v.isVector3 ?
+      this.intersector.switchBase(v).sub(this.intersector.origin)
+    : this.intersector.switchBase(v.clone().add(this.intersector.origin));
+}
+
 // Updates the children Object4D with their 3D projection if need be
 Space4D.prototype.project = function()
 {
@@ -110,72 +123,42 @@ Space4D.prototype.project = function()
   this.dirty = false;
 }
 
-// Assumes that the player cannot get pinched and that the previousPos is valid
-// Player player
-// Returns the maximum-length amount that keeps a valid position
-// THREE.Vector3 previousPos, THREE.Vector3 amount, float collisionRadius
-Space4D.prototype.tryForMove = function(previousPos, amount, collisionRadius)
+// Assumes that the object is in a valid position
+// Returns the maximum-length movement that keeps a valid position
+// Object4D object, THREE.Vector4 amount
+Space4D.prototype.tryForMove = function(object, amount)
 {
   // Check for null movement first
   if(amount.length() == 0)
     return { collided: false, movement: amount };
 
   var collisions = [];
-  var sqr = collisionRadius * collisionRadius;
-  var nextPos = previousPos.clone().add(amount);
+  var nextPos = object.position.clone().add(amount);
+  var objAABB = object.getAABB();
+  var posBackup = objAABB.p;
+  objAABB.p = nextPos;
 
-  // Find all faces that collide with the camera's new position
+  // Find all objects that collide with the object's new position
   var i = 0;
   this.visitObjects(function(child)
   {
     if(!child.positionalOnly)
     {
-      var bodies = child.getPhysical3DMeshes();
-      for(var i = 0; i < bodies.length; i++)
-      {
-        var body = bodies[i], geom3 = body.geometry, vertices = geom3.vertices, faces = geom3.faces;
-        for(var j = 0; j < faces.length; j++)
-        {
-          var face = faces[j];
-          var faceNorm = cross(sub(vertices, face.b, face.a), sub(vertices, face.c, face.a));
-          // Only check collisions for faces that exist in 3D
-          if(faceNorm.length() == 0)
-            continue;
-          var side = Array.isArray(body.material) ? body.material[0].side : body.material.side;
-          if(side == THREE.BackSide)
-            faceNorm.negate();
-          faceNorm.normalize();
-          // console.log(vertices[face.a], vertices[face.b], vertices[face.c]);
-          // Only check collisions for faces that face us
-          if(dot(faceNorm, amount) >= 0 && side != THREE.DoubleSide)
-            continue;
-          var proj = projOnTriangle(nextPos, vertices[face.a], vertices[face.b], vertices[face.c]);
-          var dSq = dist2(proj, nextPos);
-          // Objects have spherical hitboxes
-          if(dSq < sqr)
-            // There has been a collision
-            collisions.push({ proj: proj, dSq: dSq, obj: child, face: face, faceNorm: faceNorm });
-        }
-      }
+      var aabb = child.getAABB();
+      if(objAABB.intersects(aabb))
+        collisions.push({ dSq: dist2(nextPos, aabb.p), obj: child });
     }
   });
-
+  
+  objAABB.p = posBackup;
+  
   if(collisions.length == 0)
     return { collided: false, movement: amount };
   // There has been one or more collisions
   collisions.sort(function (x, y) { return y.dSq - x.dSq; });
   // Only resolve collision with the closest face for now
-  var proj = collisions[0].proj;
-  var child = collisions[0].obj, vertices = child.get3DBody().geometry.vertices;
-  var face = collisions[0].face;
-  var faceNorm = collisions[0].faceNorm;
-  // The movement brings the object right on the intersection point ...
-  // var newAmount = amount.clone().normalize().multiplyScalar(proj.clone().sub(previousPos).length());
-  var newAmount = new THREE.Vector3();
-  var movRemainder = amount.clone().sub(newAmount);
-  // ... and the rest of the movement is carried along the surface by subtracting the projection on the normal
-  newAmount.add(movRemainder.sub(faceNorm.multiplyScalar(movRemainder.dot(faceNorm))));
-  return { collided: true, movement: this.tryForMove(previousPos, newAmount.multiplyScalar(1), collisionRadius).movement };
+  // TODO
+  return { collided: true, movement: new THREE.Vector4(0, 0, 0, 0) };
 }
 
 // Projection of point on triangle

@@ -21,7 +21,7 @@ Object4D.prototype.getCellVertices = function(i)
 
 Object4D.prototype.getAABB = function()
 {
-  var vertices = geometry.vertices;
+  var vertices = this.geometry.vertices;
   var minx = 123456789, maxx = -123456789,
       miny = 123456789, maxy = -123456789,
       minz = 123456789, maxz = -123456789,

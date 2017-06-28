@@ -1,4 +1,4 @@
-const D4_GRAVITY = 0.35; // unit/s²
+const D4_GRAVITY = 0.5; // unit/s²
 const D4_FRICTION = 20; // unit/s²
 const D4_JUMP = 0.15; // unit/s
 
@@ -71,10 +71,14 @@ function levelLoaded()
 {
   // Start controls
   // D4_camera.position.copy(LevelLoader.result.startPos);
-  D4_camera.position.y = 0.5;
+  D4_camera.position.y = 1.0;
   D4_camera.lookAt(D4_scene.position);
 
-  var fpControls = new FirstPersonControls(D4_container, new Player(), D4_camera, D4_space);
+  var p = new Player();
+  p.hasGravity = true;
+  p.position = D4_space.switchBase(D4_camera.position);
+  
+  var fpControls = new FirstPersonControls(D4_container, p, D4_camera, D4_space);
   fpControls.listen();
 
   document.getElementById("start").style.display = activeControls === fpControls ? "" : "none";
