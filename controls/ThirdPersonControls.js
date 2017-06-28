@@ -3,7 +3,7 @@ function ThirdPersonControls(
   scene3D,
   space4D,
   manaBar,
-  rotation4DPlanes = ["xw", "zw"],
+  rotation4DPlanes = ["xw", "yw", "zw"],
   keys = new KeySettings(),
   rotation4DSensitivity = 2,
   displacement3DSensitivity = 3)
@@ -20,6 +20,7 @@ function ThirdPersonControls(
   this.rotation4DSensitivity = rotation4DSensitivity;
   this.displacement3DSensitivity = displacement3DSensitivity;
   this.focusedPosition = new THREE.Vector3();
+  this.currentRotation = 0;
 
   var geometry = new THREE.Geometry();
   geometry.vertices.push(new THREE.Vector3(0.25, 1, 0));
@@ -70,40 +71,47 @@ function ThirdPersonControls(
     this.fpControls.activate();
     this.positionMarker.visible = false;
   }
+  
+  this.onKeyDown = function()
+  {
+    if(KeySettings.keyPressed[this.keys.shift])
+      this.changeChurrentRotation();
+  }
+  
+  this.changeChurrentRotation = function()
+  {
+    this.currentRotation = (this.currentRotation + 1)%this.rotation4DPlanes.length;
+  }
 
   this.update = function(dt)
   {
     //4D rotations :
     if(KeySettings.keyPressed[this.keys.ana] && !this.manaBar.empty())
     {
-      for(var i = 0; i < this.rotation4DPlanes.length; i++)
+      if(this.rotateAroundMe)
       {
-        if(this.rotateAroundMe)
-        {
-          this.space4D.rotateAround(this.player.position, this.rotation4DPlanes[i], dt * rotation4DSensitivity);
-          this.displacementEuler[this.rotation4DPlanes[i]] -= dt * rotation4DSensitivity;
-        }
-        else if(this.focusedObject4D !== null)
-          this.focusedObject4D.rotate(this.rotation4DPlanes[i], - dt * rotation4DSensitivity)
+        this.space4D.rotateAround(this.player.position, this.rotation4DPlanes[this.currentRotation], dt * rotation4DSensitivity);
+        this.displacementEuler[this.rotation4DPlanes[this.currentRotation]] -= dt * rotation4DSensitivity;
       }
+      else if(this.focusedObject4D !== null)
+        this.focusedObject4D.rotate(this.rotation4DPlanes[this.currentRotation], - dt * rotation4DSensitivity)
     }
 
     if(KeySettings.keyPressed[this.keys.kata] && !this.manaBar.empty())
     {
-      for(var i = 0; i < this.rotation4DPlanes.length; i++)
+      if(this.rotateAroundMe)
       {
-        if(this.rotateAroundMe)
-        {
-          this.space4D.rotateAround(this.player.position, this.rotation4DPlanes[i], -dt * rotation4DSensitivity);
-          this.displacementEuler[this.rotation4DPlanes[i]] += dt * rotation4DSensitivity;
-        }
-        else if(this.focusedObject4D !== null)
-          this.focusedObject4D.rotate(this.rotation4DPlanes[i], dt * rotation4DSensitivity)
+        this.space4D.rotateAround(this.player.position, this.rotation4DPlanes[this.currentRotation], -dt * rotation4DSensitivity);
+        this.displacementEuler[this.rotation4DPlanes[this.currentRotation]] += dt * rotation4DSensitivity;
       }
+      else if(this.focusedObject4D !== null)
+        this.focusedObject4D.rotate(this.rotation4DPlanes[this.currentRotation], dt * rotation4DSensitivity)
     }
 
     if( this.focusedObject4D !== null && (KeySettings.keyPressed[this.keys.kata] || KeySettings.keyPressed[this.keys.ana])  && !this.manaBar.empty() )
     {
+      if(this.focusedObject4D.isRotationLocked(this.rotation4DPlanes[this.currentRotation]))
+        this.changeChurrentRotation();
       this.focusedObject4D.dirty = true;
       this.manaBar.use(dt * rotation4DSensitivity);
       this.manaBar.updateDom();

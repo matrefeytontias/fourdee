@@ -6,6 +6,7 @@ function LevelObject(geometry, material)
   this.wireframeIndexes = [];
   this.highlighted = false;
   this.endRotation = null;
+  this.lockedRotations = [];
 }
 
 LevelObject.prototype = new Mesh4D();
@@ -40,7 +41,13 @@ LevelObject.prototype.lockRotations = function(rotations)
     var backup = r[property];
     delete r[property];
     Object.defineProperty(r, property, { get: function() { return backup; } });
+    this.lockedRotations.push(rotations[i]);
   }
+}
+
+LevelObject.prototype.isRotationLocked = function(rotation)
+{
+  return this.lockedRotations.indexOf(rotation) != -1;
 }
 
 //boolean b, THREE.Material wireframeMaterial
